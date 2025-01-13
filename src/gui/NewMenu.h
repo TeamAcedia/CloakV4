@@ -82,6 +82,10 @@ private:
 
     gui::IGUIEnvironment* env;
     video::SColor outlineColor = video::SColor(255, 255, 255, 255);
+    std::vector<bool> subCategoryRectanglesVisible; // Для хранения видимости прямоугольников
+    std::vector<core::rect<s32>> subCategoryRectangles;
+
+    s32 subCategoryHeight = rectHeight * 3;
 };
 
 #endif

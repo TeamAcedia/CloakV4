@@ -32,6 +32,9 @@ void NewMenu::create()
         return;
     }
 
+    subCategoryRectanglesVisible.resize(script->m_cheat_categories.size(), false);
+    subCategoryRectangles.resize(script->m_cheat_categories.size());
+
     if (!xrayLineEdit) 
         xrayLineEdit = new CustomEditBox(env, g_settings->get("xray_nodes"), "xray_nodes", xray_form, "Xray node list");
 
@@ -146,6 +149,38 @@ bool NewMenu::OnEvent(const irr::SEvent& event)
                     return true; 
                 }
             }
+            for (size_t i = 0; i < subCategoryRects.size(); ++i) {
+                if (selectedCategory[i]) {
+                    for (size_t j = 0; j < subCategoryRects[i].size(); ++j) {
+                        if (subCategoryRects[i][j].isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y))) {
+                            subCategoryRectanglesVisible[i] = !subCategoryRectanglesVisible[i];
+                            if (subCategoryRectanglesVisible[i]) {
+                                // Сдвигаем все подкатегории вниз
+                                for (size_t k = 0; k < subCategoryRects[i].size(); ++k) {
+                                    subCategoryRects[i][k].UpperLeftCorner.Y += (3 * rectHeight);
+                                    subCategoryRects[i][k].LowerRightCorner.Y += (3 * rectHeight);
+                                }
+
+                                // Устанавливаем прямоугольник подкатегории
+                                subCategoryRectangles[i] = core::rect<s32>(
+                                    subCategoryRects[i][j].UpperLeftCorner.X,
+                                    subCategoryRects[i][j].LowerRightCorner.Y,
+                                    subCategoryRects[i][j].LowerRightCorner.X,
+                                    subCategoryRects[i][j].LowerRightCorner.Y + (3 * rectHeight)
+                                );
+                            } else {
+                                // Возвращаем подкатегории на их исходные позиции
+                                for (size_t k = 0; k < subCategoryRects[i].size(); ++k) {
+                                    subCategoryRects[i][k].UpperLeftCorner.Y -= (3 * rectHeight);
+                                    subCategoryRects[i][k].LowerRightCorner.Y -= (3 * rectHeight);
+                                }
+                                subCategoryRectangles[i] = core::rect<s32>(0, 0, 0, 0);
+                            }
+                            return true; 
+                        }
+                    }
+                }
+            }
         } else if (event.MouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP) {
             isDragging = false;
             draggedRectIndex = -1;
@@ -255,7 +290,12 @@ void NewMenu::subDrawCategory(video::IVideoDriver* driver, gui::IGUIFont* font)
                 s32 functionTextX = subRect.UpperLeftCorner.X + (subRect.getWidth() - functionTextSize.Width) / 2;
                 s32 functionTextY = subRect.UpperLeftCorner.Y + (subRect.getHeight() - functionTextSize.Height) / 2;
 
-                font-> draw(wFunctionName.c_str(), core::rect<s32>(functionTextX, functionTextY, functionTextX + functionTextSize.Width, functionTextY + functionTextSize.Height), video::SColor(255, 255, 255, 255));
+                font->draw(wFunctionName.c_str(), core::rect<s32>(functionTextX, functionTextY, functionTextX + functionTextSize.Width, functionTextY + functionTextSize.Height), video::SColor(255, 255, 255, 255));
+
+                // Отрисовка прямоугольника, если он видим
+                if (subCategoryRectanglesVisible[i]) {
+                    driver->draw2DRectangle(video::SColor(100, 0, 0, 0), subCategoryRectangles[i]);
+                }
             }
         }
     }
