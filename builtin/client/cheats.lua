@@ -122,3 +122,4 @@ end
 --core.register_cheat_setting("AutoHit Speed", "Interact", "autohit", "autohit.speed", {type="slider_int", min=0, max=10, steps=10})
 --core.register_cheat_setting("XRay Nodelist", "Render", "xray", "xray.nodes", {type="text", size=10})
 --core.register_cheat_setting("FastDig Instant", "Interact", "fastdig", "fastdig.instant", {type="bool"})
+--core.setPlayerColorESP("FoxLoveFire", {r = 255, g = 0, b = 255})

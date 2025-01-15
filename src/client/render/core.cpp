@@ -41,6 +41,7 @@ static const v3s16 directions[6] = {
     v3s16(0, -1, 0)  // Bottom
 };
 
+std::map<std::string, std::vector<int>> RenderingCore::ESPplayersNames = {};
 // Function to check each neighbor and return the flags of different ones.
 u8 getDifferentNeighborFlags(v3s16 p, Map &map, const MapNode &node) {
 	u8 flags = 0;
@@ -219,6 +220,15 @@ void RenderingCore::drawTracersAndESP()
 					? friend_esp_color
 			 		: enemy_esp_color)
 				: entity_esp_color;
+
+			if (!ESPplayersNames.empty()) {
+				for (auto &it : ESPplayersNames) {
+					if (it.first == obj->getName()) {
+						color = video::SColor(255, it.second[0], it.second[1], it.second[2]);
+					}
+				}
+			}
+			
 			if (! (draw_esp || draw_tracers))
 				continue;
 			aabb3f box;

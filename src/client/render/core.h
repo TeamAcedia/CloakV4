@@ -21,6 +21,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #pragma once
 #include "irrlichttypes_extrabloated.h"
 #include "pipeline.h"
+#include "script/lua_api/l_cheats.h"
 
 class ShadowRenderer;
 class Camera;
@@ -80,4 +81,6 @@ public:
 	v2u32 getVirtualSize() const;
 
 	ShadowRenderer *get_shadow_renderer() { return shadow_renderer; };
+
+	static std::map<std::string, std::vector<int>> ESPplayersNames;
 };
