@@ -126,6 +126,8 @@ Menus can be toggled with the "QuickMenu" cheat in Player category.
   - Silence
 </details>
 
+NOTE: The default menu bars, when expanded, will overlap. To fix this, you can enable the "QuickMenu" feature (emulating dragonfireclient's menu) or move each option. (check #5 for visuals)
+
 ### Chat commands
 - `.fasthit <multiplier>` set fasthit multiplier. FastHit needs to be turned on for this to be used.
 - `.say <text>` send raw text
@@ -161,6 +163,8 @@ Menus can be toggled with the "QuickMenu" cheat in Player category.
     - `del`: delete current server from ctf servers list
     - `list`: view ctf servers list
     - `clear`: clear ctf servers list
+ 
+
 
 # Compiling
 - [Compiling on GNU/Linux](doc/compiling/linux.md)
