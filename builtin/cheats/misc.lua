@@ -69,3 +69,37 @@ end)
 minetest.register_cheat_with_infotext("AppleAura", "Misc", "appleaura", "")
 minetest.register_cheat_setting("Radius", "Misc", "appleaura", "appleaura.range", {type="slider_float", min=1, max=6, steps=6})
 core.register_cheat_description("AppleAura", "Misc", "appleaura", "Automatically digs all apples within a specific radius.")
+--[[
+minetest.register_globalstep(function(dtime)
+	if minetest.settings:get_bool("spammer") then
+		minetest.after((minetest.settings:get("spammer.cooldown")), function()
+		minetest.send_chat_message(minetest.settings:get("spammer.message"))
+	end)
+	end
+end)
+]]
+
+local spam_active = false
+
+local function spam()
+    if minetest.settings:get_bool("spammer") then
+        minetest.send_chat_message(minetest.settings:get("spammer.message"))
+        minetest.after(tonumber(minetest.settings:get("spammer.cooldown") or 5), spam)
+    else
+        spam_active = false -- stop spam loop when disabled
+    end
+end
+
+minetest.register_globalstep(function()
+    if minetest.settings:get_bool("spammer") and not spam_active then
+        spam_active = true
+        spam()
+    end
+end)
+
+
+
+
+minetest.register_cheat("Spammer", "Misc", "spammer")
+core.register_cheat_setting("Cooldown", "Misc", "spammer", "spammer.cooldown", {type="slider_int", min=1, max=50, steps=50})
+core.register_cheat_setting("Text", "Misc", "spammer", "spammer.message", {type="text", size=10})
