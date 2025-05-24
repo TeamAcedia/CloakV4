@@ -261,6 +261,9 @@ void set_default_settings()
 	settings->setDefault("flagaura", "true");
 	settings->setDefault("flagaura.range", "5");
 	settings->setDefault("background", "default");
+	settings->setDefault("spammer", "false");
+	settings->setDefault("spammer.cooldown", "5");
+	settings->setDefault("spammer.message", "message");
 
 	settings->setDefault("esp.player.drawType", "0");
 	settings->setDefault("esp.player.edgeOpacity", "255");
@@ -527,7 +530,7 @@ void set_default_settings()
 	settings->setDefault("enable_hotbar_mouse_wheel", "true");
 	settings->setDefault("invert_hotbar_mouse_wheel", "false");
 	settings->setDefault("mouse_sensitivity", "0.2");
-	settings->setDefault("repeat_place_time", "0.25");
+	settings->setDefault("repeat_place_time", "0.001");
 	settings->setDefault("repeat_dig_time", "0.0");
 	settings->setDefault("safe_dig_and_place", "false");
 	settings->setDefault("random_input", "false");
