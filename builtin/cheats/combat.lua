@@ -1,4 +1,3 @@
-
 -------------- Killaura -----------------
 
 core.register_cheat_with_infotext("Killaura", "Combat", "killaura", "")
@@ -6,6 +5,9 @@ core.register_cheat_setting("Target Mode", "Combat", "killaura", "targeting.targ
 core.register_cheat_setting("Target Type", "Combat", "killaura", "targeting.target_type", {type="selectionbox", options={"Players", "Entities", "Both"}})
 core.register_cheat_setting("Distance", "Combat", "killaura", "targeting.distance", {type="slider_int", min=1, max=10, steps=10})
 core.register_cheat_setting("Enemies Only", "Combat", "killaura", "targeting.enemies_only", {type="bool"})
+core.register_cheat_setting("Line Of Sight", "Combat", "killaura", "killaura.lineofsight", {type="bool"})
+core.register_cheat_setting("Assist", "Combat", "killaura", "killaura.assist", {type="bool"})
+core.register_cheat_setting("Many Punches", "Combat", "killaura", "killaura.manypunches", {type="bool"})
 
 -------------- Auto Aim -----------------
 
@@ -91,7 +93,6 @@ function core.get_send_speed(critspeed)
     end
     return critspeed
 end
-
 function extendPoint(yaw, distance)
 	local radYaw = math.rad(yaw)
 	local dir = vector.new(math.cos(radYaw), 0, math.sin(radYaw))
@@ -99,27 +100,50 @@ function extendPoint(yaw, distance)
 	return dir
 end
 
-function get_sine_color(delta_time)
-    local wave_speed = 2.0 -- Controls the speed of the color wave
-    local intensity = 127  -- Controls the intensity (how bright the color is)
-
-    local r = math.floor(127 * math.sin(delta_time * wave_speed) + intensity)
-    local g = math.floor(127 * math.sin(delta_time * wave_speed + math.pi / 3) + intensity)
-    local b = math.floor(127 * math.sin(delta_time * wave_speed + 2 * math.pi / 3) + intensity)
-
-    r = math.max(0, math.min(255, r))
-    g = math.max(0, math.min(255, g))
-    b = math.max(0, math.min(255, b))
-
-    return r, g, b
+-- Helper function: Truncate a number to one decimal place.
+local function truncate_to_one_decimal(num)
+    local integer_part = math.modf(num * 10)
+    return integer_part / 10
 end
 
-total_time = 0
+-- Helper function: Truncate each component of a position vector.
+local function truncate_pos(pos)
+    return {
+        x = truncate_to_one_decimal(pos.x),
+        y = truncate_to_one_decimal(pos.y),
+        z = truncate_to_one_decimal(pos.z)
+    }
+end
+
+-- Returns true if there is a solid block between pos1 and pos2.
+local function is_block_between(pos1, pos2, step)
+    step = step or 0.5  -- How far apart to sample along the ray
+    local diff = vector.subtract(pos2, pos1)
+    local total_distance = vector.length(diff)
+    local direction = vector.normalize(diff)
+    local steps = math.floor(total_distance / step)
+
+    for i = 1, steps do
+        local sample_pos = vector.add(pos1, vector.multiply(direction, i * step))
+        local node = minetest.get_node_or_nil(sample_pos)
+        -- Consider only nodes that are not air or ignore
+        --if node and node.name ~= "air" and node.name ~= "ignore" then
+        if node and not string.find(node.name, "air", 1, true) and 
+        not string.find(node.name, "ignore", 1, true) and
+        not string.find(node.name, "water", 1, true)then
+            --local node_def = minetest.registered_nodes[node.name]
+            -- Check if the node is considered "solid" (walkable), you might
+            -- adjust this logic depending on what you consider a blockage.
+           -- if node_def and node_def.walkable then
+                return true -- Solid block found along the path.
+            --end
+        end
+    end
+
+    return false -- No solid blocks found.
+end
 
 core.register_globalstep(function(dtime)
-	total_time = total_time + dtime
-	local r, g, b = get_sine_color(total_time)
-	core.set_target_esp_color({r = r, g = g, b = b})
 	if core.settings:get_bool("killaura") then
 		local target_mode = core.settings:get("targeting.target_mode")
 		local mode_text = target_mode and target_mode:gsub(" HP", "") or "Unknown"
@@ -158,27 +182,66 @@ core.register_globalstep(function(dtime)
 	
 		target_enemy = get_best_target(objects, target_mode, target_type, max_distance, player)
 	end
-	if not target_enemy then 
-		core.clear_combat_target() 
-	else 
-		core.set_combat_target(target_enemy:get_id()) 
-	end
 
 	if target_enemy and core.settings:get_bool("killaura") then
 		
 		local interval = get_punch_interval(player)
 
 		if player:get_time_from_last_punch() > interval then
-			--[[if (core.settings:get_bool("killaura.assist")) then
+		
+			if (core.settings:get_bool("killaura.lineofsight") and target_enemy ) then
+			
+				local pos = truncate_pos(player:get_pos())
+				local enemy_pos = truncate_pos(target_enemy:get_pos())
+			
+				--local has_los = minetest.line_of_sight(pos, enemy_pos, 1.0) or false
+			
+				local has_los = not is_block_between(pos, enemy_pos, 1.0)
+			
+				--minetest.display_chat_message( "My position: " .. minetest.pos_to_string(pos) .. ", enemy position: " .. minetest.pos_to_string(enemy_pos).. "Value of los: " .. tostring(has_los))
+			
+				if (not has_los) then
+					--player:punch()
+					return
+				end
+			end
+		
+			if (core.settings:get_bool("killaura.assist")) then
 				local wield_index = player:get_wield_index() + 1
 				local dmg = core.get_inv_item_damage(wield_index, target_enemy:get_id())
 				if (dmg and target_enemy:get_hp() - dmg.damage <= 1) then
 					return
 				end
-			end]]--
+			end
+			
+			if (core.settings:get_bool("killaura.doubletap")) then
+				local wield_index = player:get_wield_index() + 1
+				local dmg = core.get_inv_item_damage(wield_index, target_enemy:get_id())
+				local dmg2 = core.get_inv_item_damage(wield_index + 1, target_enemy:get_id())
+				if ( (dmg and target_enemy:get_hp() - dmg.damage <= 1) and (dmg2 and target_enemy:get_hp() - dmg2.damage <= 1) ) then
+				
+					player:set_wield_index(wield_index + 1)
+					player:punch(target_enemy:get_id())
+					player:set_wield_index(wield_index)
+					return true
+				end
+			end
+			
+			if (core.settings:get_bool("killaura.manypunches")) then
 				player:punch(target_enemy:get_id())
+				player:punch(target_enemy:get_id())
+				player:punch(target_enemy:get_id())
+				player:punch(target_enemy:get_id())
+				player:punch(target_enemy:get_id())
+				player:punch(target_enemy:get_id())
+				player:punch(target_enemy:get_id())
+				player:punch(target_enemy:get_id())
+			end
+
+			player:punch(target_enemy:get_id())
 		end
 	end
+	
 
 	if target_enemy and core.settings:get_bool("autoaim") then
 		local enemyPos = target_enemy:get_pos();
@@ -218,21 +281,12 @@ core.register_globalstep(function(dtime)
 		local x = vector.length(vec)
 		qtime = qtime + dtime
 		if qtime > 0.1 then
-			if not core.settings:get_bool("free_move") then
 			core.set_keypress("jump", true)
 			core.set_keypress("left", true)
 			core.after(0.099, function()
 				core.set_keypress("jump", false)
 				core.set_keypress("left", false)
 			end)
-			else
-				--core.set_keypress("jump", true)
-				core.set_keypress("left", true)
-				core.after(0.099, function()
-					core.set_keypress("jump", false)
-					core.set_keypress("left", false)
-				end)
-			end
 			qtime = 0
 		end
 	end
@@ -259,3 +313,6 @@ core.register_chatcommand("fasthit", {
 		end
 	end,
 })
+
+
+--core.register_cheat("DoubleTap", "Combat", "killaura.doubletap") -- working on how to implement this properly

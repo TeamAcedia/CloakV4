@@ -40,9 +40,11 @@ end
 
 local client_core_developers = {
 	"ProunceDev <prouncedev@gmail.com> [Project founder]",
-	"Plus-22 <unknown email>", 
-	"Pl608 <unknown email>",
-	"Maintainer_ (FoxLoveFire) <ivanskatov672@gmail.com>",
+	"plus22 [Core Developer]", 
+	"Maintainer_ (FoxLoveFire) <ivanskatov672@gmail.com> [Core Developer]",
+	"Astra0081X [Core Developer]",
+	"Pl608 [Developer]",
+	"Burrowing_Owl [Contributor]"
 }
 
 local core_developers = {
