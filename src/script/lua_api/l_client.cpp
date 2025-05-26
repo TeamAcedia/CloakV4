@@ -427,7 +427,7 @@ int ModApiClient::l_place_node(lua_State *L)
 	v3s16 pos = read_v3s16(L, 1);
 	PointedThing pointed;
 	pointed.type = POINTEDTHING_NODE;
-	pointed.node_abovesurface = pos + v3s16(0, 1, 0);
+	pointed.node_abovesurface = pos;
 	pointed.node_undersurface = pos;
 	// Add node to client map
 	content_t id;
