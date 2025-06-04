@@ -11,19 +11,17 @@ This client includes almost all CSM api additions from dragonfire, although it h
 
 ### Discord servers
 
-[Team Acedia (our discord server)](https://discord.gg/SKGuNxF4)
-[Minetest cheat clients, former dragonfire server](https://discord.gg/kab99uu)
+- [TeamAcedia](https://discord.com/invite/SKGuNxF4)
+- [Minetest cheat clients (former dragonfire server)](https://discord.gg/kab99uu)
+
 
 ### Development team:
-  Core devs:
-  - [ProunceDev](https://github.com/ProunceDev)
-  - [Maintainer_ / FoxLoveFire](https://github.com/FoxLoveFire)
-  - [plus22 / Plus-22](https://github.com/plus-22)
-  - [Astra0081X](https://github.com/astra0081X)
-Devs:
-  - [Pl608](https://github.com/PL608wastaken)
-Contributors:
-  - Burrowing_Owl
+  - [ProunceDev](https://github.com/ProunceDev) [Core dev]
+  - [Maintainer_ / FoxLoveFire](https://github.com/FoxLoveFire) [Core dev]
+  - [plus22 / Plus-22](https://github.com/plus-22) [Core dev]
+  - [Astra0081X](https://github.com/astra0081X) [Core dev]
+  - [Pl608](https://github.com/PL608wastaken) [Dev]
+  - Burrowing_Owl [Contributor]
 
 # Features
 ### Menus
@@ -146,14 +144,15 @@ Contributors:
 
 <details>
   <summary>World</summary>
-  - AutoTNT: switches to TNT and places it.
-  - BlockLava: puts blocks where lava is.
-  - BlockWater: puts blocks where water is.
+
+  - AutoTNT: Puts TNT on the ground.
+  - BlockLava: Replace lava with the block you're holding.
+  - BlockWater: Replace water with the block you're holding.
   - Nuke
-  - Replace: When you break a block it gets replaced with the block you're holding.
+  - Replace: When you break a block, it gets replaced with the block you're holding.
   - Scaffold: Puts blocks below you.
   - ScaffoldPlus: Puts even more blocks below you.
-  - Silence
+  - Silence: Disables sound.
 </details>
 
 NOTE: The default menu bars, when expanded, will overlap. To fix this, move each option (check [#5](https://github.com/TeamAcedia/CloakV4/issues/5#issuecomment-2655191958) for visuals) or you can enable the "QuickMenu" feature (emulating dragonfireclient's menu. Keep in mind you can't configure cheats from there)
