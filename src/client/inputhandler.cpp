@@ -52,6 +52,12 @@ void MyEventReceiver::reloadKeybindings()
 	keybindings[KeyType::TOGGLE_HUD] = getKeySetting("keymap_toggle_hud");
 	keybindings[KeyType::TOGGLE_CHAT] = getKeySetting("keymap_toggle_chat");
 	keybindings[KeyType::TOGGLE_FOG] = getKeySetting("keymap_toggle_fog");
+	keybindings[KeyType::TOGGLE_CHEAT_MENU] = getKeySetting("keymap_toggle_cheat_menu");
+	keybindings[KeyType::SELECT_UP] = getKeySetting("keymap_select_up");
+	keybindings[KeyType::SELECT_DOWN] = getKeySetting("keymap_select_down");
+	keybindings[KeyType::SELECT_LEFT] = getKeySetting("keymap_select_left");
+	keybindings[KeyType::SELECT_RIGHT] = getKeySetting("keymap_select_right");
+	keybindings[KeyType::SELECT_CONFIRM] = getKeySetting("keymap_select_confirm");
 	keybindings[KeyType::TOGGLE_UPDATE_CAMERA] = getKeySetting("keymap_toggle_update_camera");
 	keybindings[KeyType::TOGGLE_DEBUG] = getKeySetting("keymap_toggle_debug");
 	keybindings[KeyType::TOGGLE_PROFILER] = getKeySetting("keymap_toggle_profiler");

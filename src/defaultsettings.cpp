@@ -127,6 +127,23 @@ void set_default_settings()
 	settings->setDefault("occlusion_culler", "bfs");
 	settings->setDefault("enable_raytraced_culling", "true");
 	settings->setDefault("chat_weblink_color", "#8888FF");
+	// Cheat Menu
+	settings->setDefault("cheat_menu_font", "FM_FallBack");
+	settings->setDefault("cheat_menu_bg_color", "(10, 15, 20)"); //greyish
+	settings->setDefault("cheat_menu_bg_color_alpha", "173");
+	settings->setDefault("cheat_menu_active_bg_color", "(50, 80, 175)"); //blueish
+	settings->setDefault("cheat_menu_active_bg_color_alpha", "210");
+	settings->setDefault("cheat_menu_font_color", "(255, 255, 255)"); //white
+	settings->setDefault("cheat_menu_font_color_alpha", "195");
+	settings->setDefault("cheat_menu_selected_font_color", "(0, 0, 0)"); //black
+	settings->setDefault("cheat_menu_selected_font_color_alpha", "235");
+	settings->setDefault("cheat_menu_head_height", "40");
+	settings->setDefault("cheat_menu_entry_height", "25");
+	settings->setDefault("cheat_menu_entry_width", "165");
+	settings->setDefault("cheat_menu_debug_on", "false");
+	
+	//Cheats
+	settings->setDefault("cheat_hud", "true");
 
 	// Keymap
 #if USE_SDL2
@@ -198,6 +215,12 @@ void set_default_settings()
 	USEKEY2("keymap_slot8", "SYSTEM_SCANCODE_37", "KEY_KEY_8");
 	USEKEY2("keymap_slot9", "SYSTEM_SCANCODE_38", "KEY_KEY_9");
 	USEKEY2("keymap_slot10", "SYSTEM_SCANCODE_39", "KEY_KEY_0");
+	settings->setDefault("keymap_toggle_cheat_menu", "KEY_F8");
+	settings->setDefault("keymap_select_up", "KEY_UP");
+	settings->setDefault("keymap_select_down", "KEY_DOWN");
+	settings->setDefault("keymap_select_left", "KEY_LEFT");
+	settings->setDefault("keymap_select_right", "KEY_RIGHT");
+	settings->setDefault("keymap_select_confirm", "KEY_RETURN");
 	settings->setDefault("keymap_slot11", "");
 	settings->setDefault("keymap_slot12", "");
 	settings->setDefault("keymap_slot13", "");

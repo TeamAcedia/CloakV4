@@ -7,6 +7,7 @@
 #include "irrlichttypes.h"
 #include "config.h"
 #include <csignal>
+#include "gui/cheatMenu.h"
 #include <string>
 
 #if !IS_CLIENT_BUILD
@@ -43,3 +44,5 @@ void the_game(volatile std::sig_atomic_t *kill,
 		std::string &error_message,
 		ChatBackend &chat_backend,
 		bool *reconnect_requested);
+
+inline CheatMenu *m_cheat_menu = nullptr;

@@ -1423,6 +1423,15 @@ bool Game::initGui()
 	// Make sure the size of the recent messages buffer is right
 	chat_backend->applySettings();
 
+	m_cheat_menu = new CheatMenu(client);
+
+	if (!m_cheat_menu) {
+		*error_message = "Could not allocate memory for cheat menu";
+		errorstream << *error_message << std::endl;
+		return false;
+	}
+
+
 	// Chat backend and console
 	gui_chat_console = make_irr<GUIChatConsole>(guienv, guienv->getRootGUIElement(),
 			-1, chat_backend, client, &g_menumgr);
@@ -1890,6 +1899,18 @@ void Game::processUserInput(f32 dtime)
 
 void Game::processKeyInput()
 {
+	if (wasKeyDown(KeyType::SELECT_UP)) {
+		m_cheat_menu->selectUp();
+	} else if (wasKeyDown(KeyType::SELECT_DOWN)) {
+		m_cheat_menu->selectDown();
+	} else if (wasKeyDown(KeyType::SELECT_LEFT)) {
+		m_cheat_menu->selectLeft();
+	} else if (wasKeyDown(KeyType::SELECT_RIGHT)) {
+		m_cheat_menu->selectRight();
+	} else if (wasKeyDown(KeyType::SELECT_CONFIRM)) {
+		m_cheat_menu->selectConfirm();
+	}
+
 	if (wasKeyDown(KeyType::DROP)) {
 		dropSelectedItem(isKeyDown(KeyType::SNEAK));
 	} else if (wasKeyDown(KeyType::AUTOFORWARD)) {
@@ -1958,6 +1979,8 @@ void Game::processKeyInput()
 		toggleBlockBounds();
 	} else if (wasKeyPressed(KeyType::TOGGLE_HUD)) {
 		m_game_ui->toggleHud();
+	} else if (wasKeyDown(KeyType::TOGGLE_CHEAT_MENU)) {	
+		m_game_ui->toggleCheatMenu();
 	} else if (wasKeyPressed(KeyType::MINIMAP)) {
 		toggleMinimap(isKeyDown(KeyType::SNEAK));
 	} else if (wasKeyPressed(KeyType::TOGGLE_CHAT)) {
@@ -4138,6 +4161,16 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats)
 
 	if (this->m_game_ui->m_flags.show_profiler_graph)
 		graph->draw(10, screensize.Y - 10, driver, g_fontengine->getFont());
+
+	/*
+		Cheat menu
+	*/
+
+	if (!gui_chat_console->isOpen()) {
+		if (m_game_ui->m_flags.show_cheat_menu)
+			m_cheat_menu->draw(driver, m_game_ui->m_flags.show_minimal_debug);
+	}
+
 
 	/*
 		Damage flash

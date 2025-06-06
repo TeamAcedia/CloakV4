@@ -2519,3 +2519,69 @@ show_technical_names (Show technical names) bool false
 
 #    Controlled by a checkbox in the settings menu.
 show_advanced (Show advanced settings) bool false
+
+Cheat Menu]
+More actions
+
+~
+
+~#   Font to use for cheat menu
+
+~cheat_menu_font (MenuFont) enum FM_Mono FM_Standard,FM_Mono,FM_Fallback,FM_Simple,FM_SimpleMono,FM_MaxMode,FM_Unspecified
+
+~
+
+~#   (RGB value)
+
+~cheat_menu_bg_color (Cell background color) v3f 255, 145, 88
+
+~
+
+~cheat_menu_bg_color_alpha (Cell background color alpha) int 192
+
+~
+
+~#   (RGB value)
+
+~cheat_menu_active_bg_color (Active cell background color) v3f 255, 87, 53
+
+~
+
+~cheat_menu_active_bg_color_alpha (Active cell background color alpha) int 192
+
+~
+
+~#   (RGB value)
+
+~cheat_menu_font_color (Font color) v3f 0, 0, 0
+
+~
+
+~cheat_menu_font_color_alpha (Font color alpha) int 255 
+
+~
+
+~#   (RGB value)
+
+~cheat_menu_selected_font_color (Selected font color) v3f 255, 252, 88
+
+
+
+cheat_menu_selected_font_color_alpha (Selected font color alpha) int 255
+
+
+
+
+cheat_menu_head_height (Head height) int 50
+
+
+
+
+
+cheat_menu_entry_height (Entry height) int 40
+
+
+
+
+
+cheat_menu_entry_width (Entry width) int 200
