@@ -5,6 +5,7 @@
 #include "game.h"
 
 #include <cmath>
+#include <iostream>
 #include "client/renderingengine.h"
 #include "camera.h"
 #include "client.h"
@@ -64,6 +65,7 @@
 #if USE_SOUND
 	#include "client/sound/sound_openal.h"
 #endif
+//MARKMARKMARK1
 
 #include <csignal>
 
@@ -4251,13 +4253,7 @@ void Game::readSettings()
  ****************************************************************************/
 /****************************************************************************/
 
-<<<<<<< HEAD
 void the_game(volatile std::sig_atomic_t *kill,
-=======
-Game *g_game;
-
-void the_game(bool *kill,
->>>>>>> 88f7f9d60 (make chat change position)
 		InputHandler *input,
 		RenderingEngine *rendering_engine,
 		const GameStartData &start_data,
