@@ -220,7 +220,7 @@ void set_default_settings()
 	settings->setDefault("keymap_select_down", "KEY_DOWN");
 	settings->setDefault("keymap_select_left", "KEY_LEFT");
 	settings->setDefault("keymap_select_right", "KEY_RIGHT");
-	settings->setDefault("keymap_select_confirm", "KEY_RETURN");
+	USEKEY2("keymap_select_confirm", "SYSTEM_SCANCODE_40", "KEY_RETURN");
 	settings->setDefault("keymap_slot11", "");
 	settings->setDefault("keymap_slot12", "");
 	settings->setDefault("keymap_slot13", "");
