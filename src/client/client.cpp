@@ -9,6 +9,7 @@
 #include <IFileSystem.h>
 #include <json/json.h>
 #include "client.h"
+#include "camera.h"
 #include "client/fontengine.h"
 #include "network/clientopcodes.h"
 #include "network/connection.h"

@@ -4,6 +4,8 @@
 // Copyright (C) 2018 nerzhul, Loic Blot <loic.blot@unix-experience.fr>
 
 #include "gameui.h"
+#include "game.h"
+#include "camera.h"
 #include <irrlicht_changes/static_text.h>
 #include <gettext.h>
 #include "gui/mainmenumanager.h"

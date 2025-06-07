@@ -12,6 +12,7 @@
 #include <set>
 #include <vector>
 #include <unordered_set>
+#include "camera.h"
 #include "gamedef.h"
 #include "inventorymanager.h"
 #include "network/address.h"
