@@ -233,15 +233,26 @@ void GameUI::updateChatSize()
 {
 	// Update gui element size and position
 	s32 chat_y = 5;
+	const v2u32 &window_size = RenderingEngine::getWindowSize();
 
 	if (m_flags.show_minimal_debug)
 		chat_y += m_guitext->getTextHeight();
 	if (m_flags.show_basic_debug)
 		chat_y += m_guitext2->getTextHeight();
 
-	const v2u32 &window_size = RenderingEngine::getWindowSize();
+	//core::rect<s32> chat_size(10, chat_y, window_size.X - 20, 0);
 
-	core::rect<s32> chat_size(10, chat_y, window_size.X - 20, 0);
+int cwidth = g_settings->getU32("cheat_menu_entry_width");
+	int chat_length = g_settings->getBool("cheat_hud") ? window_size.X - cwidth : window_size.X;
+	int chat_start;
+	if (!m_flags.show_cheat_menu) {
+	    chat_start = 0;
+	} else if (m_cheat_menu->m_cheat_layer) {
+	    chat_start = cwidth * 2 + 10;
+	} else {
+		chat_start = cwidth + 7;
+	}
+	core::rect<s32> chat_size(chat_start, chat_y, chat_length, 0);
 	chat_size.LowerRightCorner.Y = std::min((s32)window_size.Y,
 			m_guitext_chat->getTextHeight() + chat_y);
 
