@@ -671,7 +671,7 @@ protected:
 			const CameraOrientation &cam);
 	void updateClouds(float dtime);
 	void updateShadows();
-	void drawScene(ProfilerGraph *graph, RunStats *stats);
+	void drawScene(ProfilerGraph *graph, RunStats *stats, float dtime);
 
 	// Misc
 	void showOverlayMessage(const char *msg, float dtime, int percent,
@@ -4023,7 +4023,7 @@ void Game::updateFrame(ProfilerGraph *graph, RunStats *stats, f32 dtime,
 		==================== Drawing begins ====================
 	*/
 	if (device->isWindowVisible())
-		drawScene(graph, stats);
+		drawScene(graph, stats, dtime);
 	/*
 		==================== End scene ====================
 	*/
@@ -4102,7 +4102,7 @@ void Game::updateShadows()
 	shadow->getDirectionalLight().updateFrustum(camera, client);
 }
 
-void Game::drawScene(ProfilerGraph *graph, RunStats *stats)
+void Game::drawScene(ProfilerGraph *graph, RunStats *stats, float dtime)
 {
 	ZoneScoped;
 
@@ -4169,6 +4169,9 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats)
 	if (!gui_chat_console->isOpen()) {
 		if (m_game_ui->m_flags.show_cheat_menu)
 			m_cheat_menu->draw(driver, m_game_ui->m_flags.show_minimal_debug);
+		if (g_settings->getBool("cheat_hud")) {
+			m_cheat_menu->drawHUD(driver, dtime);
+		}
 	}
 
 
