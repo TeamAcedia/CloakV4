@@ -1,16 +1,7 @@
 #include "gui/targetHUD.h"
 
-std::chrono::high_resolution_clock::time_point TargetHUD::lastTime = std::chrono::high_resolution_clock::now();
-
 TargetHUD::TargetHUD(const core::rect<s32>& rect) : CheatUIElement(rect) {}
 
-float TargetHUD::getDeltaTime() {
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> deltaTime = currentTime - lastTime;
-    lastTime = currentTime;
-
-    return deltaTime.count();
-}
 
 double TargetHUD::getInterpolatedHealth(const GenericCAO *obj, float dtime) {
 	ActiveObject::object_t id = obj->getId();

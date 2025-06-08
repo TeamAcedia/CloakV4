@@ -77,11 +77,11 @@ public:
 	void draw(video::SColor _skycolor, bool _show_hud,
 			bool _draw_wield_tool, bool _draw_crosshair);
 	void draw_HUD(video::SColor _skycolor, bool _show_hud,
-			bool _draw_wield_tool, bool _draw_crosshair);
+			bool _draw_wield_tool, bool _draw_crosshair, float dtime);
 	void drawTracersAndESP();
 	void Draw3D(PipelineContext &context);
 	void DrawWield(PipelineContext &context);
-	void DrawHUD(PipelineContext &context);
+	void DrawHUD(PipelineContext &context, float dtime);
 	void MapPostFxStep(PipelineContext &context);
 	void RenderShadowMapStep(PipelineContext &context);
 	v2u32 getVirtualSize() const;

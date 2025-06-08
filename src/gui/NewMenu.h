@@ -59,7 +59,7 @@ public:
     void close();
 
     virtual bool OnEvent(const irr::SEvent& event);
-    virtual void draw() override;
+	void draw_custom(float dtime);
     bool isOpen() { return m_is_open; }
     
     ~NewMenu();
@@ -149,11 +149,6 @@ private:
     video::SColor option_color = video::SColor(255, 2, 5, 8);
     
     s32 subCategoryHeight = category_height * 3;
-
-    static float getDeltaTime();
-
-    static std::chrono::high_resolution_clock::time_point lastTime;
-
     std::vector<CheatUIElement*> hudElements;
 };
 

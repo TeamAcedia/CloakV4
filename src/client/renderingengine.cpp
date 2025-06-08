@@ -509,9 +509,9 @@ void RenderingEngine::draw_scene(video::SColor skycolor, bool show_hud,
 }
 
 void RenderingEngine::draw_HUD(video::SColor skycolor, bool show_hud,
-		bool draw_wield_tool, bool draw_crosshair)
+		bool draw_wield_tool, bool draw_crosshair, float dtime)
 {
-	core->draw_HUD(skycolor, show_hud, draw_wield_tool, draw_crosshair);
+	core->draw_HUD(skycolor, show_hud, draw_wield_tool, draw_crosshair, dtime);
 }
 
 const VideoDriverInfo &RenderingEngine::getVideoDriverInfo(irr::video::E_DRIVER_TYPE type)

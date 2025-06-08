@@ -93,7 +93,7 @@ void RenderingCore::draw(video::SColor _skycolor, bool _show_hud,
 }
 
 void RenderingCore::draw_HUD(video::SColor _skycolor, bool _show_hud,
-		bool _draw_wield_tool, bool _draw_crosshair) {
+		bool _draw_wield_tool, bool _draw_crosshair, float dtime) {
 	v2u32 screensize = device->getVideoDriver()->getScreenSize();
 	virtual_size = v2u32(screensize.X * virtual_size_scale.X, screensize.Y * virtual_size_scale.Y);
 
@@ -102,7 +102,7 @@ void RenderingCore::draw_HUD(video::SColor _skycolor, bool _show_hud,
 	context.draw_wield_tool = _draw_wield_tool;
 	context.show_hud = _show_hud;
 
-	DrawHUD(context);
+	DrawHUD(context, dtime);
 	MapPostFxStep(context);
 }
 
@@ -403,7 +403,7 @@ void RenderingCore::DrawWield(PipelineContext &context)
 		context.client->getCamera()->drawWieldedTool();
 }
 
-void RenderingCore::DrawHUD(PipelineContext &context)
+void RenderingCore::DrawHUD(PipelineContext &context, float dtime)
 {
 	if (context.show_hud) {
 		if (context.shadow_renderer)
@@ -418,7 +418,7 @@ void RenderingCore::DrawHUD(PipelineContext &context)
 		context.hud->drawLuaElements(context.client->getCamera()->getOffset());
 		context.client->getCamera()->drawNametags();
 		if (g_settings->getBool("enable_health_esp")) {
-			context.client->getCamera()->drawHealthESP();
+			context.client->getCamera()->drawHealthESP(dtime);
 		}
 	}
 	context.device->getGUIEnvironment()->drawAll();

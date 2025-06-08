@@ -3740,8 +3740,9 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats, f32 dtime)
 
 	// draw HUD last so it doesn't look weird ontop of cheat menu
 	this->m_rendering_engine->draw_HUD(sky_color, this->m_game_ui->m_flags.show_hud,
-			draw_wield_tool, draw_crosshair);
+			draw_wield_tool, draw_crosshair, dtime);
 
+	new_menu->draw_custom(dtime);
 	/*
 		Damage flash
 	*/

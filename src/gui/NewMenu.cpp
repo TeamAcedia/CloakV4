@@ -36,15 +36,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 
 #include "NewMenu.h"
 
-std::chrono::high_resolution_clock::time_point NewMenu::lastTime = std::chrono::high_resolution_clock::now();
-
-float NewMenu::getDeltaTime() {
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> deltaTime = currentTime - lastTime;
-    lastTime = currentTime;
-
-    return deltaTime.count();
-}
 
 NewMenu::NewMenu(gui::IGUIEnvironment* env, 
     gui::IGUIElement* parent, 
@@ -1054,7 +1045,7 @@ void NewMenu::drawHints(video::IVideoDriver* driver, gui::IGUIFont* font, const 
     }
 }
 
-void NewMenu::draw() 
+void NewMenu::draw_custom(float dtime) 
 {
     if (m_client == nullptr || m_client->isShutdown()) {
         return;
@@ -1062,7 +1053,6 @@ void NewMenu::draw()
 
     GET_SCRIPT_POINTER
 
-    float dtime = getDeltaTime();
 
     video::IVideoDriver* driver = Environment->getVideoDriver();
 

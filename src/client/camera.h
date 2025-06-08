@@ -230,7 +230,7 @@ public:
 
 	void drawNametags();
 
-	void drawHealthESP();
+	void drawHealthESP(float dtime);
 
 	inline void addArmInertia(f32 player_yaw);
 
@@ -321,7 +321,5 @@ private:
 
 	double getInterpolatedHealth(const GenericCAO *obj, float dtime);
 
-    static float getDeltaTime();
-
-    static std::chrono::high_resolution_clock::time_point lastTime;
+    //static float getDeltaTime();
 };

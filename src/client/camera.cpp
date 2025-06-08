@@ -41,22 +41,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <SViewFrustum.h>
 #include <IVideoDriver.h>
 
-
 #define CAMERA_OFFSET_STEP 200
 #define WIELDMESH_OFFSET_X 55.0f
 #define WIELDMESH_OFFSET_Y -35.0f
 #define WIELDMESH_AMPLITUDE_X 7.0f
 #define WIELDMESH_AMPLITUDE_Y 10.0f
-
-std::chrono::high_resolution_clock::time_point Camera::lastTime = std::chrono::high_resolution_clock::now();
-
-float Camera::getDeltaTime() {
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> deltaTime = currentTime - lastTime;
-    lastTime = currentTime;
-
-    return deltaTime.count();
-}
 
 Camera::Camera(MapDrawControl &draw_control, Client *client, RenderingEngine *rendering_engine):
 	m_draw_control(draw_control),
@@ -737,10 +726,8 @@ double Camera::getInterpolatedHealth(const GenericCAO *obj, float dtime) {
 	}
 }
 
-void Camera::drawHealthESP()
+void Camera::drawHealthESP(float dtime)
 {
-
-	float dtime = getDeltaTime();
 
     ClientEnvironment &env = m_client->getEnv();
     gui::IGUIFont *font = g_fontengine->getFont();
