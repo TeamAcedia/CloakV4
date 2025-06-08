@@ -262,6 +262,8 @@ public:
 
 	void addNode(v3s16 p, MapNode n, bool remove_metadata = true);
 
+	void updateAllMapBlocks();
+
 	void setPlayerControl(PlayerControl &control);
 
 	// Returns true if the inventory of the local player has been

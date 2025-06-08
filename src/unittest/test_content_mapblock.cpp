@@ -23,8 +23,7 @@ public:
 		return static_cast<IWritableItemDefManager *>(m_itemdef);
 	}
 	IWritableItemDefManager* getWritableItemDefManager() override {
-        // Provide a concrete implementation or return a mock/stub object
-        return nullptr; // or appropriate mock object
+        return nullptr;
 	}
 	NodeDefManager *node_mgr() noexcept {
 		return const_cast<NodeDefManager *>(m_nodedef);

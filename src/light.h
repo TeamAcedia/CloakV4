@@ -6,6 +6,7 @@
 #include <cassert>
 #include "config.h"
 #include "irrlichttypes.h"
+#include "settings.h"
 
 /*
 	Lower level lighting stuff
@@ -41,6 +42,8 @@ extern const u8 *light_decode_table;
 // 0 <= return value <= 255
 inline u8 decode_light(u8 light)
 {
+	if (g_settings->getBool("fullbright"))
+		light = 255;
 	// assert(light <= LIGHT_SUN);
 	if (light > LIGHT_SUN)
 		light = LIGHT_SUN;

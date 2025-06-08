@@ -2,6 +2,11 @@
 core.cheats = {
 	["Render"] = {
 		["CheatHUD"] = "cheat_hud",
+		["FullBright"] = "fullbright",
+		["BrightNight"] = "no_night",
+    },
+	["Player"] = {
+		["PrivBypass"] = "priv_bypass",
     }
 }
 

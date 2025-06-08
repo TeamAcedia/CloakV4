@@ -1038,6 +1038,23 @@ void Settings::registerChangedCallback(const std::string &name,
 	m_callbacks[name].emplace_back(cbf, userdata);
 }
 
+void Settings::deregisterChangedCallback(const std::string &name,
+	SettingsChangedCallback cbf, void *userdata)
+{
+	MutexAutoLock lock(m_callback_mutex);
+	SettingsCallbackMap::iterator it_cbks = m_callbacks.find(name);
+
+	if (it_cbks != m_callbacks.end()) {
+		SettingsCallbackList &cbks = it_cbks->second;
+
+		SettingsCallbackList::iterator position =
+			std::find(cbks.begin(), cbks.end(), std::make_pair(cbf, userdata));
+
+		if (position != cbks.end())
+			cbks.erase(position);
+	}
+}
+
 size_t Settings::deregisterAllChangedCallbacks(const void *userdata)
 {
 	MutexAutoLock lock(m_callback_mutex);

@@ -128,6 +128,8 @@ public:
 	// Returns NULL if not found
 	MapBlock * getBlockNoCreateNoEx(v3s16 p);
 
+	void listAllLoadedBlocks(std::vector<v3s16> &dst);
+
 	/* Server overrides */
 	virtual MapBlock * emergeBlock(v3s16 p, bool create_blank=true)
 	{ return getBlockNoCreateNoEx(p); }

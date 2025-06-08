@@ -865,17 +865,48 @@ Game::Game() :
 	m_chat_log_buf(g_logger),
 	m_game_ui(new GameUI())
 {
-	clearTextureNameCache();
-
-	const char *settings[] = {
-		"chat_log_level", "doubletap_jump", "toggle_sneak_key", "toggle_aux1_key",
-		"enable_joysticks", "enable_fog", "mouse_sensitivity", "joystick_frustum_sensitivity",
-		"repeat_place_time", "repeat_dig_time", "noclip", "free_move", "fog_start",
-		"cinematic", "cinematic_camera_smoothing", "camera_smoothing", "invert_mouse",
-		"enable_hotbar_mouse_wheel", "invert_hotbar_mouse_wheel", "pause_on_lost_focus",
-	};
-	for (auto s : settings)
-		g_settings->registerChangedCallback(s, &settingChangedCallback, this);
+	g_settings->registerChangedCallback("chat_log_level",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("doubletap_jump",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("toggle_sneak_key",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("toggle_aux1_key",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("enable_joysticks",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("enable_fog",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("mouse_sensitivity",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("joystick_frustum_sensitivity",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("repeat_place_time",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("repeat_dig_time",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("noclip",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("free_move",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("fog_start",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("cinematic",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("cinematic_camera_smoothing",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("camera_smoothing",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("invert_mouse",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("enable_hotbar_mouse_wheel",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("invert_hotbar_mouse_wheel",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("pause_on_lost_focus",
+		&settingChangedCallback, this);
+	g_settings->registerChangedCallback("fullbright",
+		&updateAllMapBlocksCallback, this);
 
 	readSettings();
 }
@@ -4203,7 +4234,10 @@ void Game::showOverlayMessage(const char *msg, float dtime, int percent, float *
 	m_rendering_engine->draw_load_screen(wstrgettext(msg), guienv, texture_src,
 			dtime, percent, indef_pos);
 }
-
+void Game::updateAllMapBlocksCallback(const std::string &setting_name, void *data)
+{
+	((Game *) data)->client->updateAllMapBlocks();
+}
 void Game::settingChangedCallback(const std::string &setting_name, void *data)
 {
 	((Game *)data)->readSettings();

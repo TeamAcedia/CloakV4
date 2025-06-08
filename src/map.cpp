@@ -110,6 +110,21 @@ MapBlock *Map::getBlockNoCreate(v3s16 p3d)
 	return block;
 }
 
+void Map::listAllLoadedBlocks(std::vector<v3s16> &dst)
+{
+	for (auto &sector_it : m_sectors) {
+		MapSector *sector = sector_it.second;
+
+		MapBlockVect blocks;
+		sector->getBlocks(blocks);
+
+		for (MapBlock *block : blocks) {
+			v3s16 p = block->getPos();
+			dst.push_back(p);
+		}
+	}
+}
+
 bool Map::isValidPosition(v3s16 p)
 {
 	v3s16 blockpos = getNodeBlockPos(p);

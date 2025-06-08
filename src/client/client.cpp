@@ -1540,6 +1540,25 @@ void Client::addNode(v3s16 p, MapNode n, bool remove_metadata)
 	}
 }
 
+void Client::updateAllMapBlocks()
+{
+	v3s16 currentBlock = getNodeBlockPos(floatToInt(m_env.getLocalPlayer()->getPosition(), BS));
+
+	for (s16 X = currentBlock.X - 2; X <= currentBlock.X + 2; X++)
+	for (s16 Y = currentBlock.Y - 2; Y <= currentBlock.Y + 2; Y++)
+	for (s16 Z = currentBlock.Z - 2; Z <= currentBlock.Z + 2; Z++)
+		addUpdateMeshTask(v3s16(X, Y, Z), false, true);
+
+	Map &map = m_env.getMap();
+
+	std::vector<v3s16> positions;
+	map.listAllLoadedBlocks(positions);
+
+	for (v3s16 p : positions) {
+		addUpdateMeshTask(p, false, false);
+	}
+}
+
 void Client::setPlayerControl(PlayerControl &control)
 {
 	LocalPlayer *player = m_env.getLocalPlayer();

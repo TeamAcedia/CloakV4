@@ -86,6 +86,9 @@ void MeshMakeData::setCrack(int crack_level, v3s16 crack_pos)
 static u8 getInteriorLight(enum LightBank bank, MapNode n, s32 increment,
 	const NodeDefManager *ndef)
 {
+	if (g_settings->getBool("fullbright"))
+	return 255;
+
 	u8 light = n.getLight(bank, ndef->getLightingFlags(n));
 	light = rangelim(light + increment, 0, LIGHT_SUN);
 	return decode_light(light);
@@ -97,6 +100,7 @@ static u8 getInteriorLight(enum LightBank bank, MapNode n, s32 increment,
 */
 u16 getInteriorLight(MapNode n, s32 increment, const NodeDefManager *ndef)
 {
+	
 	u16 day = getInteriorLight(LIGHTBANK_DAY, n, increment, ndef);
 	u16 night = getInteriorLight(LIGHTBANK_NIGHT, n, increment, ndef);
 	return day | (night << 8);
@@ -108,6 +112,9 @@ u16 getInteriorLight(MapNode n, s32 increment, const NodeDefManager *ndef)
 */
 static u8 getFaceLight(enum LightBank bank, MapNode n, MapNode n2, const NodeDefManager *ndef)
 {
+	if (g_settings->getBool("fullbright"))
+	return 255;
+
 	ContentLightingFlags f1 = ndef->getLightingFlags(n);
 	ContentLightingFlags f2 = ndef->getLightingFlags(n2);
 
