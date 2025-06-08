@@ -423,7 +423,23 @@ void getNodeTile(MapNode mn, const v3s16 &p, const v3s16 &dir, MeshMakeData *dat
 	getNodeTileN(mn, p, dir_to_tile[facedir][dir_i].tile, data, tile);
 	tile.rotation = tile.world_aligned ? TileRotation::None : dir_to_tile[facedir][dir_i].rotation;
 }
-
+std::set<content_t> splitToContentT(std::string str, const NodeDefManager *ndef)
+{
+	str += "\n";
+	std::set<content_t> dat;
+	std::string buf;
+	for (char c : str) {
+		if (c == ',' || c == '\n') {
+			if (! buf.empty()) {
+				dat.insert(ndef->getId(buf));
+			}
+			buf.clear();
+		} else if (c != ' ') {
+			buf += c;
+		}
+	}
+	return dat;
+}
 /*
 	MapBlockBspTree
 */
@@ -628,7 +644,13 @@ MapBlockMesh::MapBlockMesh(Client *client, MeshMakeData *data):
 			}
 		}
 	}
-
+/*
+	  X-Ray settings
+	*/
+	std::set<content_t> xraySet;
+	if (g_settings->getBool("xray"))
+		xraySet = splitToContentT(
+			g_settings->get("xray_nodes"), data->m_nodedef);
 	// algin vertices to mesh grid, not meshgen area
 	v3f offset = intToFloat((data->m_blockpos - mesh_grid.getMeshPos(data->m_blockpos)) * MAP_BLOCKSIZE, BS);
 
@@ -636,7 +658,7 @@ MapBlockMesh::MapBlockMesh(Client *client, MeshMakeData *data):
 
 	{
 		// Generate everything
-		MapblockMeshGenerator(data, &collector).generate();
+		MapblockMeshGenerator(data, &collector).generate(xraySet);
 	}
 
 	/*

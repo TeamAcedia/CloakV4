@@ -58,6 +58,22 @@ function core.unregister_chatcommand(name)
 	end
 end
 
+local function get_pt_name(object_type)
+	local player = core.localplayer
+	if not player then return end
+	local pt = player:get_pointed_thing()
+	if not pt then return end
+
+	local item
+	if object_type == "node" then
+		item = core.get_node_or_nil(pt.under)
+	elseif object_type == "player" then
+		item = core.get_object_or_nil(pt.id)
+	end
+	if not item then return end
+	return item.name
+end
+
 function core.override_chatcommand(name, redefinition)
 	local chatcommand = core.registered_chatcommands[name]
 	assert(chatcommand, "Attempt to override non-existent chatcommand "..name)
@@ -160,6 +176,88 @@ local function do_help_cmd(name, param)
 end
 
 if INIT == "client" then
+	function core.register_list_command(command, desc, setting)
+		local def = {}
+		def.description = desc
+		def.params = "del <item> | add <item> | list | clear"
+		def.list_setting = setting
+		function def.func(param)
+			local list = (minetest.settings:get(setting) or ""):split(",")
+			if param == "list" then
+				return true, table.concat(list, ", ")
+			elseif param == "clear" then
+				for k in pairs(list) do
+					list[k] = nil
+				end
+				core.settings:set(setting, "")
+				return true, "Cleared list."
+			else
+				local sparam = param:split(" ")
+				local cmd = sparam[1]
+				local item = sparam[2]
+				if cmd == "del" then
+					if not item then
+						local pt_name = get_pt_name("node")
+						if not pt_name then
+							return false, "Missing item and pointed node is invalid."
+						end
+
+						-- remove pt_name
+						local i = table.indexof(list, pt_name)
+						if i == -1 then
+							return false, pt_name .. " is not on the list."
+						else
+							table.remove(list, i)
+							core.settings:set(setting, table.concat(list, ","))
+							return true, "Removed " .. pt_name .. " from the list."
+						end
+
+					end
+
+					-- remove item
+					local i = table.indexof(list, item)
+					if i == -1 then
+						return false, item .. " is not on the list."
+					else
+						table.remove(list, i)
+						core.settings:set(setting, table.concat(list, ","))
+						return true, "Removed " .. item .. " from the list."
+					end
+
+				elseif cmd == "add" then
+					if not item then
+						local pt_name = get_pt_name("node")
+						if not pt_name then
+							return false, "Missing item and pointed node is invalid."
+						end
+
+						-- add pt_name
+						local i = table.indexof(list, pt_name)
+						if i ~= -1 then
+							return false, pt_name .. " is already on the list."
+						else
+							table.insert(list, pt_name)
+							core.settings:set(setting, table.concat(list, ","))
+							return true, "Added " .. pt_name .. " to the list."
+						end
+					end
+
+					-- add item
+					local i = table.indexof(list, item)
+					if i ~= -1 then
+						return false, item .. " is already on the list."
+					else
+						table.insert(list, item)
+						core.settings:set(setting, table.concat(list, ","))
+						return true, "Added " .. item .. " to the list."
+					end
+
+				end
+			end
+			return false, "Invalid usage. (See .help " .. command .. ")"
+		end
+		core.register_chatcommand(command, def)
+	end
 	core.register_chatcommand("help", {
 		params = core.gettext("[all | <cmd>] [-t]"),
 		description = core.gettext("Get help for commands (-t: output in chat)"),

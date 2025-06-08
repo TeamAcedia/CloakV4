@@ -144,6 +144,14 @@ void set_default_settings()
 	
 	//Cheats
 	settings->setDefault("cheat_hud", "true");
+<<<<<<< HEAD
+=======
+	settings->setDefault("priv_bypass", "false");
+	settings->setDefault("fullbright", "false"); 
+	settings->setDefault("no_night", "false");
+	settings->setDefault("xray", "false");
+	settings->setDefault("xray_nodes", "default:stone,mcl_core:stone");
+>>>>>>> c2ee75e25 (Add xray and get_pointed_thing())
 
 	// Keymap
 #if USE_SDL2

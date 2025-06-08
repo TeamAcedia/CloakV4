@@ -47,6 +47,7 @@ class MapblockMeshGenerator
 public:
 	MapblockMeshGenerator(MeshMakeData *input, MeshCollector *output);
 	void generate();
+	void generate(std::set<content_t>);
 
 private:
 	MeshMakeData *const data;
@@ -150,7 +151,7 @@ private:
 		float offset_h, float offset_v = 0.0);
 
 // drawtypes
-	void drawSolidNode();
+	void drawSolidNode(std::set<content_t> xraySet);
 	void drawLiquidNode();
 	void drawGlasslikeNode();
 	void drawGlasslikeFramedNode();
@@ -168,4 +169,5 @@ private:
 // common
 	void errorUnknownDrawtype();
 	void drawNode();
+	void drawNode(std::set<content_t> xraySet);
 };

@@ -426,7 +426,7 @@ void MapblockMeshGenerator::drawAutoLightedCuboid(aabb3f box,
 	}
 }
 
-void MapblockMeshGenerator::drawSolidNode()
+void MapblockMeshGenerator::drawSolidNode(std::set<content_t> xraySet)
 {
 	u8 faces = 0; // k-th bit will be set if k-th face is to be drawn.
 	static const v3s16 tile_dirs[6] = {
@@ -444,6 +444,8 @@ void MapblockMeshGenerator::drawSolidNode()
 		v3s16 p2 = blockpos_nodes + cur_node.p + tile_dirs[face];
 		MapNode neighbor = data->m_vmanip.getNodeNoEx(p2);
 		content_t n2 = neighbor.getContent();
+		if (xraySet.find(n2) != xraySet.end())
+			n2 = CONTENT_AIR;
 		bool backface_culling = cur_node.f->drawtype == NDT_NORMAL;
 		if (n2 == n1)
 			continue;
@@ -1293,7 +1295,8 @@ void MapblockMeshGenerator::drawPlantlikeNode()
 
 void MapblockMeshGenerator::drawPlantlikeRootedNode()
 {
-	drawSolidNode();
+	std::set<content_t> emptyXraySet;
+		drawSolidNode(emptyXraySet);
 	TileSpec tile;
 	useTile(&tile, 0, MATERIAL_FLAG_CRACK_OVERLAY, 0, true);
 	cur_node.origin += v3f(0.0, BS, 0.0);
@@ -1773,12 +1776,18 @@ void MapblockMeshGenerator::errorUnknownDrawtype()
 void MapblockMeshGenerator::drawNode()
 {
 	cur_node.origin = intToFloat(cur_node.p, BS);
+	std::set<content_t> emptyXraySet;
+	drawNode(emptyXraySet);
+}
+
+void MapblockMeshGenerator::drawNode(std::set<content_t> xraySet)
+{
 	switch (cur_node.f->drawtype) {
 		case NDT_AIRLIKE:  // Not drawn at all
 			return;
 		case NDT_LIQUID:
 		case NDT_NORMAL: // solid nodes don’t need the usual setup
-			drawSolidNode();
+			drawSolidNode(xraySet);
 			return;
 		default:
 			break;
@@ -1804,6 +1813,21 @@ void MapblockMeshGenerator::drawNode()
 		case NDT_NODEBOX:           drawNodeboxNode(); break;
 		case NDT_MESH:              drawMeshNode(); break;
 		default:                    errorUnknownDrawtype(); break;
+	}
+}
+
+void MapblockMeshGenerator::generate(std::set<content_t> xraySet)
+{
+	ZoneScoped;
+
+	for (cur_node.p.Z = 0; cur_node.p.Z < data->m_side_length; cur_node.p.Z++)
+	for (cur_node.p.Y = 0; cur_node.p.Y < data->m_side_length; cur_node.p.Y++)
+	for (cur_node.p.X = 0; cur_node.p.X < data->m_side_length; cur_node.p.X++) {
+		cur_node.n = data->m_vmanip.getNodeNoEx(blockpos_nodes + cur_node.p);
+		cur_node.f = &nodedef->get(cur_node.n);
+		content_t node_content = cur_node.n.getContent();
+		if (xraySet.empty() || xraySet.find(node_content) == xraySet.end())
+			drawNode(xraySet);
 	}
 }
 

@@ -51,6 +51,12 @@ core.register_chatcommand("list_players", {
 		return true, core.gettext("Online players: ") .. players
 	end
 })
+core.register_chatcommand("kill", {
+	description = "Kill yourself",
+	func = function()
+		core.send_damage(10000)
+	end,
+})
 
 core.register_chatcommand("disconnect", {
 	description = core.gettext("Exit to main menu"),
@@ -58,7 +64,6 @@ core.register_chatcommand("disconnect", {
 		core.disconnect()
 	end,
 })
-
 core.register_chatcommand("clear_chat_queue", {
 	description = core.gettext("Clear the out chat queue"),
 	func = function(param)
@@ -70,3 +75,5 @@ core.register_chatcommand("clear_chat_queue", {
 function core.run_server_chatcommand(cmd, param)
 	core.send_chat_message("/" .. cmd .. " " .. param)
 end
+
+core.register_list_command("xray", "Configure X-Ray", "xray_nodes")

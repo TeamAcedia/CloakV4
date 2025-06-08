@@ -607,6 +607,8 @@ public:
 	void run();
 	void shutdown();
 
+	const PointedThing &getPointedOld() const { return runData.pointed_old; }
+
 protected:
 
 	// Basic initialisation

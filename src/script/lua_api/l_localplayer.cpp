@@ -8,6 +8,8 @@
 #include "script/common/c_converter.h"
 #include "client/localplayer.h"
 #include "hud.h"
+#include "client/client.h"
+#include "client/game.h"
 #include "common/c_content.h"
 #include "client/content_cao.h"
 
@@ -475,6 +477,17 @@ void LuaLocalPlayer::Register(lua_State *L)
 	registerClass<LuaLocalPlayer>(L, methods, metamethods);
 }
 
+int LuaLocalPlayer::l_get_pointed_thing(lua_State *L)
+{
+	PointedThing pointed = g_game->getPointedOld();
+	if (pointed.type == POINTEDTHING_NODE) {
+		push_pointed_thing(L, pointed);
+		return 1;
+	}
+	lua_pushnil(L);
+	return 0;
+}
+
 const char LuaLocalPlayer::className[] = "LocalPlayer";
 const luaL_Reg LuaLocalPlayer::methods[] = {
 		luamethod(LuaLocalPlayer, get_velocity),
@@ -510,6 +523,9 @@ const luaL_Reg LuaLocalPlayer::methods[] = {
 		luamethod(LuaLocalPlayer, hud_get_all),
 
 		luamethod(LuaLocalPlayer, get_move_resistance),
+
+		//cheats n stuff
+		luamethod(LuaLocalPlayer, get_pointed_thing),
 
 		{0, 0}
 };

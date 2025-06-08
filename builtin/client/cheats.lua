@@ -4,6 +4,7 @@ core.cheats = {
 		["CheatHUD"] = "cheat_hud",
 		["FullBright"] = "fullbright",
 		["BrightNight"] = "no_night",
+		["Xray"] = "xray",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",

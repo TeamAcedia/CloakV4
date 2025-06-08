@@ -85,6 +85,11 @@ private:
 
 	static int l_get_move_resistance(lua_State *L);
 
+	//cheats n stuff
+
+	//get_pointed_thing()
+	static int l_get_pointed_thing(lua_State *L);
+
 	static LocalPlayer *getobject(LuaLocalPlayer *ref);
 	static LocalPlayer *getobject(lua_State *L, int narg);
 
