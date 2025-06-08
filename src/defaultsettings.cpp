@@ -193,7 +193,7 @@ void set_default_settings()
 	settings->setDefault("fastplace", "false");
 	settings->setDefault("autoplace", "false");
 	settings->setDefault("prevent_natural_damage", "true");
-	settings->setDefault("coords", "true");
+	settings->setDefault("coords", "false");
 	settings->setDefault("fullbright", "true");
 	settings->setDefault("friends", "{}");
 	settings->setDefault("enemies", "{}");
