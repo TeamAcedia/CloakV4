@@ -14,6 +14,12 @@
 #include "inventory.h"
 #include "log.h"
 
+#include "script/cpp_api/s_base.h"
+#ifndef SERVER
+#include "client/client.h"
+#include "client/renderingengine.h"
+#include "client/shader.h"
+#endif
 
 // garbage collector
 int LuaItemStack::gc_object(lua_State *L)
@@ -579,9 +585,9 @@ int ModApiItem::l_register_item_raw(lua_State *L)
 
 	// Get the writable item and node definition managers from the server
 	IWritableItemDefManager *idef =
-			getServer(L)->getWritableItemDefManager();
+			getGameDef(L)->getWritableItemDefManager();
 	NodeDefManager *ndef =
-			getServer(L)->getWritableNodeDefManager();
+			getGameDef(L)->getWritableNodeDefManager();
 
 	// Check if name is defined
 	std::string name;
@@ -644,12 +650,12 @@ int ModApiItem::l_unregister_item_raw(lua_State *L)
 	std::string name = luaL_checkstring(L, 1);
 
 	IWritableItemDefManager *idef =
-			getServer(L)->getWritableItemDefManager();
+			getGameDef(L)->getWritableItemDefManager();
 
 	// Unregister the node
 	if (idef->get(name).type == ITEM_NODE) {
 		NodeDefManager *ndef =
-			getServer(L)->getWritableNodeDefManager();
+			getGameDef(L)->getWritableNodeDefManager();
 		ndef->removeNode(name);
 	}
 
@@ -667,7 +673,7 @@ int ModApiItem::l_register_alias_raw(lua_State *L)
 
 	// Get the writable item definition manager from the server
 	IWritableItemDefManager *idef =
-			getServer(L)->getWritableItemDefManager();
+			getGameDef(L)->getWritableItemDefManager();
 
 	idef->registerAlias(name, convert_to);
 

@@ -37,6 +37,12 @@ public:
 	TestGameDef();
 	~TestGameDef() = default;
 
+
+
+	IWritableItemDefManager *getWritableItemDefManager() { return m_itemdef; }
+	NodeDefManager *getWritableNodeDefManager() { return m_nodedef; }
+
+
 	void defineSomeNodes();
 
 	bool joinModChannel(const std::string &channel);
@@ -48,6 +54,9 @@ public:
 	}
 
 private:
+	IWritableItemDefManager *m_itemdef = nullptr;
+	NodeDefManager *m_nodedef = nullptr;
+
 	std::unique_ptr<ModChannelMgr> m_modchannel_mgr;
 };
 

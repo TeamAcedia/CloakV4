@@ -17,6 +17,7 @@ extern "C" {
 
 #if CHECK_CLIENT_BUILD()
 class Client;
+class Game;
 class GUIEngine;
 #endif
 class EmergeThread;
@@ -32,6 +33,7 @@ public:
 	static ServerInventoryManager *getServerInventoryMgr(lua_State *L);
 	#if CHECK_CLIENT_BUILD()
 	static Client*          getClient(lua_State *L);
+	static Game*        	getGame(lua_State *L);
 	static GUIEngine*       getGuiEngine(lua_State *L);
 	#endif // !SERVER
 	static EmergeThread*    getEmergeThread(lua_State *L);

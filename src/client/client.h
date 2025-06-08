@@ -33,7 +33,6 @@
 class Camera;
 class ClientMediaDownloader;
 class ISoundManager;
-class IWritableItemDefManager;
 class IWritableShaderSource;
 class IWritableTextureSource;
 class MapDatabase;
@@ -217,6 +216,7 @@ public:
 	void handleCommand_FormspecPrepend(NetworkPacket *pkt);
 	void handleCommand_CSMRestrictionFlags(NetworkPacket *pkt);
 	void handleCommand_PlayerSpeed(NetworkPacket *pkt);
+	void handleCommand_Redirect(NetworkPacket *pkt);
 	void handleCommand_MediaPush(NetworkPacket *pkt);
 	void handleCommand_MinimapModes(NetworkPacket *pkt);
 	void handleCommand_SetLighting(NetworkPacket *pkt);
@@ -373,7 +373,9 @@ public:
 
 	// IGameDef interface
 	IItemDefManager* getItemDefManager() override;
+	IWritableItemDefManager* getWritableItemDefManager() override;
 	const NodeDefManager* getNodeDefManager() override;
+	NodeDefManager* getWritableNodeDefManager() override;
 	ICraftDefManager* getCraftDefManager() override;
 	ITextureSource* getTextureSource();
 	virtual IWritableShaderSource* getShaderSource();
@@ -430,7 +432,7 @@ public:
 
 	inline bool checkCSMRestrictionFlag(CSMRestrictionFlags flag) const
 	{
-		return m_csm_restriction_flags & flag;
+		return false;
 	}
 
 	bool joinModChannel(const std::string &channel) override;

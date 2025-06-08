@@ -5,6 +5,7 @@
 
 #include "scripting_client.h"
 #include "client/client.h"
+#include "client/game.h"
 #include "cpp_api/s_internal.h"
 #include "lua_api/l_client.h"
 #include "lua_api/l_client_common.h"
@@ -27,6 +28,7 @@ ClientScripting::ClientScripting(Client *client):
 	ScriptApiBase(ScriptingType::Client)
 {
 	setGameDef(client);
+	setGame(g_game);
 
 	SCRIPTAPI_PRECHECKHEADER
 
@@ -63,6 +65,7 @@ void ClientScripting::InitializeModApi(lua_State *L, int top)
 	LuaSettings::Register(L);
 	ClientSoundHandle::Register(L);
 
+	ModApiClient::Initialize(L, top);
 	ModApiUtil::InitializeClient(L, top);
 	ModApiClientCommon::Initialize(L, top);
 	ModApiClient::Initialize(L, top);

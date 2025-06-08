@@ -1972,7 +1972,15 @@ IItemDefManager* Client::getItemDefManager()
 {
 	return m_itemdef;
 }
+IWritableItemDefManager* Client::getWritableItemDefManager()
+{
+	return m_itemdef;
+}
 const NodeDefManager* Client::getNodeDefManager()
+{
+	return m_nodedef;
+}
+NodeDefManager* Client::getWritableNodeDefManager()
 {
 	return m_nodedef;
 }

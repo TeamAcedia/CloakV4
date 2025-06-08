@@ -1323,8 +1323,10 @@ void NodeDefManager::eraseIdFromGroups(content_t id)
 
 
 // IWritableNodeDefManager
-content_t NodeDefManager::set(const std::string &name, const ContentFeatures &def)
+content_t NodeDefManager::set(const std::string &name, const ContentFeatures &d)
 {
+	ContentFeatures def = d;
+	
 	// Pre-conditions
 	assert(!name.empty());
 	assert(name != "ignore");
