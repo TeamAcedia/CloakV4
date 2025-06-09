@@ -1042,10 +1042,10 @@ void Client::Send(NetworkPacket* pkt)
 // Will fill up 12 + 12 + 4 + 4 + 4 + 1 + 1 + 1 + 4 + 4 bytes
 void writePlayerPos(LocalPlayer *myplayer, ClientMap *clientMap, NetworkPacket *pkt, bool camera_inverted)
 {
-	v3s32 position   = v3s32::from(myplayer->getPosition() * 100);
+	v3s32 position   = v3s32::from(myplayer->getLegitPosition() * 100);
 	v3s32 speed      = v3s32::from(myplayer->getSpeed() * 100);
-	s32 pitch        = myplayer->getPitch() * 100;
-	s32 yaw          = myplayer->getYaw() * 100;
+	s32 pitch        = myplayer->getLegitPitch() * 100;
+	s32 yaw          = myplayer->getLegitYaw() * 100;
 	u32 keyPressed   = myplayer->control.getKeysPressed();
 	// scaled by 80, so that pi can fit into a u8
 	u8 fov           = std::fmin(255.0f, clientMap->getCameraFov() * 80.0f);
@@ -1410,8 +1410,8 @@ void Client::sendPlayerPos()
 	if (
 			player->last_position        == player->getPosition() &&
 			player->last_speed           == player->getSpeed()    &&
-			player->last_pitch           == player->getPitch()    &&
-			player->last_yaw             == player->getYaw()      &&
+			player->last_pitch           == player->getLegitPitch()    &&
+			player->last_yaw             == player->getLegitYaw()      &&
 			player->last_keyPressed      == keyPressed            &&
 			player->last_camera_fov      == camera_fov            &&
 			player->last_camera_inverted == camera_inverted       &&
@@ -1422,8 +1422,8 @@ void Client::sendPlayerPos()
 
 	player->last_position        = player->getPosition();
 	player->last_speed           = player->getSpeed();
-	player->last_pitch           = player->getPitch();
-	player->last_yaw             = player->getYaw();
+	player->last_pitch           = player->getLegitPitch();
+	player->last_yaw             = player->getLegitYaw();
 	player->last_keyPressed      = keyPressed;
 	player->last_camera_fov      = camera_fov;
 	player->last_camera_inverted = camera_inverted;

@@ -8,6 +8,9 @@ core.cheats = {
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
+    },
+	["Movement"] = {
+		["Freecam"] = "freecam",
     }
 }
 

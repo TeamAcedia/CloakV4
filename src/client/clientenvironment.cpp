@@ -77,8 +77,8 @@ void ClientEnvironment::step(float dtime)
 	stepTimeOfDay(dtime);
 
 	// Get some settings
-	bool fly_allowed = m_client->checkLocalPrivilege("fly");
-	bool free_move = fly_allowed && g_settings->getBool("free_move");
+	bool fly_allowed = m_client->checkLocalPrivilege("fly") || g_settings->getBool("freecam");
+	bool free_move = (fly_allowed && g_settings->getBool("free_move")) || g_settings->getBool("freecam");
 
 	// Get local player
 	LocalPlayer *lplayer = getLocalPlayer();
@@ -128,7 +128,7 @@ void ClientEnvironment::step(float dtime)
 
 		// Apply physics
 		lplayer->gravity = 0;
-		if (!free_move) {
+		if (!free_move && !g_settings->getBool("freecam")) {
 			// Gravity
 			if (!is_climbing && !lplayer->in_liquid)
 				// HACK the factor 2 for gravity is arbitrary and should be removed eventually

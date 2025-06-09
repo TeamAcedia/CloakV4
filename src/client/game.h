@@ -621,6 +621,7 @@ protected:
 
 	// Client creation
 	bool createClient(const GameStartData &start_data);
+	void updateDefaultSettings();
 	bool initGui();
 
 	// Client connection
@@ -654,6 +655,7 @@ protected:
 	void toggleCinematic();
 	void toggleBlockBounds();
 	void toggleAutoforward();
+	void toggleFreecam();
 
 	void toggleMinimap(bool shift_pressed);
 	void toggleFog();
@@ -719,7 +721,7 @@ protected:
 			return m_cache_enable_fog;
 		return true;
 	}
-
+	static void freecamChangedCallback(const std::string &setting_name, void *data);
 	static void settingChangedCallback(const std::string &setting_name, void *data);
 	static void updateAllMapBlocksCallback(const std::string &setting_name, void *data);
 	void readSettings();

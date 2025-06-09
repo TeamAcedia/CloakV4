@@ -68,6 +68,7 @@ void MyEventReceiver::reloadKeybindings()
 			getKeySetting("keymap_decrease_viewing_range_min");
 	keybindings[KeyType::RANGESELECT] = getKeySetting("keymap_rangeselect");
 	keybindings[KeyType::ZOOM] = getKeySetting("keymap_zoom");
+	keybindings[KeyType::FREECAM] = getKeySetting("keymap_toggle_freecam");
 
 	keybindings[KeyType::QUICKTUNE_NEXT] = getKeySetting("keymap_quicktune_next");
 	keybindings[KeyType::QUICKTUNE_PREV] = getKeySetting("keymap_quicktune_prev");

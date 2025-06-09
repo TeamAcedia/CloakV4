@@ -911,6 +911,8 @@ Game::Game() :
 		&updateAllMapBlocksCallback, this);	
 	g_settings->registerChangedCallback("xray_nodes",	
 		&updateAllMapBlocksCallback, this);
+	g_settings->registerChangedCallback("freecam",
+		&freecamChangedCallback, this);
 
 	readSettings();
 }
@@ -941,6 +943,8 @@ Game::~Game()
 		&updateAllMapBlocksCallback, this);
 	g_settings->deregisterChangedCallback("xray_nodes",
 		&updateAllMapBlocksCallback, this);
+	g_settings->deregisterChangedCallback("freecam",
+		&freecamChangedCallback, this);
 
 	if (m_rendering_engine)
 		m_rendering_engine->finalize();
@@ -1387,6 +1391,8 @@ bool Game::createClient(const GameStartData &start_data)
 	// Update cached textures, meshes and materials
 	client->afterContentReceived();
 
+	updateDefaultSettings();
+
 	/* Camera
 	 */
 	camera = new Camera(*draw_control, client, m_rendering_engine);
@@ -1452,6 +1458,13 @@ bool Game::shouldShowTouchControls()
 	if (touch_controls == "auto")
 		return RenderingEngine::getLastPointerType() == PointerType::Touch;
 	return is_yes(touch_controls);
+}
+
+void Game::updateDefaultSettings()
+{
+	g_settings->setBool("freecam", false);
+
+	return;
 }
 
 bool Game::initGui()
@@ -1781,7 +1794,7 @@ void Game::updateDebugState()
 	}
 
 	// noclip
-	draw_control->allow_noclip = m_cache_enable_noclip && client->checkPrivilege("noclip");
+	draw_control->allow_noclip = (m_cache_enable_noclip && client->checkPrivilege("noclip")) || g_settings->getBool("freecam");
 }
 
 void Game::updateProfilers(const RunStats &stats, const FpsControl &draw_times,
@@ -1989,6 +2002,8 @@ void Game::processKeyInput()
 		toggleFast();
 	} else if (wasKeyDown(KeyType::NOCLIP)) {
 		toggleNoClip();
+	} else if (wasKeyDown(KeyType::FREECAM)) {
+		toggleFreecam();
 #if USE_SOUND
 	} else if (wasKeyDown(KeyType::MUTE)) {
 		bool new_mute_sound = !g_settings->getBool("mute_sound");
@@ -2014,7 +2029,7 @@ void Game::processKeyInput()
 #endif
 	} else if (wasKeyDown(KeyType::CINEMATIC)) {
 		toggleCinematic();
-	} else if (wasKeyPressed(KeyType::SCREENSHOT)) {
+	} else if ((wasKeyPressed)(KeyType::SCREENSHOT)) {
 		client->makeScreenshot();
 	} else if (wasKeyPressed(KeyType::TOGGLE_BLOCK_BOUNDS)) {
 		toggleBlockBounds();
@@ -2246,6 +2261,18 @@ void Game::toggleNoClip()
 	}
 }
 
+void Game::toggleFreecam()
+{
+	bool freecam = ! g_settings->getBool("freecam");
+	g_settings->set("freecam", bool_to_cstr(freecam));
+
+	if (freecam) {
+		m_game_ui->showTranslatedStatusText("Freecam enabled");
+	} else {
+		m_game_ui->showTranslatedStatusText("Freecam disabled");
+	}
+}
+
 void Game::toggleCinematic()
 {
 	bool cinematic = !g_settings->getBool("cinematic");
@@ -2385,7 +2412,7 @@ void Game::toggleDebug()
 
 
 void Game::toggleUpdateCamera()
-{
+{	
 	auto &flag = m_flags.disable_camera_update;
 	flag = client->checkPrivilege("debug") ? !flag : false;
 	if (flag)
@@ -3085,6 +3112,11 @@ void Game::updateCamera(f32 dtime)
 	ToolCapabilities playeritem_toolcap =
 		playeritem.getToolCapabilities(itemdef_manager, &hand);
 
+	if (wasKeyPressed(KeyType::CAMERA_MODE) && !g_settings->getBool("freecam")) {
+		camera->toggleCameraMode();
+		updateCameraMode();
+	}
+
 	float full_punch_interval = playeritem_toolcap.full_punch_interval;
 	float tool_reload_ratio = runData.time_from_last_punch / full_punch_interval;
 
@@ -3111,7 +3143,7 @@ void Game::updateCameraMode()
 	if (playercao) {
 		// Make the player visible depending on camera mode.
 		playercao->updateMeshCulling();
-		playercao->setChildrenVisible(camera->getCameraMode() > CAMERA_MODE_FIRST);
+		playercao->setChildrenVisible((g_settings->getBool("freecam")) || camera->getCameraMode() > CAMERA_MODE_FIRST);
 	}
 }
 
@@ -3943,8 +3975,8 @@ void Game::updateFrame(ProfilerGraph *graph, RunStats *stats, f32 dtime,
 
 	// When in noclip mode force same sky brightness as above ground so you
 	// can see properly
-	if (draw_control->allow_noclip && m_cache_enable_free_move &&
-		client->checkPrivilege("fly")) {
+	if ((draw_control->allow_noclip && m_cache_enable_free_move &&
+		client->checkPrivilege("fly")) || g_settings->getBool("freecam")) {
 		direct_brightness = time_brightness;
 		sunlight_seen = true;
 	} else {
@@ -4250,6 +4282,19 @@ void Game::settingChangedCallback(const std::string &setting_name, void *data)
 {
 	((Game *)data)->readSettings();
 }
+void Game::freecamChangedCallback(const std::string &setting_name, void *data)
+{
+    Game *game = (Game *) data;
+    LocalPlayer *player = game->client->getEnv().getLocalPlayer();
+    if (g_settings->getBool("freecam")) {
+        game->camera->setCameraMode(CAMERA_MODE_FIRST);
+        player->freecamEnable();
+    } else {
+        player->freecamDisable();
+    }
+    game->updateCameraMode();
+}
+
 
 void Game::readSettings()
 {

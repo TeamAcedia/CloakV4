@@ -26,7 +26,8 @@ enum class LocalPlayerAnimation
 };
 
 struct PlayerSettings
-{
+{	
+	bool freecam = false;
 	bool free_move = false;
 	bool pitch_move = false;
 	bool fast_move = false;
@@ -119,16 +120,40 @@ public:
 	void setBreath(u16 breath) { m_breath = breath; }
 
 	v3s16 getLightPosition() const;
-
-	void setYaw(f32 yaw) { m_yaw = yaw; }
+	
+	inline void setYaw(f32 yaw) {
+		m_yaw = yaw;
+		if (!m_freecam)
+			m_legit_yaw = m_yaw;
+	}
+	inline void setLegitYaw(f32 yaw) {
+		if (m_freecam)
+			m_legit_yaw = yaw;
+		else
+			setYaw(yaw);
+	}
 	f32 getYaw() const { return m_yaw; }
+	f32 getLegitYaw() const { return m_legit_yaw; }
 
-	void setPitch(f32 pitch) { m_pitch = pitch; }
+	inline void setPitch(f32 pitch) {
+		m_pitch = pitch;
+		if (!m_freecam)
+			m_legit_pitch = m_pitch;
+	}
+	inline void setLegitPitch(f32 pitch) {
+		if (m_freecam)
+			m_legit_pitch = pitch;
+		else
+			setPitch(pitch);
+	}
 	f32 getPitch() const { return m_pitch; }
+	f32 getLegitPitch() const { return m_legit_pitch; }
 
 	inline void setPosition(const v3f &position)
 	{
 		m_position = position;
+		if (!m_freecam)
+			m_legit_position = position;
 		m_sneak_node_exists = false;
 	}
 	inline void addPosition(const v3f &added_pos)
@@ -138,6 +163,32 @@ public:
 	}
 
 	v3f getPosition() const { return m_position; }
+
+	v3f getLegitPosition() const { return m_legit_position; }
+
+	v3f getLegitSpeed() const { return m_freecam ? m_legit_speed : m_speed; }
+
+	v3f getSendSpeed();
+
+	inline void setLegitPosition(const v3f &position)
+	{
+		if (m_freecam)
+			m_legit_position = position;
+		else
+			setPosition(position);
+	}
+
+	inline void freecamEnable()
+	{
+		m_freecam = true;
+	}
+
+	inline void freecamDisable()
+	{
+		m_freecam = false;
+		setPosition(m_legit_position);
+		setSpeed(m_legit_speed);
+	}
 
 	// Non-transformed eye offset getters
 	// For accurate positions, use the Camera functions
@@ -176,7 +227,10 @@ private:
 		const collisionMoveResult &result,
 		v3f position_before_move, v3f speed_before_move);
 
+	bool m_freecam = false;
 	v3f m_position;
+	v3f m_legit_position;
+	v3f m_legit_speed;
 	v3s16 m_standing_node;
 
 	v3s16 m_sneak_node = v3s16(32767, 32767, 32767);
@@ -205,6 +259,8 @@ private:
 	u16 m_breath = PLAYER_MAX_BREATH_DEFAULT;
 	f32 m_yaw = 0.0f;
 	f32 m_pitch = 0.0f;
+	f32 m_legit_yaw = 0.0f;
+	f32 m_legit_pitch = 0.0f;
 	aabb3f m_collisionbox = aabb3f(-BS * 0.30f, 0.0f, -BS * 0.30f, BS * 0.30f,
 		BS * 1.75f, BS * 0.30f);
 	float m_eye_height = 1.625f;

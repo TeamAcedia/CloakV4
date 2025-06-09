@@ -18,19 +18,20 @@
 */
 
 const static std::string PlayerSettings_names[] = {
-	"free_move", "pitch_move", "fast_move", "continuous_forward", "always_fly_fast",
+	"freecam", "free_move", "pitch_move", "fast_move", "continuous_forward", "always_fly_fast",
 	"aux1_descends", "noclip", "autojump"
 };
 
 void PlayerSettings::readGlobalSettings()
 {
-	free_move = g_settings->getBool("free_move");
+	freecam = g_settings->getBool("freecam");
+	free_move = g_settings->getBool("free_move") || freecam;
 	pitch_move = g_settings->getBool("pitch_move");
-	fast_move = g_settings->getBool("fast_move");
+	fast_move = g_settings->getBool("fast_move") || freecam;
 	continuous_forward = g_settings->getBool("continuous_forward");
-	always_fly_fast = g_settings->getBool("always_fly_fast");
+	always_fly_fast = g_settings->getBool("always_fly_fast") || freecam;
 	aux1_descends = g_settings->getBool("aux1_descends");
-	noclip = g_settings->getBool("noclip");
+	noclip = g_settings->getBool("noclip") || freecam;
 	autojump = g_settings->getBool("autojump");
 }
 
@@ -235,9 +236,9 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 	PlayerSettings &player_settings = getPlayerSettings();
 
 	// Skip collision detection if noclip mode is used
-	bool fly_allowed = m_client->checkLocalPrivilege("fly");
-	bool noclip = m_client->checkLocalPrivilege("noclip") && player_settings.noclip;
-	bool free_move = player_settings.free_move && fly_allowed;
+	bool fly_allowed = m_client->checkLocalPrivilege("fly") || g_settings->getBool("freecam");
+	bool noclip = m_client->checkLocalPrivilege("noclip") && player_settings.noclip  || g_settings->getBool("freecam");
+	bool free_move = player_settings.free_move && fly_allowed || g_settings->getBool("freecam");
 
 	if (noclip && free_move) {
 		position += m_speed * dtime;
@@ -657,7 +658,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 				raising the height at which the jump speed is kept
 				at its starting value
 			*/
-			v3f speedJ = getSpeed();
+			v3f speedJ = getLegitSpeed();
 			if (speedJ.Y >= -0.5f * BS) {
 				speedJ.Y = movement_speed_jump * physics_override.jump;
 				setSpeed(speedJ);
@@ -733,7 +734,7 @@ v3s16 LocalPlayer::getStandingNodePos()
 
 v3s16 LocalPlayer::getFootstepNodePos()
 {
-	v3f feet_pos = getPosition() + v3f(0.0f, m_collisionbox.MinEdge.Y, 0.0f);
+	v3f feet_pos = getLegitPosition() + v3f(0.0f, m_collisionbox.MinEdge.Y, 0.0f);
 
 	// Emit swimming sound if the player is in liquid
 	if (in_liquid_stable)
@@ -833,9 +834,9 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 	PlayerSettings &player_settings = getPlayerSettings();
 
 	// Skip collision detection if noclip mode is used
-	bool fly_allowed = m_client->checkLocalPrivilege("fly");
-	bool noclip = m_client->checkLocalPrivilege("noclip") && player_settings.noclip;
-	bool free_move = noclip && fly_allowed && player_settings.free_move;
+	bool fly_allowed = m_client->checkLocalPrivilege("fly")  || g_settings->getBool("freecam");
+	bool noclip = m_client->checkLocalPrivilege("noclip") && player_settings.noclip  || g_settings->getBool("freecam");
+	bool free_move = noclip && fly_allowed && player_settings.free_move  || g_settings->getBool("freecam");
 	if (free_move) {
 		position += m_speed * dtime;
 		setPosition(position);
