@@ -262,6 +262,9 @@ public:
 
 	void addNode(v3s16 p, MapNode n, bool remove_metadata = true);
 
+	std::vector<std::pair<v3s16, MapNode>> getAllLoadedNodes();
+	std::vector<std::pair<v3s16, MapNode>> getNodesAtBlockPos(v3s16 blockPos);
+
 	void updateAllMapBlocks();
 
 	void setPlayerControl(PlayerControl &control);

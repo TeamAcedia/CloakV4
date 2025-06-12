@@ -1,10 +1,15 @@
--- idk im trying some stuff
 core.cheats = {
 	["Render"] = {
 		["CheatHUD"] = "cheat_hud",
 		["FullBright"] = "fullbright",
 		["BrightNight"] = "no_night",
 		["Xray"] = "xray",
+		["EntityESP"] = "enable_entity_esp",
+		["EntityTracers"] = "enable_entity_tracers",
+		["PlayerESP"] = "enable_player_esp",
+		["PlayerTracers"] = "enable_player_tracers",
+		["NodeESP"] = "enable_node_esp",
+		["NodeTracers"] = "enable_node_tracers",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",

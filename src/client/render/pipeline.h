@@ -6,6 +6,7 @@
 #include "irrlichttypes_bloated.h"
 #include <IrrlichtDevice.h> // used in all render/*.cpp
 #include <IVideoDriver.h> // used in all render/*.cpp
+#include "pipeline.h"
 
 #include <vector>
 #include <memory>

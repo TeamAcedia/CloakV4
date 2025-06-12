@@ -620,6 +620,8 @@ MapBlockMesh::MapBlockMesh(Client *client, MeshMakeData *data):
 {
 	ZoneScoped;
 
+	std::set<content_t> nodeESPSet = splitToContentT(g_settings->get("node_esp_nodes"), data->m_nodedef);
+
 	for (auto &m : m_mesh)
 		m = make_irr<scene::SMesh>();
 
@@ -641,6 +643,24 @@ MapBlockMesh::MapBlockMesh(Client *client, MeshMakeData *data):
 				MinimapMapblock *block = new MinimapMapblock;
 				m_minimap_mapblocks[mesh_grid.getOffsetIndex(ofs)] = block;
 				block->getMinimapNodes(&data->m_vmanip, data->m_nodedef, p);
+			}
+		}
+	}
+
+
+		/*
+		NodeESP
+	*/
+	{
+		v3s16 blockpos_nodes = data->m_blockpos * MAP_BLOCKSIZE;
+		for (s16 x = 0; x < MAP_BLOCKSIZE; x++) {
+			for (s16 y = 0; y < MAP_BLOCKSIZE; y++) {
+				for (s16 z = 0; z < MAP_BLOCKSIZE; z++) {
+					v3s16 pos = v3s16(x, y, z) + blockpos_nodes;
+					const MapNode &node = data->m_vmanip.getNodeRefUnsafeCheckFlags(pos);
+					if (nodeESPSet.find(node.getContent()) != nodeESPSet.end())
+						esp_nodes.insert(pos);
+				}
 			}
 		}
 	}

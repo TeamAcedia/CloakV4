@@ -90,6 +90,20 @@ void ActiveObjectMgr::getActiveObjects(const v3f &origin, f32 max_d,
 	}
 }
 
+void ActiveObjectMgr::getAllActiveObjects(const v3f &origin,
+	std::vector<DistanceSortedActiveObject> &dest)
+{
+for (auto &ao_it : m_active_objects.iter()) {
+	ClientActiveObject *obj = ao_it.second.get();
+	if (!obj)
+		continue;
+
+	f32 d2 = (obj->getPosition() - origin).getLengthSQ();
+
+	dest.emplace_back(obj, d2);
+}
+}
+
 std::vector<DistanceSortedActiveObject> ActiveObjectMgr::getActiveSelectableObjects(const core::line3d<f32> &shootline)
 {
 	std::vector<DistanceSortedActiveObject> dest;

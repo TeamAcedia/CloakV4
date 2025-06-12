@@ -1539,6 +1539,56 @@ void Client::addNode(v3s16 p, MapNode n, bool remove_metadata)
 		addUpdateMeshTaskWithEdge(modified_block.first, false, true);
 	}
 }
+std::vector<std::pair<v3s16, MapNode>> Client::getNodesAtBlockPos(v3s16 blockPos)
+{
+	Map &map = m_env.getMap();
+	std::vector<std::pair<v3s16, MapNode>> nodes;
+	MapBlock *block = map.getBlockNoCreate(blockPos);
+	if (!block)
+		return nodes;
+
+	v3s16 relNodePos;
+	for (relNodePos.Z = 0; relNodePos.Z < MAP_BLOCKSIZE; ++relNodePos.Z)
+	for (relNodePos.Y = 0; relNodePos.Y < MAP_BLOCKSIZE; ++relNodePos.Y)
+	for (relNodePos.X = 0; relNodePos.X < MAP_BLOCKSIZE; ++relNodePos.X) {
+		v3s16 absoluteNodePos = blockPos * MAP_BLOCKSIZE + relNodePos;
+		bool is_valid_position;
+		MapNode node = CSMGetNode(absoluteNodePos, &is_valid_position);
+		
+		if (is_valid_position)
+			nodes.push_back(std::make_pair(absoluteNodePos, node));
+	}
+
+	return nodes;
+}
+
+std::vector<std::pair<v3s16, MapNode>> Client::getAllLoadedNodes()
+{
+	Map &map = m_env.getMap();
+	std::vector<v3s16> blockPositions;
+	map.listAllLoadedBlocks(blockPositions);
+
+	std::vector<std::pair<v3s16, MapNode>> nodes;
+	for (const v3s16 &blockPos : blockPositions) {
+		MapBlock *block = map.getBlockNoCreate(blockPos);
+		if (!block)
+			continue;
+
+		v3s16 relNodePos;
+		for (relNodePos.Z = 0; relNodePos.Z < MAP_BLOCKSIZE; ++relNodePos.Z)
+		for (relNodePos.Y = 0; relNodePos.Y < MAP_BLOCKSIZE; ++relNodePos.Y)
+		for (relNodePos.X = 0; relNodePos.X < MAP_BLOCKSIZE; ++relNodePos.X) {
+			v3s16 absoluteNodePos = blockPos * MAP_BLOCKSIZE + relNodePos;
+			bool is_valid_position;
+			MapNode node = CSMGetNode(absoluteNodePos, &is_valid_position);
+			
+			if (is_valid_position)
+				nodes.push_back(std::make_pair(absoluteNodePos, node));
+		}
+	}
+
+	return nodes;
+}
 
 void Client::updateAllMapBlocks()
 {

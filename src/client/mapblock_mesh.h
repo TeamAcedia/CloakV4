@@ -257,6 +257,8 @@ public:
 		return m_transparent_buffers;
 	}
 
+	std::set<v3s16> esp_nodes;
+
 private:
 
 	irr_ptr<scene::IMesh> m_mesh[MAX_TILE_LAYERS];
