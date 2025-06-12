@@ -208,6 +208,9 @@ void set_default_settings()
 	settings->setDefault("auto_heal.cooldown", "0.5");
 	settings->setDefault("orbit", "false");
     settings->setDefault("orbit.radius", "2");
+	settings->setDefault("tpaura", "false");
+	settings->setDefault("tpaura.distance", "10");
+	settings->setDefault("tpaura.delay", "0.1");
 	settings->setDefault("crystalspam", "false");
 	settings->setDefault("combatlog", "false");
 	settings->setDefault("critical_hits", "false");

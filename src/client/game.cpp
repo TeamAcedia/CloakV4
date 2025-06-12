@@ -275,6 +275,7 @@ void Game::panic()
     g_settings->setBool("enable_health_esp", false);
     g_settings->setBool("anti_afk", false);
     g_settings->setBool("killaura", false);
+    g_settings->setBool("tpaura", false);
     g_settings->setBool("critical_hits", false);
     g_settings->setBool("be_a_bitch", false);
     g_settings->setBool("crystalspam", false);

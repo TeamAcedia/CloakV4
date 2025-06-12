@@ -29,6 +29,15 @@ core.register_cheat_setting("Distance", "Combat", "orbit", "targeting.distance",
 core.register_cheat_setting("Radius", "Combat", "orbit", "orbit.radius", {type="slider_float", min=1, max=3, steps=5})
 core.register_cheat_setting("Enemies Only", "Combat", "orbit", "targeting.enemies_only", {type="bool"})
 
+--------------- TPAura -------------------
+
+core.register_cheat_with_infotext("TP Aura", "Combat", "tpaura", "Nearest")
+core.register_cheat_setting("Target Mode", "Combat", "tpaura", "targeting.target_mode", {type="selectionbox", options={"Nearest", "Lowest HP", "Highest HP"}})
+core.register_cheat_setting("Target Type", "Combat", "tpaura", "targeting.target_type", {type="selectionbox", options={"Players", "Entities", "Both"}})
+core.register_cheat_setting("Distance", "Combat", "tpaura", "tpaura.distance", {type="slider_int", min=1, max=20, steps=20})
+core.register_cheat_setting("TP Delay", "Combat", "tpaura", "tpaura.delay", {type="slider_float", min=0, max=1, steps=11})
+core.register_cheat_setting("Enemies Only", "Combat", "tpaura", "targeting.enemies_only", {type="bool"})
+
 --------------- Functions -------------------
 function is_valid_target(obj, target_type, max_distance,ppos)
     local target_pos = obj:get_pos()
@@ -168,18 +177,27 @@ core.register_globalstep(function(dtime)
 		core.update_infotext("Orbit", "Combat", "orbit", string.format("%s, %s", mode_text, target_description))
 	end
 
+	if core.settings:get_bool("tpaura") then
+		local target_mode = core.settings:get("targeting.target_mode")
+		local mode_text = target_mode and target_mode:gsub(" HP", "") or "Unknown"
+	
+		local target_description = core.settings:get("targeting.target_type")
+		core.update_infotext("TP Aura", "Combat", "tpaura", string.format("%s, %s", core.settings:get("tpaura.distance"), core.settings:get("tpaura.delay")))
+	end
+
     local player = core.localplayer
 	if not player then return end
     local ppos = core.localplayer:get_pos()
-	local objects = core.get_nearby_objects(tonumber(core.settings:get("targeting.distance")))
 	local target_enemy = nil
-
 	
 	if core.settings:get("targeting.target_mode") then
 		local target_mode = core.settings:get("targeting.target_mode")
 		local target_type = core.settings:get("targeting.target_type")
 		local max_distance = tonumber(core.settings:get("targeting.distance")) + 0.5
-	
+		if core.settings:get_bool("tpaura") then
+			max_distance = tonumber(core.settings:get("tpaura.distance")) + 0.5
+		end
+		local objects = core.get_nearby_objects(max_distance)
 		target_enemy = get_best_target(objects, target_mode, target_type, max_distance, player)
 	end
 

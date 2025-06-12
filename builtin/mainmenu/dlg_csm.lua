@@ -59,8 +59,8 @@ local function get_formspec(dlgview, name, tabdata)
 					conffile:set("load_mod_" .. mod.name,
 						mod.enabled and "true" or "false")
 				elseif mod.enabled then
-					gamedata.errormessage = fgettext_ne("Failed to enable clientmo" ..
-						"d \"$1\" as it contains disallowed characters. " ..
+					gamedata.errormessage = fgettext_ne("Failed to enable clientmod" ..
+						" \"$1\" as it contains disallowed characters. " ..
 						"Only characters [a-z0-9_] are allowed.",
 						mod.name)
 				end
