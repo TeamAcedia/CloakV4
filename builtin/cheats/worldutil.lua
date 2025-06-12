@@ -75,22 +75,52 @@ core.register_globalstep(function(dtime)
 			end
 		end
 		if core.settings:get_bool("scaffold_plus") then
-			local z = pos.z
-			local positions = {
-				{x = 0, y = -0.6, z = 0},
-                {x = 1, y = -0.6, z = 0},
-                {x = -1, y = -0.6, z = 0},
-                {x = -1, y = -0.6, z = -1},
-                {x = 0, y = -0.6, z = -1},
-                {x = 1, y = -0.6, z = -1},
-                {x = -1, y = -0.6, z = 1},
-                {x = 0, y = -0.6, z = 1},
-                {x = 1, y = -0.6, z = 1}
-			}
-			for i, p in pairs(positions) do
-				core.place_node(vector.add(pos, p))
+			local max_distance = 4    -- Maximum radius from the player
+			local nodes_placed = 0
+
+			local origin = vector.round(pos)
+
+			local visited = {}
+			local queue = {{x = 0, y = 0, z = 0}} -- Start from the origin
+			local checked = {}
+
+			while #queue > 0 and nodes_placed < nodes_per_tick do
+				local offset = table.remove(queue, 1)
+				local world_pos = vector.add(origin, offset)
+				local key = minetest.pos_to_string(world_pos)
+
+				-- Ensure we haven't already processed this block
+				if not checked[key] then
+					checked[key] = true
+
+					-- Check distance from origin (XZ only)
+					local dist = math.sqrt(offset.x ^ 2 + offset.z ^ 2)
+					if dist <= max_distance then
+						local node = core.get_node_or_nil(world_pos)
+						if node and node.name == "air" then
+							core.place_node(world_pos)
+							nodes_placed = nodes_placed + 1
+						end
+
+						-- Add surrounding positions to the queue
+						for dx = -1, 1 do
+							for dz = -1, 1 do
+								if dx ~= 0 or dz ~= 0 then
+									local neighbor = {x = offset.x + dx, y = 0, z = offset.z + dz}
+									local n_key = minetest.pos_to_string(neighbor)
+									if not visited[n_key] then
+										table.insert(queue, neighbor)
+										visited[n_key] = true
+									end
+								end
+							end
+						end
+					end
+				end
 			end
 		end
+
+
 		if core.settings:get_bool("block_water") then
 			local positions = core.find_nodes_near(pos, 5, {"mcl_core:water_source", "mcl_core:water_floating"}, true)
 			for i, p in pairs(positions) do
@@ -147,3 +177,4 @@ core.register_cheat("BlockLava", "World", "block_lava")
 core.register_cheat("AutoTNT", "World", "autotnt")
 core.register_cheat("Nuke", "World", "nuke")
 core.register_cheat("Replace", "World", "replace")
+core.register_cheat_setting("Nodes Per Tick", "World", "scaffold_plus", "nodes_per_tick", {type="slider_int", min=1, max=64, steps=64})
