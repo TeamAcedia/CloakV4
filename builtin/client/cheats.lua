@@ -74,6 +74,7 @@ core.cheats = {
 		["AntiAdmin"] = "autostaff",
 		["Panic"] = "panic",
 		["Hints"] = "use_hints",
+		["Check Velocity"] = "check_velocity"
 	}
 }
 
@@ -178,6 +179,7 @@ core.register_cheat_setting("Warn Staff", "Misc", "autostaff", "autostaff.warn_s
 core.register_cheat_description("Auto Team", "Misc", "autoteam", "Sets allied players to your team in ctf")
 core.register_cheat_description("Nametags", "Misc", "use_colored_nametags", "Sets player nametag colors based on their friend/enemy status")
 core.register_cheat_description("Panic", "Misc", "panic", "Disables all detectable cheats")
+core.register_cheat_description("Check Velocity", "Misc" , "check_velocity", "Automatically enables the nofalldamage cheat when falling.")
 core.register_cheat_description("Hints", "Misc", "use_hints", "Enable cheat hints")
 --Movement
 core.register_cheat_description("AirJump", "Movement", "airjump", "Jump on air")

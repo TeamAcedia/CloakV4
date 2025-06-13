@@ -3405,7 +3405,14 @@ void Game::handleDigging(const PointedThing &pointed, const v3s16 &nodepos,
 
 	camera->setDigging(0);  // Dig animation
 }
-
+void Game::checkVelocity() {
+	LocalPlayer *player = client->getEnv().getLocalPlayer();
+	if (!player)
+		return;
+	
+	if (player->getSendSpeed().Y > -33)
+		g_settings->setBool("prevent_natural_damage", true);
+}
 void Game::updateFrame(ProfilerGraph *graph, RunStats *stats, f32 dtime,
 		const CameraOrientation &cam)
 {
@@ -3516,6 +3523,8 @@ void Game::updateFrame(ProfilerGraph *graph, RunStats *stats, f32 dtime,
 	if (g_settings->getBool("panic")) {
 		panic();
 	}
+	if (g_settings->getBool("check_velocity")) 
+		checkVelocity();
 	/*
 		Inventory
 	*/

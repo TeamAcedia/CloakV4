@@ -295,6 +295,8 @@ void set_default_settings()
 	settings->setDefault("XrayNodes", "false");
 	settings->setDefault("ESPNodes", "false");
 
+	settings->setDefault("check_velocity", "false");
+
 	// Keymap
 	settings->setDefault("remote_port", "30000");
 	settings->setDefault("keymap_forward", "KEY_KEY_W");
