@@ -114,7 +114,6 @@ void GameUI::update(const RunStats &stats, Client *client, MapDrawControl *draw_
 	v2u32 screensize = RenderingEngine::getWindowSize();
 
 	LocalPlayer *player = client->getEnv().getLocalPlayer();
-	v3f player_position = player->getPosition();
 
 	s32 minimal_debug_height = 0;
 
