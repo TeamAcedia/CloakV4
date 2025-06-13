@@ -640,7 +640,11 @@ public:
 	\param box The axis aligned box to draw
 	\param color Color to use while drawing the box. */
 	virtual void draw3DBox(const core::aabbox3d<f32> &box,
-			SColor color = SColor(255, 255, 255, 255)) = 0;
+		SColor color = SColor(255, 255, 255, 255),
+		int drawType = 0,
+		int edgeAlpha = -1, 
+		int faceAlpha = -1,
+		u8 diffNeighbors = 63) = 0;
 
 	//! Draws a 2d image without any special effects
 	/** \param texture Pointer to texture to use.

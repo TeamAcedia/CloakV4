@@ -2437,6 +2437,174 @@ void COpenGLDriver::setFog(SColor c, E_FOG_TYPE fogType, f32 start,
 	GLfloat data[4] = {color.r, color.g, color.b, color.a};
 	glFogfv(GL_FOG_COLOR, data);
 }
+void COpenGLDriver::draw3DBox(const core::aabbox3d<f32>& box, SColor color, int drawType, int edgeAlpha, int faceAlpha, u8 diffNeighbors)
+{
+	core::vector3df edges[8];
+	box.getEdges(edges);
+	setRenderStates3DMode();
+
+	video::S3DVertex edgeV[24];
+    video::S3DVertex faceV[36];
+
+    SColor edgeColor = color;
+    if (edgeAlpha >= 0 && edgeAlpha <= 255) {
+        edgeColor.setAlpha(edgeAlpha);
+    }
+
+    SColor faceColor = color;
+    if (faceAlpha >= 0 && faceAlpha <= 255) {
+        faceColor.setAlpha(faceAlpha);
+    }
+
+	// if drawType is 0 or 2, draw edges
+	if (drawType == 0 || drawType == 2) {
+        for (u32 i = 0; i < 24; i++)
+            edgeV[i].Color = edgeColor;
+
+		edgeV[0].Pos = edges[5];
+		edgeV[1].Pos = edges[1];
+		edgeV[2].Pos = edges[1];
+		edgeV[3].Pos = edges[3];
+		edgeV[4].Pos = edges[3];
+		edgeV[5].Pos = edges[7];
+		edgeV[6].Pos = edges[7];
+		edgeV[7].Pos = edges[5];
+		edgeV[8].Pos = edges[0];
+		edgeV[9].Pos = edges[2];
+		edgeV[10].Pos = edges[2];
+		edgeV[11].Pos = edges[6];
+		edgeV[12].Pos = edges[6];
+		edgeV[13].Pos = edges[4];
+		edgeV[14].Pos = edges[4];
+		edgeV[15].Pos = edges[0];
+		edgeV[16].Pos = edges[1];
+		edgeV[17].Pos = edges[0];
+		edgeV[18].Pos = edges[3];
+		edgeV[19].Pos = edges[2];
+		edgeV[20].Pos = edges[7];
+		edgeV[21].Pos = edges[6];
+		edgeV[22].Pos = edges[5];
+		edgeV[23].Pos = edges[4];
+
+		if (!FeatureAvailable[IRR_ARB_vertex_array_bgra] && !FeatureAvailable[IRR_EXT_vertex_array_bgra])
+			getColorBuffer(edgeV, 24, EVT_STANDARD);
+
+		CacheHandler->setClientState(true, false, true, false);
+
+		glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex), &(static_cast<const S3DVertex *>(edgeV))[0].Pos);
+
+	#ifdef GL_BGRA
+		const GLint colorSize = (FeatureAvailable[IRR_ARB_vertex_array_bgra] || FeatureAvailable[IRR_EXT_vertex_array_bgra]) ? GL_BGRA : 4;
+	#else
+		const GLint colorSize = 4;
+	#endif
+		if (FeatureAvailable[IRR_ARB_vertex_array_bgra] || FeatureAvailable[IRR_EXT_vertex_array_bgra])
+			glColorPointer(colorSize, GL_UNSIGNED_BYTE, sizeof(S3DVertex), &(static_cast<const S3DVertex *>(edgeV))[0].Color);
+		else {
+			assert(!ColorBuffer.size());
+			glColorPointer(colorSize, GL_UNSIGNED_BYTE, 0, &ColorBuffer[0]);
+		}
+
+		glDrawArrays(GL_LINES, 0, 24);
+	}
+
+	// If drawType is 1 or 2, draw faces
+	if (drawType == 1 || drawType == 2) {
+        for (u32 i = 0; i < 36; i++)
+            faceV[i].Color = faceColor;
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+		// Front face
+		if (diffNeighbors & (1<<0)) {
+			faceV[0].Pos = edges[0];
+			faceV[1].Pos = edges[1];
+			faceV[2].Pos = edges[5];
+
+			faceV[3].Pos = edges[0];
+			faceV[4].Pos = edges[5];
+			faceV[5].Pos = edges[4];
+		}
+
+		// Back face
+		if (diffNeighbors & (1<<1)) {
+			faceV[6].Pos = edges[3];
+			faceV[7].Pos = edges[6];
+			faceV[8].Pos = edges[7];
+
+			faceV[9].Pos = edges[3];
+			faceV[10].Pos = edges[2];
+			faceV[11].Pos = edges[6];
+		}
+
+		// Left face
+		if (diffNeighbors & (1<<2)) {
+			faceV[12].Pos = edges[0];
+			faceV[13].Pos = edges[3];
+			faceV[14].Pos = edges[1];
+
+			faceV[15].Pos = edges[0];
+			faceV[16].Pos = edges[2];
+			faceV[17].Pos = edges[3];
+		}
+
+		// Right face
+		if (diffNeighbors & (1<<3)) {
+			faceV[18].Pos = edges[5];
+			faceV[19].Pos = edges[6];
+			faceV[20].Pos = edges[4];
+
+			faceV[21].Pos = edges[5];
+			faceV[22].Pos = edges[7];
+			faceV[23].Pos = edges[6];
+		}
+
+		// Top face
+		if (diffNeighbors & (1<<4)) {
+			faceV[24].Pos = edges[1];
+			faceV[25].Pos = edges[3];
+			faceV[26].Pos = edges[7];
+
+			faceV[27].Pos = edges[1];
+			faceV[28].Pos = edges[7];
+			faceV[29].Pos = edges[5];
+		}
+
+		// Bottom face
+		if (diffNeighbors & (1<<5)) {
+			faceV[30].Pos = edges[0];
+			faceV[31].Pos = edges[4];
+			faceV[32].Pos = edges[2];
+
+			faceV[33].Pos = edges[2];
+			faceV[34].Pos = edges[4];
+			faceV[35].Pos = edges[6];
+		}
+
+		if (!FeatureAvailable[IRR_ARB_vertex_array_bgra] && !FeatureAvailable[IRR_EXT_vertex_array_bgra])
+			getColorBuffer(faceV, 36, EVT_STANDARD);
+
+		CacheHandler->setClientState(true, false, true, false);
+
+		glVertexPointer(3, GL_FLOAT, sizeof(S3DVertex), &(static_cast<const S3DVertex *>(faceV))[0].Pos);
+
+	#ifdef GL_BGRA
+		const GLint colorSize = (FeatureAvailable[IRR_ARB_vertex_array_bgra] || FeatureAvailable[IRR_EXT_vertex_array_bgra]) ? GL_BGRA : 4;
+	#else
+		const GLint colorSize = 4;
+	#endif
+		if (FeatureAvailable[IRR_ARB_vertex_array_bgra] || FeatureAvailable[IRR_EXT_vertex_array_bgra])
+			glColorPointer(colorSize, GL_UNSIGNED_BYTE, sizeof(S3DVertex), &(static_cast<const S3DVertex *>(faceV))[0].Color);
+		else {
+			assert(!ColorBuffer.size());
+			glColorPointer(colorSize, GL_UNSIGNED_BYTE, 0, &ColorBuffer[0]);
+		}
+		glDrawArrays(GL_TRIANGLES, 0, 36);
+
+		glDisable(GL_BLEND);
+	}
+}
 
 //! Draws a 3d line.
 void COpenGLDriver::draw3DLine(const core::vector3df &start,

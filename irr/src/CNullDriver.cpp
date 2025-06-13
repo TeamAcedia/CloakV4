@@ -587,7 +587,7 @@ void CNullDriver::draw3DLine(const core::vector3df &start,
 }
 
 //! Draws a 3d axis aligned box.
-void CNullDriver::draw3DBox(const core::aabbox3d<f32> &box, SColor color)
+void CNullDriver::draw3DBox(const core::aabbox3d<f32> &box, SColor color, int drawType, int edgeAlpha, int faceAlpha, u8 diffNeighbors)
 {
 	core::vector3df edges[8];
 	box.getEdges(edges);

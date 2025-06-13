@@ -113,9 +113,13 @@ public:
 	virtual void draw3DLine(const core::vector3df &start,
 			const core::vector3df &end, SColor color = SColor(255, 255, 255, 255)) override;
 
-	//! Draws a 3d axis aligned box.
+	//! Draws a 3d axis aligned box, only outlines.
 	virtual void draw3DBox(const core::aabbox3d<f32> &box,
-			SColor color = SColor(255, 255, 255, 255)) override;
+		SColor color = SColor(255, 255, 255, 255),
+		int drawType = 0,
+		int edgeAlpha = -1, 
+		int faceAlpha = -1,
+		u8 diffNeighbors = 63) override;
 
 	//! draws an 2d image
 	void draw2DImage(const video::ITexture *texture, const core::position2d<s32> &destPos, bool useAlphaChannelOfTexture) override;
