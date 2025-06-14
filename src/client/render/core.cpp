@@ -43,7 +43,7 @@ static const v3s16 directions[6] = {
 };
 
 std::map<std::string, std::vector<int>> RenderingCore::ESPplayersNames = {};
-u16 RenderingCore::combat_target;
+u16 RenderingCore::combat_target = 0;
 video::SColor RenderingCore::target_esp_color = video::SColor(255, 255, 0, 0);
 
 // Function to check each neighbor and return the flags of different ones.
