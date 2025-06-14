@@ -273,7 +273,7 @@ static bool add_area_node_boxes(const v3s16 min, const v3s16 max, IGameDef *game
 			any_position_valid = true;
 			const ContentFeatures &f = nodedef->get(n);
 
-			if (!f.walkable)
+			if (!(f.walkable || ((g_settings->getBool("jesus")) && f.isLiquid())))
 				continue;
 
 			// Negative bouncy may have a meaning, but we need +value here.

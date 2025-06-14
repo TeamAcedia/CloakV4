@@ -1040,13 +1040,18 @@ void Client::Send(NetworkPacket* pkt)
 }
 
 // Will fill up 12 + 12 + 4 + 4 + 4 + 1 + 1 + 1 + 4 + 4 bytes
-void writePlayerPos(LocalPlayer *myplayer, ClientMap *clientMap, NetworkPacket *pkt, bool camera_inverted)
+void writePlayerPos(LocalPlayer *myplayer, ClientMap *clientMap, NetworkPacket *pkt, bool camera_inverted, bool autoSneak)
 {
 	v3s32 position   = v3s32::from(myplayer->getLegitPosition() * 100);
 	v3s32 speed      = v3s32::from(myplayer->getSpeed() * 100);
 	s32 pitch        = myplayer->getLegitPitch() * 100;
 	s32 yaw          = myplayer->getLegitYaw() * 100;
-	u32 keyPressed   = myplayer->control.getKeysPressed();
+	u32 keyPressed;
+	if (autoSneak) {
+		keyPressed = myplayer->control.getKeysPressedAutoSneak();
+	} else {
+		keyPressed = myplayer->control.getKeysPressed();
+	}
 	// scaled by 80, so that pi can fit into a u8
 	u8 fov           = std::fmin(255.0f, clientMap->getCameraFov() * 80.0f);
 	u8 wanted_range  = std::fmin(255.0f,
@@ -1105,7 +1110,11 @@ void Client::interact(InteractAction action, const PointedThing& pointed)
 
 	pkt.putLongString(tmp_os.str());
 
-	writePlayerPos(myplayer, &m_env.getClientMap(), &pkt, m_camera->getCameraMode() == CAMERA_MODE_THIRD_FRONT);
+	if (action == INTERACT_PLACE) {
+		writePlayerPos(myplayer, &m_env.getClientMap(), &pkt, m_camera->getCameraMode() == CAMERA_MODE_THIRD_FRONT, false);
+	} else {
+		writePlayerPos(myplayer, &m_env.getClientMap(), &pkt, m_camera->getCameraMode() == CAMERA_MODE_THIRD_FRONT, g_settings->getBool("autosneak"));
+	}
 
 	Send(&pkt);
 }
@@ -1433,7 +1442,9 @@ void Client::sendPlayerPos()
 
 	NetworkPacket pkt(TOSERVER_PLAYERPOS, 12 + 12 + 4 + 4 + 4 + 1 + 1 + 1 + 4 + 4);
 
-	writePlayerPos(player, &map, &pkt, camera_inverted);
+	bool autosneak = g_settings->getBool("autosneak");
+	writePlayerPos(player, &map, &pkt, camera_inverted, autosneak);
+
 
 	Send(&pkt);
 }

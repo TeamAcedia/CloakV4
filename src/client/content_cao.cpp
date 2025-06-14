@@ -1021,7 +1021,7 @@ void GenericCAO::step(float dtime, ClientEnvironment *env)
 					m_client->checkLocalPrivilege("fly")))) || g_settings->getBool("freecam"))
 					new_speed *= 1.5;
 			// slowdown speed if sneaking
-			if (controls.sneak && walking)
+			if (controls.sneak && walking && !g_settings->getBool("no_slow"))
 				new_speed /= 2;
 
 			if (walking && (controls.dig || controls.place)) {

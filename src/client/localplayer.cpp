@@ -319,6 +319,26 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 			nodemgr->get(node2.getContent()).climbable) && !free_move;
 	}
 
+	if (!is_climbing && !free_move && g_settings->getBool("spider")) {
+		v3s16 spider_positions[4] = {
+			floatToInt(position + v3f(+1.0f, +0.0f,  0.0f) * BS, BS),
+			floatToInt(position + v3f(-1.0f, +0.0f,  0.0f) * BS, BS),
+			floatToInt(position + v3f( 0.0f, +0.0f, +1.0f) * BS, BS),
+			floatToInt(position + v3f( 0.0f, +0.0f, -1.0f) * BS, BS),
+		};
+
+		for (v3s16 sp : spider_positions) {
+			bool is_valid;
+			MapNode node = map->getNode(sp, &is_valid);
+
+			if (is_valid && nodemgr->get(node.getContent()).walkable) {
+				is_climbing = true;
+				break;
+			}
+		}
+	}
+
+
 	// Player object property step height is multiplied by BS in
 	// /src/script/common/c_content.cpp and /src/content_sao.cpp
 	float player_stepheight = (m_cao == nullptr) ? 0.0f :
@@ -369,7 +389,7 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 		Player is allowed to jump when this is true.
 	*/
 	bool touching_ground_was = touching_ground;
-	touching_ground = result.touching_ground;
+	touching_ground = result.touching_ground || (g_settings->getBool("airjump") && !control.sneak);
 	bool sneak_can_jump = false;
 
 	// Max. distance (X, Z) over border for sneaking determined by collision box
@@ -384,7 +404,7 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 	/*
 		If sneaking, keep on top of last walked node and don't fall off
 	*/
-	if (could_sneak && m_sneak_node_exists) {
+	if (could_sneak && m_sneak_node_exists && !g_settings->getBool("autosneak")) {
 		const v3f sn_f = intToFloat(m_sneak_node, BS);
 		const v3f bmin = sn_f + m_sneak_node_bb_top.MinEdge;
 		const v3f bmax = sn_f + m_sneak_node_bb_top.MaxEdge;
@@ -652,14 +672,14 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 						speedV.Y = speed_walk;
 				}
 			}
-		} else if (m_can_jump) {
+		} else if (m_can_jump || g_settings->getBool("jetpack")) {
 			/*
 				NOTE: The d value in move() affects jump height by
 				raising the height at which the jump speed is kept
 				at its starting value
 			*/
 			v3f speedJ = getLegitSpeed();
-			if (speedJ.Y >= -0.5f * BS) {
+			if (speedJ.Y >= -0.5f * BS || g_settings->getBool("jetpack")) {
 				speedJ.Y = movement_speed_jump * physics_override.jump;
 				setSpeed(speedJ);
 				m_client->getEventManager()->put(new SimpleTriggerEvent(MtEvent::PLAYER_JUMP));
@@ -682,7 +702,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 	if (superspeed || (is_climbing && fast_climb) ||
 			((in_liquid || in_liquid_stable) && fast_climb))
 		speedH = speedH.normalize() * speed_fast;
-	else if (control.sneak && !free_move && !in_liquid && !in_liquid_stable)
+	else if (control.sneak && !free_move && !in_liquid && !in_liquid_stable && !g_settings->getBool("no_slow"))
 		speedH = speedH.normalize() * movement_speed_crouch * physics_override.speed_crouch;
 	else
 		speedH = speedH.normalize() * speed_walk;
@@ -912,6 +932,26 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 		is_climbing = (nodemgr->get(node.getContent()).climbable ||
 			nodemgr->get(node2.getContent()).climbable) && !free_move;
 
+			if (!is_climbing && !free_move && g_settings->getBool("spider")) {
+				v3s16 spider_positions[4] = {
+					floatToInt(position + v3f(+1.0f, +0.0f,  0.0f) * BS, BS),
+					floatToInt(position + v3f(-1.0f, +0.0f,  0.0f) * BS, BS),
+					floatToInt(position + v3f( 0.0f, +0.0f, +1.0f) * BS, BS),
+					floatToInt(position + v3f( 0.0f, +0.0f, -1.0f) * BS, BS),
+				};
+		
+				for (v3s16 sp : spider_positions) {
+					bool is_valid;
+					MapNode node = map->getNode(sp, &is_valid);
+		
+					if (is_valid && nodemgr->get(node.getContent()).walkable) {
+						is_climbing = true;
+						break;
+					}
+				}
+			}
+	
+
 	// Maximum distance over border for sneaking
 	f32 sneak_max = BS * 0.4f;
 
@@ -966,7 +1006,7 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 		Player is allowed to jump when this is true.
 	*/
 	bool touching_ground_was = touching_ground;
-	touching_ground = result.touching_ground;
+	touching_ground = result.touching_ground || (g_settings->getBool("airjump") && !control.sneak);
 
 	//bool standing_on_unloaded = result.standing_on_unloaded;
 
@@ -1144,7 +1184,7 @@ float LocalPlayer::getSlipFactor(Environment *env, const v3f &speedH)
 	Map *map = &env->getMap();
 	const ContentFeatures &f = nodemgr->get(map->getNode(getStandingNodePos()));
 	int slippery = 0;
-	if (f.walkable)
+	if (f.walkable && !g_settings->getBool("antislip"))
 		slippery = itemgroup_get(f.groups, "slippery");
 
 	if (slippery >= 1) {

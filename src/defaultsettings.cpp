@@ -181,6 +181,13 @@ void set_default_settings()
 	settings->setDefault("autodig", "false");
 	settings->setDefault("fastdig", "false");
 	settings->setDefault("instant_break", "false");
+	settings->setDefault("jesus", "false");
+	settings->setDefault("no_slow", "false");
+	settings->setDefault("spider", "false");
+	settings->setDefault("autosneak", "false");
+	settings->setDefault("jetpack", "false");
+	settings->setDefault("antislip", "false");
+	settings->setDefault("airjump", "false");
 
 	// Keymap
 #if USE_SDL2
