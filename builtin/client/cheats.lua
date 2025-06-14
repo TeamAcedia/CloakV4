@@ -26,6 +26,15 @@ core.cheats = {
 	["Combat"] = {
 		["AntiKnockback"] = "antiknockback",
 		["AttachmentFloat"] = "float_above_parent",
+    },
+	["Interact"] = {
+		["FastHit"] = "spamclick",
+		["AutoHit"] = "autohit",
+		["FastPlace"] = "fastplace",
+		["AutoPlace"] = "autoplace",
+		["AutoDig"] = "autodig",
+		["FastDig"] = "fastdig",
+		["InstantBreak"] = "instant_break",
     }
 }
 

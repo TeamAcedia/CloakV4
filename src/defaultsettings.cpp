@@ -174,8 +174,13 @@ void set_default_settings()
 	settings->setDefault("norender.particles", "false");
 	settings->setDefault("reach", "false");
 	settings->setDefault("autorespawn", "false");
-
->>>>>>> 284062488 (update ESP)
+	settings->setDefault("spamclick", "false");
+	settings->setDefault("autohit", "false");
+	settings->setDefault("fastplace", "false");
+	settings->setDefault("autoplace", "false");
+	settings->setDefault("autodig", "false");
+	settings->setDefault("fastdig", "false");
+	settings->setDefault("instant_break", "false");
 
 	// Keymap
 #if USE_SDL2

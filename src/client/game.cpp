@@ -3333,7 +3333,7 @@ void Game::processPlayerInteraction(f32 dtime, bool show_hud)
 		selected_def.sound_use : selected_def.sound_use_air;
 
 	// Prepare for repeating, unless we're not supposed to
-	if (isKeyDown(KeyType::PLACE) && !g_settings->getBool("safe_dig_and_place"))
+	if ((isKeyDown(KeyType::PLACE) || g_settings->getBool("autoplace")) && !g_settings->getBool("safe_dig_and_place"))
 		runData.repeat_place_timer += dtime;
 	else
 		runData.repeat_place_timer = 0;
@@ -3497,9 +3497,9 @@ void Game::handlePointingAtNode(const PointedThing &pointed,
 
 	ClientMap &map = client->getEnv().getClientMap();
 
-	if (runData.nodig_delay_timer <= 0.0 && isKeyDown(KeyType::DIG)
+	if (((runData.nodig_delay_timer <= 0.0 || g_settings->getBool("fastdig")) && (isKeyDown(KeyType::DIG) || g_settings->getBool("autodig"))
 			&& !runData.digging_blocked
-			&& client->checkPrivilege("interact")) {
+			&& client->checkPrivilege("interact"))) {
 		handleDigging(pointed, nodepos, selected_item, hand_item, dtime);
 	}
 
@@ -3518,7 +3518,7 @@ void Game::handlePointingAtNode(const PointedThing &pointed,
 	}
 
 	if ((wasKeyPressed(KeyType::PLACE) ||
-			runData.repeat_place_timer >= m_repeat_place_time) &&
+			(runData.repeat_place_timer >= (g_settings->getBool("fastplace") ? 0.001 : m_repeat_place_time))) &&
 			client->checkPrivilege("interact")) {
 		runData.repeat_place_timer = 0;
 		infostream << "Place button pressed while looking at ground" << std::endl;
@@ -3776,11 +3776,11 @@ void Game::handlePointingAtObject(const PointedThing &pointed, const ItemStack &
 
 	m_game_ui->setInfoText(infotext);
 
-	if (isKeyDown(KeyType::DIG)) {
+	if (isKeyDown(KeyType::DIG) || g_settings->getBool("autohit")) {
 		bool do_punch = false;
 		bool do_punch_damage = false;
 
-		if (runData.object_hit_delay_timer <= 0.0) {
+		if (runData.object_hit_delay_timer <= 0.0 || g_settings->getBool("spamclick")) {
 			do_punch = true;
 			do_punch_damage = true;
 			runData.object_hit_delay_timer = object_hit_delay;
@@ -3847,6 +3847,13 @@ void Game::handleDigging(const PointedThing &pointed, const v3s16 &nodepos,
 				player, nodepos, n, features);
 	}
 
+	if (g_settings->getBool("fastdig")) {
+		runData.dig_time_complete /= 10;
+	}
+	if(g_settings->getBool("instant_break")) {
+		runData.dig_time_complete = 0;
+		runData.dig_instantly = true;
+	}
 	if (!runData.digging) {
 		infostream << "Started digging" << std::endl;
 		runData.dig_instantly = runData.dig_time_complete == 0;
