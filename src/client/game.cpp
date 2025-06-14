@@ -4028,7 +4028,7 @@ void Game::updateFrame(ProfilerGraph *graph, RunStats *stats, f32 dtime,
 	/*
 		Damage camera tilt
 	*/
-	if (player->hurt_tilt_timer > 0.0f) {
+	if (player->hurt_tilt_timer > 0.0f || g_settings->getBool("no_hurt_cam")) {
 		player->hurt_tilt_timer -= dtime * 6.0f;
 
 		if (player->hurt_tilt_timer < 0.0f)
@@ -4257,6 +4257,7 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats, float dtime)
 	*/
 	if (this->runData.damage_flash > 0.0f) {
 		video::SColor color(this->runData.damage_flash, 180, 0, 0);
+        if (! g_settings->getBool("no_hurt_cam"))
 		this->driver->draw2DRectangle(color,
 					core::rect<s32>(0, 0, screensize.X, screensize.Y),
 					NULL);

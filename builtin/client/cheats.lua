@@ -11,6 +11,8 @@ core.cheats = {
 		["NodeESP"] = "enable_node_esp",
 		["NodeTracers"] = "enable_node_tracers",
 	--	["HUDBypass"] = "hud_flags_bypass", dont wanna work, will fix later
+		["NoHurtCam"] = "no_hurt_cam",
+		["NoParticles"] = "norender.particles"
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",

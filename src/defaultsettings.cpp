@@ -170,6 +170,8 @@ void set_default_settings()
 	settings->setDefault("prevent_natural_damage", "false");
 	settings->setDefault("antiknockback", "false");
 	settings->setDefault("float_above_parent", "false");
+	settings->setDefault("no_hurt_cam", "false");
+	settings->setDefault("norender.particles", "false");
 
 >>>>>>> 284062488 (update ESP)
 
