@@ -17,6 +17,8 @@ core.cheats = {
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
 		["NoFallDamage"] = "prevent_natural_damage",
+		["Reach"] = "reach",
+		["AutoRespawn"] = "autorespawn",
     },
 	["Movement"] = {
 		["Freecam"] = "freecam",

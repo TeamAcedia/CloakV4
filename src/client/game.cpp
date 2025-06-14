@@ -3231,6 +3231,9 @@ void Game::processPlayerInteraction(f32 dtime, bool show_hud)
 
 	core::line3d<f32> shootline;
 
+	if (g_settings->getBool("reach"))
+		d += 2;
+
 	switch (camera->getCameraMode()) {
 	case CAMERA_MODE_ANY:
 		assert(false);

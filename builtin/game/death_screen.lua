@@ -13,7 +13,11 @@ function core.show_death_screen(player, _reason)
 end
 
 core.register_on_dieplayer(function(player, reason)
+if core.settings:get_bool("autorespawn") then
+	player:respawn()
+else
 	core.show_death_screen(player, reason)
+end
 end)
 
 core.register_on_joinplayer(function(player)

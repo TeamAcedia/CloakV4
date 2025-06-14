@@ -172,6 +172,8 @@ void set_default_settings()
 	settings->setDefault("float_above_parent", "false");
 	settings->setDefault("no_hurt_cam", "false");
 	settings->setDefault("norender.particles", "false");
+	settings->setDefault("reach", "false");
+	settings->setDefault("autorespawn", "false");
 
 >>>>>>> 284062488 (update ESP)
 
