@@ -3405,7 +3405,6 @@ void Game::handleDigging(const PointedThing &pointed, const v3s16 &nodepos,
 
 	camera->setDigging(0);  // Dig animation
 }
-
 void Game::updateFrame(ProfilerGraph *graph, RunStats *stats, f32 dtime,
 		const CameraOrientation &cam)
 {

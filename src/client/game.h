@@ -772,6 +772,7 @@ public:
     void toggleAutoaim();
     void toggleScaffold();
     void toggleBlink();
+	void checkVelocity();
 
 	void toggleMinimap(bool shift_pressed);
 	void toggleFog();

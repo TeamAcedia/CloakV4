@@ -43,7 +43,7 @@ static const v3s16 directions[6] = {
 };
 
 std::map<std::string, std::vector<int>> RenderingCore::ESPplayersNames = {};
-u16 RenderingCore::combat_target = NULL;
+u16 RenderingCore::combat_target = 0;
 video::SColor RenderingCore::target_esp_color = video::SColor(255, 255, 0, 0);
 
 // Function to check each neighbor and return the flags of different ones.
@@ -275,7 +275,7 @@ void RenderingCore::drawTracersAndESP()
 			box.MaxEdge += pos;
 
 			if (draw_esp) {
-				if (combat_target != NULL && obj->getId() == combat_target) {
+				if (combat_target && obj->getId() == combat_target) {
 					if (is_player) {
 						pCnt += 1;
 					} else {
