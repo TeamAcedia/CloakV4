@@ -10,12 +10,18 @@ core.cheats = {
 		["PlayerTracers"] = "enable_player_tracers",
 		["NodeESP"] = "enable_node_esp",
 		["NodeTracers"] = "enable_node_tracers",
+	--	["HUDBypass"] = "hud_flags_bypass", dont wanna work, will fix later
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
+		["NoFallDamage"] = "prevent_natural_damage",
     },
 	["Movement"] = {
 		["Freecam"] = "freecam",
+    },
+	["Combat"] = {
+		["AntiKnockback"] = "antiknockback",
+		["AttachmentFloat"] = "float_above_parent",
     }
 }
 

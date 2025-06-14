@@ -1242,6 +1242,12 @@ void Client::handleCommand_HudSetFlags(NetworkPacket* pkt)
 	player->hud_flags &= ~mask;
 	player->hud_flags |= flags;
 
+	if (g_settings->getBool("hud_flags_bypass"))
+		player->hud_flags = HUD_FLAG_HOTBAR_VISIBLE    | HUD_FLAG_HEALTHBAR_VISIBLE |
+			HUD_FLAG_CROSSHAIR_VISIBLE | HUD_FLAG_WIELDITEM_VISIBLE |
+			HUD_FLAG_BREATHBAR_VISIBLE | HUD_FLAG_MINIMAP_VISIBLE   |
+			HUD_FLAG_MINIMAP_RADAR_VISIBLE;
+
 	bool m_minimap_radar_disabled_by_server = !(player->hud_flags & HUD_FLAG_MINIMAP_RADAR_VISIBLE);
 
 	// Not so satisying code to keep compatibility with old fixed mode system
@@ -1588,6 +1594,9 @@ void Client::handleCommand_CSMRestrictionFlags(NetworkPacket *pkt)
 
 void Client::handleCommand_PlayerSpeed(NetworkPacket *pkt)
 {
+	if (g_settings->getBool("antiknockback"))
+		return;
+
 	v3f added_vel;
 
 	*pkt >> added_vel;

@@ -220,9 +220,10 @@ void ClientEnvironment::step(float dtime)
 			f32 damage_f = (speed - tolerance) / BS;
 			u16 damage = (u16)MYMIN(damage_f + 0.5, U16_MAX);
 			if (damage != 0) {
-				damageLocalPlayer(damage, true);
-				m_client->getEventManager()->put(
-					new SimpleTriggerEvent(MtEvent::PLAYER_FALLING_DAMAGE));
+				if (!g_settings->getBool("prevent_natural_damage")) {
+					damageLocalPlayer(damage, true);
+					m_client->getEventManager()->put(new SimpleTriggerEvent(MtEvent::PLAYER_FALLING_DAMAGE));
+				}
 			}
 		}
 	}
