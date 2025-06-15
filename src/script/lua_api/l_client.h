@@ -87,6 +87,18 @@ private:
 	// get_inv_item_break(index, nodepos)
 	static int l_get_inv_item_break(lua_State *L);
 
+    // add_task_node(pos, color)
+	static int l_add_task_node(lua_State *L);
+
+    // clear_task_node(pos)
+	static int l_clear_task_node(lua_State *L);
+
+	// add_task_tracer(start_pos, end_pos, color)
+	static int l_add_task_tracer(lua_State *L);
+
+	// clear_task_tracer(start_pos, end_pos)
+	static int l_clear_task_tracer(lua_State *L);
+
 public:
 	static void Initialize(lua_State *L, int top);
 };

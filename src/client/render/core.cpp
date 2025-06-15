@@ -29,6 +29,11 @@ RenderingCore::RenderingCore(IrrlichtDevice *_device, Client *_client, Hud *_hud
 
 RenderingCore::~RenderingCore() = default;
 
+v2u32 RenderingCore::getVirtualSize() const
+{
+	return virtual_size;
+}
+
 void RenderingCore::draw(video::SColor _skycolor, bool _show_hud,
 		bool _draw_wield_tool, bool _draw_crosshair)
 {

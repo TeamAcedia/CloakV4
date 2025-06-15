@@ -517,6 +517,30 @@ Call these functions only at load time!
 * `core.delete_particlespawner(id)`
     * Delete `ParticleSpawner` with `id` (return value from `core.add_particlespawner`)
 
+### Task nodes and tracers
+* `core.add_task_node(pos, color)`
+    * Adds a visual node marker at the specified position.
+    * `pos`: table with `{ x = number, y = number, z = number }`
+    * `color`: ARGB color table
+        * Example:
+            * `color1 = { r = 255, g = 100, b = 50 }`
+            * `color2 = { a = 128, r = 255, g = 255, b = 0 }`
+
+* `core.clear_task_node(pos)`
+    * Removes the node marker at the given position.
+    * `pos`: table with `{ x = number, y = number, z = number }`
+
+* `core.add_task_tracer(start_pos, end_pos, color)`
+    * Draws a tracer line between two positions.
+    * `start_pos`, `end_pos`: tables with `{ x = number, y = number, z = number }`
+    * `color`: ARGB color table
+        * Example:
+            * `color = { a = 255, r = 0, g = 255, b = 0 }`
+
+* `core.clear_task_tracer(start_pos, end_pos)`
+    * Removes the tracer line between two positions.
+    * `start_pos`, `end_pos`: tables with `{ x = number, y = number, z = number }`
+
 ### Misc.
 * `core.parse_json(string[, nullvalue])`: returns something
     * Convert a string containing JSON data into the Lua equivalent
@@ -1026,3 +1050,4 @@ As documented in `lua_api.md`, except for obvious reasons, the `playername` fiel
 ### `ParticleSpawner` definition (`add_particlespawner`)
 
 As documented in `lua_api.md`, except for obvious reasons, the `playername` field is not supported.
+

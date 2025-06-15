@@ -83,7 +83,7 @@ void DrawTracersAndESP::run(PipelineContext &context)
 	draw_player_tracers = g_settings->getBool("enable_player_tracers");
 	draw_node_esp = g_settings->getBool("enable_node_esp");
 	draw_node_tracers = g_settings->getBool("enable_node_tracers");
-	
+
 	entity_esp_color = video::SColor(255, 255, 255, 255);
 	player_esp_color = video::SColor(255, 0, 255, 0);
 	self_esp_color = video::SColor(255, 255, 255, 0);
@@ -205,6 +205,65 @@ void DrawTracersAndESP::run(PipelineContext &context)
 	driver->setMaterial(oldmaterial);
 }
 
+std::vector<TaskNode> DrawTaskBlocksAndTracers::task_nodes;
+std::vector<TaskTracer> DrawTaskBlocksAndTracers::task_tracers;
+
+void DrawTaskBlocksAndTracers::run(PipelineContext &context)
+{
+	auto driver = context.device->getVideoDriver();
+
+	draw_task_blocks = g_settings->getBool("enable_task_nodes");
+	draw_task_tracers = g_settings->getBool("enable_task_tracers");
+
+	float time = context.device->getTimer()->getTime() / 1000.0f;
+
+	LocalPlayer *player = context.client->getEnv().getLocalPlayer();
+	ClientEnvironment &env = context.client->getEnv();
+	ClientMap &clientMap = env.getClientMap();
+	Camera *camera = context.client->getCamera();
+
+	v3f camera_offset = intToFloat(camera->getOffset(), BS);
+	v3f eye_pos = (camera->getPosition() + 1000.0f*camera->getDirection() - camera_offset);
+
+	video::SMaterial material, oldmaterial;
+	oldmaterial = driver->getMaterial2D();
+	material.MaterialType = video::EMT_TRANSPARENT_VERTEX_ALPHA;
+	material.forEachTexture([] (video::SMaterialLayer &tex) {
+		tex.MinFilter = irr::video::ETMINF_NEAREST_MIPMAP_NEAREST;
+		tex.MagFilter = irr::video::ETMAGF_NEAREST;
+	});
+	material.ZBuffer = irr::video::ECFN_ALWAYS;
+	material.ZWriteEnable = irr::video::EZW_OFF;
+	driver->setMaterial(material);
+
+	if (draw_task_blocks) {
+	float anim = (std::sin(time * 2.f) + 1.f) / 2.f;
+
+	for (const TaskNode &node : task_nodes) {
+		v3f pos = node.position - camera_offset;
+
+		// Outer box
+		aabb3f outer_box(pos - v3f(BS / 2.f), pos + v3f(BS / 2.f));
+		driver->draw3DBox(outer_box, node.color);
+
+		v3f min_pos = pos - v3f(BS / 2.f, BS / 2.f, BS / 2.f); // smaller footprint
+		v3f max_pos = pos + v3f(BS / 2.f, -BS / 2.f + BS * anim, BS / 2.f); // grows upward
+
+		driver->draw3DBox(aabb3f(min_pos, max_pos), node.color);
+	}
+}
+
+	if (draw_task_tracers) {
+		for (const TaskTracer &tracer : task_tracers) {
+			v3f start = tracer.start - camera_offset;
+			v3f end = tracer.end - camera_offset;
+			driver->draw3DLine(start, end, tracer.color);
+		}
+	}
+
+	driver->setMaterial(oldmaterial);
+}
+
 
 void MapPostFxStep::setRenderTarget(RenderTarget * _target)
 {
@@ -297,6 +356,7 @@ void populatePlainPipeline(RenderPipeline *pipeline, Client *client)
 	auto step3D = pipeline->own(create3DStage(client, downscale_factor));
 	pipeline->addStep(step3D);
 	pipeline->addStep<DrawTracersAndESP>();
+	pipeline->addStep<DrawTaskBlocksAndTracers>();
 	pipeline->addStep<DrawWield>();
 	pipeline->addStep<MapPostFxStep>();
 

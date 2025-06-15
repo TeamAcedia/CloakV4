@@ -20,6 +20,8 @@
 #include "map.h"
 #include "util/string.h"
 #include "nodedef.h"
+#include "client/render/plain.h"
+
 
 #define checkCSMRestrictionFlag(flag) \
 	( getClient(L)->checkCSMRestrictionFlag(CSMRestrictionFlags::flag) )
@@ -494,6 +496,50 @@ int ModApiClient::l_get_inv_item_break(lua_State *L)
 	return 1;
 }
 
+// add_task_node(pos, color)
+int ModApiClient::l_add_task_node(lua_State *L)
+{	
+	v3f pos = checkFloatPos(L, 1);
+	video::SColor color = read_ARGB8(L, 2);
+	
+	DrawTaskBlocksAndTracers::addTaskNode(TaskNode{pos, color});
+
+	return 0;
+}
+
+// clear_task_node(pos)
+int ModApiClient::l_clear_task_node(lua_State *L)
+{
+	v3f pos = checkFloatPos(L, 1);
+	
+	DrawTaskBlocksAndTracers::removeTaskNode(TaskNode{pos});
+
+	return 0;
+}
+
+// add_task_tracer(start_pos, end_pos, color)
+int ModApiClient::l_add_task_tracer(lua_State *L)
+{
+	v3f start_pos = checkFloatPos(L, 1);
+	v3f end_pos = checkFloatPos(L, 2);
+	video::SColor color = read_ARGB8(L, 3);
+	
+	DrawTaskBlocksAndTracers::addTaskTracer(TaskTracer{start_pos, end_pos, color});
+
+	return 0;
+}
+
+// clear_task_tracer(start_pos, end_pos)
+int ModApiClient::l_clear_task_tracer(lua_State *L)
+{
+	v3f start_pos = checkFloatPos(L, 1);
+	v3f end_pos = checkFloatPos(L, 2);
+	
+	DrawTaskBlocksAndTracers::removeTaskTracer(TaskTracer{start_pos, end_pos});
+
+	return 0;
+}
+
 void ModApiClient::Initialize(lua_State *L, int top)
 {
 	API_FCT(get_current_modname);
@@ -520,4 +566,8 @@ void ModApiClient::Initialize(lua_State *L, int top)
 	API_FCT(start_dig);
 	API_FCT(get_inv_item_damage);
 	API_FCT(get_inv_item_break);
+	API_FCT(add_task_node);
+	API_FCT(clear_task_node);
+	API_FCT(add_task_tracer);
+	API_FCT(clear_task_tracer);
 }

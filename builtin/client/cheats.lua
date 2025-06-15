@@ -12,7 +12,9 @@ core.cheats = {
 		["NodeTracers"] = "enable_node_tracers",
 	--	["HUDBypass"] = "hud_flags_bypass", dont wanna work, will fix later
 		["NoHurtCam"] = "no_hurt_cam",
-		["NoParticles"] = "norender.particles"
+		["NoParticles"] = "norender.particles",
+		["TaskTracers"] = "enable_task_tracers",
+		["TaskNodes"] = "enable_task_nodes",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
@@ -56,3 +58,10 @@ function core.register_cheat(cheatname, category, func)
 	core.cheats[category] = core.cheats[category] or {}
 	core.cheats[category][cheatname] = func
 end
+
+-- task node and tracer tests
+core.after(0.5, function()
+	core.add_task_node({x=0, y=0, z=0}, {r=255, g=0, b=0})
+	core.add_task_node({x=10, y=0, z=0}, {r=0, g=255, b=0})
+	core.add_task_tracer({x=0, y=0, z=0}, {x=10, y=0, z=0}, {r=255, g=0, b=0})
+end)
