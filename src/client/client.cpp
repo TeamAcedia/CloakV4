@@ -1091,6 +1091,14 @@ void Client::interact(InteractAction action, const PointedThing& pointed)
 	if (myplayer == NULL)
 		return;
 
+		if (g_settings->getBool("autotool") && action == INTERACT_START_DIGGING) {
+			if (pointed.type == POINTEDTHING_NODE) {	
+				setBestHotbarItemForBreak(pointed.node_undersurface);	
+			} else if (pointed.type == POINTEDTHING_OBJECT) {	
+				setBestHotbarItemForHit(pointed.object_id);
+			}
+	
+		}
 	/*
 		[0] u16 command
 		[2] u8 action
@@ -2200,4 +2208,123 @@ ModChannel* Client::getModChannel(const std::string &channel)
 const std::string &Client::getFormspecPrepend() const
 {
 	return m_env.getLocalPlayer()->formspec_prepend;
+}
+
+void Client::setWieldIndex(u16 index) {
+	LocalPlayer *myplayer = m_env.getLocalPlayer();
+	myplayer->setWieldIndex(index);
+	g_game->processItemSelection(&g_game->getRunData().new_playeritem);
+	ItemStack selected_item, hand_item;
+	ItemStack &tool_item = myplayer->getWieldedItem(&selected_item, &hand_item);
+	g_game->getCamera()->wield(tool_item);
+
+}
+
+void Client::setBestHotbarItemForHit(u16 objectId) {
+	LocalPlayer *myplayer = m_env.getLocalPlayer();
+	if (myplayer == NULL)
+		return;
+
+	// get inventory list
+	Inventory *inventory = &myplayer->inventory;
+	if (!inventory)
+		return;
+	InventoryList *list = inventory->getList("main");
+	if (!list)
+		return;
+
+	// get genericCao
+	GenericCAO *gcao = m_env.getGenericCAO(objectId);
+	if (!gcao)
+		return;
+
+	// get initial best items, no skip index here since default getPunchDamage doesn't work properly on mineclone servers (for mobs)
+	u16 wieldIndex = myplayer->getWieldIndex();
+	u16 bestIndex = 0;
+	int bestDamage = 0;
+
+	int hotbarSize = myplayer->hud_hotbar_itemcount;
+	PunchDamageResult result;
+	ItemStack *punchitem;
+	for (int i = 0; i < hotbarSize; i++) {
+		punchitem = &list->getItem(i);
+
+		// get punchdamage
+		/*
+		reasons for not getting the true value of time since last punch:
+		1. it's broken for mobs on mineclone servers
+		2. it doesn't matter. We're just looking for the best tool.
+		*/
+		result = getPunchDamageFleshy(
+				gcao->getGroups(),
+				&punchitem->getToolCapabilities(m_itemdef),
+				punchitem,
+				10,
+				punchitem->wear);
+
+		if (!result.did_punch)
+			continue;
+
+		if (result.damage > bestDamage) {
+			bestDamage = result.damage;
+			bestIndex = i;
+		}
+	}
+
+	if (wieldIndex != bestIndex)
+		setWieldIndex(bestIndex);
+
+	return;
+}
+
+void Client::setBestHotbarItemForBreak(v3s16 nodepos) {
+	LocalPlayer *myplayer = m_env.getLocalPlayer();
+	if (myplayer == NULL)
+		return;
+
+	// get inventory list
+	Inventory *inventory = &myplayer->inventory;
+	if (!inventory)
+		return;
+	InventoryList *list = inventory->getList("main");
+	if (!list)
+		return;
+
+	// get node data
+	bool isValidPosition;
+	MapNode n = m_env.getMap().getNode(nodepos, &isValidPosition);
+	if (!isValidPosition)
+		return;
+	const ContentFeatures &features = m_nodedef->get(n);
+
+	// get initial best items
+	u16 wieldIndex = myplayer->getWieldIndex();
+	u16 bestIndex = 0;
+	float bestTime = 10000000.0;
+
+	int hotbarSize = myplayer->hud_hotbar_itemcount;
+	DigParams result;
+	ItemStack *selecteditem;
+	for (int i = 0; i < hotbarSize; i++) {
+		selecteditem = &list->getItem(i);
+
+		// get digparams
+		result = getDigParams(
+				features.groups,
+				&selecteditem->getToolCapabilities(m_itemdef),
+				selecteditem->wear);
+
+		if (!result.diggable)
+			continue;
+
+		if (result.time < bestTime) {
+			bestTime = result.time;
+			bestIndex = i;
+		}
+	}
+
+	if (wieldIndex != bestIndex)
+		setWieldIndex(bestIndex);
+
+	return;
 }

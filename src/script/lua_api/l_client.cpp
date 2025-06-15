@@ -350,6 +350,149 @@ int ModApiClient::l_start_dig(lua_State *L)
 	return 0;
 }
 
+// get_inv_item_damage(index, object_id)
+int ModApiClient::l_get_inv_item_damage(lua_State *L)
+{
+	Client *client = getClient(L);
+
+	u32 index = luaL_checkinteger(L, 1) - 1;
+	u16 object_id = lua_tointeger(L, 2);
+
+	InventoryLocation inventory_location;
+	std::string location = "current_player";
+
+	inventory_location.deSerialize(location);
+	Inventory *inventory = client->getInventory(inventory_location);
+	if (!inventory) {
+		lua_pushnil(L);
+		return 0;
+	}
+	InventoryList *list = inventory->getList("main");
+	if (!list) {
+		lua_pushnil(L);
+		return 0;
+	}
+
+	if (index < 0 || index > list->getSize() - 1) {
+		lua_pushnil(L);
+		return 0;
+	}
+
+	ItemStack punchitem;
+	try {
+		punchitem = list->getItem(index);
+	} catch (...) {
+		lua_pushnil(L);
+		return 0;
+	}
+
+	const ToolCapabilities toolcap = punchitem.getToolCapabilities(client->idef());
+
+	ClientEnvironment &env = client->getEnv();
+	GenericCAO *gcao = env.getGenericCAO(object_id);
+	if (!gcao) {
+		lua_pushnil(L);
+		return 0;
+	}
+
+	PunchDamageResult result = getPunchDamageFleshy(
+			gcao->getGroups(),
+			&toolcap,
+			&punchitem,
+			g_game->getRunData().time_from_last_punch,
+			punchitem.wear);
+
+	push_punch_damage_result(L, &result);
+
+	return 1;
+}
+
+int ModApiClient::l_get_inv_item_break(lua_State *L)
+{
+	// get node and itemdefs
+	IGameDef *gdef = getGameDef(L);
+	if (!gdef)
+	{
+	    lua_pushnil(L);
+	    return 0;
+	}
+
+	const NodeDefManager *ndef = gdef->ndef();
+	if (!ndef)
+	{
+	    lua_pushnil(L);
+	    return 0;
+	}
+
+	IItemDefManager *idef = gdef->idef();
+	if (!idef)
+	{
+	    lua_pushnil(L);
+	    return 0;
+	}
+
+	// get inputs
+	u32 index = luaL_checkinteger(L, 1) - 1;
+	v3s16 nodepos = read_v3s16(L, 2);
+
+	// get inventory item
+	Client *client = getClient(L);
+
+	InventoryLocation inventory_location;
+	std::string location = "current_player";
+
+	inventory_location.deSerialize(location);
+	Inventory *inventory = client->getInventory(inventory_location);
+	if (!inventory) {
+		lua_pushnil(L);
+		return 0;
+	}
+	InventoryList *list = inventory->getList("main");
+	if (!list) {
+		lua_pushnil(L);
+		return 0;
+	}
+
+	if (index < 0 || index > list->getSize() - 1) {
+		lua_pushnil(L);
+		return 0;
+	}
+
+	ItemStack selecteditem;
+	try {
+		selecteditem = list->getItem(index);
+	} catch (...) {
+		lua_pushnil(L);
+		return 0;
+	}
+
+	const ToolCapabilities toolcap = selecteditem.getToolCapabilities(idef);
+
+	// get node data
+	ClientEnvironment &env = client->getEnv();
+	ClientMap &map = env.getClientMap();
+	MapNode n = map.getNode(nodepos);
+	const ContentFeatures &features = ndef->get(n);
+
+	// get dig result
+	DigParams result = getDigParams(
+			features.groups,
+			&toolcap,
+			selecteditem.wear);
+
+	if (!result.diggable) {
+		LocalPlayer *player = env.getLocalPlayer();
+		ItemStack hand_item;
+		player->getHandItem(&hand_item);
+		result = getDigParams(
+			features.groups,
+			&hand_item.getToolCapabilities(idef));
+	}
+
+	push_dig_result(L, &result);
+
+	return 1;
+}
 
 void ModApiClient::Initialize(lua_State *L, int top)
 {
@@ -375,4 +518,6 @@ void ModApiClient::Initialize(lua_State *L, int top)
 	API_FCT(place_node);
 	API_FCT(dig_node);
 	API_FCT(start_dig);
+	API_FCT(get_inv_item_damage);
+	API_FCT(get_inv_item_break);
 }

@@ -608,6 +608,10 @@ public:
 	void shutdown();
 
 	const PointedThing &getPointedOld() const { return runData.pointed_old; }
+	GameRunData& getRunData() { return runData; }
+	Camera* getCamera() const { return camera; }
+	void processItemSelection(u16 *new_playeritem);
+
 
 protected:
 
@@ -642,7 +646,6 @@ protected:
 	// Input related
 	void processUserInput(f32 dtime);
 	void processKeyInput();
-	void processItemSelection(u16 *new_playeritem);
 	bool shouldShowTouchControls();
 
 	void dropSelectedItem(bool single_item = false);

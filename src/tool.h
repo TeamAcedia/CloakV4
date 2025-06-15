@@ -173,6 +173,14 @@ PunchDamageResult getPunchDamage(
 		u16 initial_wear = 0
 );
 
+PunchDamageResult getPunchDamageFleshy(
+	const ItemGroupList &armor_groups,
+	const ToolCapabilities *toolcap,
+	const ItemStack *punchitem,
+	float time_from_last_punch,
+	u16 initial_wear = 0
+);
+
 u32 calculateResultWear(const u32 uses, const u16 initial_wear);
 f32 getToolRange(const ItemStack &wielded_item, const ItemStack &hand_item,
 		const IItemDefManager *itemdef_manager);

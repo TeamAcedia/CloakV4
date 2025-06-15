@@ -12,6 +12,7 @@
 #include "lua_api/l_env.h"
 #include "lua_api/l_item.h"
 #include "lua_api/l_itemstackmeta.h"
+#include "lua_api/l_inventoryaction.h"
 #include "lua_api/l_minimap.h"
 #include "lua_api/l_modchannels.h"
 #include "lua_api/l_particles_local.h"
@@ -64,6 +65,7 @@ void ClientScripting::InitializeModApi(lua_State *L, int top)
 	ModChannelRef::Register(L);
 	LuaSettings::Register(L);
 	ClientSoundHandle::Register(L);
+	LuaInventoryAction::Register(L);
 
 	ModApiClient::Initialize(L, top);
 	ModApiUtil::InitializeClient(L, top);

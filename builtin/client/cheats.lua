@@ -48,6 +48,7 @@ core.cheats = {
 		["AutoDig"] = "autodig",
 		["FastDig"] = "fastdig",
 		["InstantBreak"] = "instant_break",
+		["AutoTool"] = "autotool",
     }
 }
 

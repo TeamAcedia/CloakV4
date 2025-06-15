@@ -598,6 +598,29 @@ void push_object_properties(lua_State *L, const ObjectProperties *prop)
 	// when adding a new property
 }
 
+// yes, I know push_dig_params exists.
+void push_dig_result(lua_State *L, DigParams *result)
+{
+	lua_newtable(L);
+	lua_pushboolean(L, result->diggable);
+	lua_setfield(L, -2, "diggable");
+	lua_pushnumber(L, result->time);
+	lua_setfield(L, -2, "time");
+	lua_pushnumber(L, result->wear);
+	lua_setfield(L, -2, "wear");
+}
+
+void push_punch_damage_result(lua_State *L, PunchDamageResult *result)
+{
+	lua_newtable(L);
+	lua_pushboolean(L, result->did_punch);
+	lua_setfield(L, -2, "did_punch");
+	lua_pushnumber(L, result->wear);
+	lua_setfield(L, -2, "wear");
+	lua_pushnumber(L, result->damage);
+	lua_setfield(L, -2, "damage");
+}
+
 /******************************************************************************/
 TileDef read_tiledef(lua_State *L, int index, u8 drawtype, bool special)
 {

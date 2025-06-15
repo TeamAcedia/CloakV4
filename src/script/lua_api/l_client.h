@@ -81,6 +81,12 @@ private:
 	// start_dig(pos)
 	static int l_start_dig(lua_State *L);
 
+	// get_inv_item_damage(index, object_id)
+	static int l_get_inv_item_damage(lua_State *L);
+
+	// get_inv_item_break(index, nodepos)
+	static int l_get_inv_item_break(lua_State *L);
+
 public:
 	static void Initialize(lua_State *L, int top);
 };

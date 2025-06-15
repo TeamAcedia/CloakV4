@@ -448,6 +448,10 @@ public:
 
 	const std::string &getFormspecPrepend() const;
 
+	void setWieldIndex(u16 index);
+	void setBestHotbarItemForHit(u16 objectId);
+	void setBestHotbarItemForBreak(v3s16 nodepos);
+
 	inline MeshGrid getMeshGrid()
 	{
 		return m_mesh_grid;

@@ -202,6 +202,7 @@ public:
 
 	// Returns non-empty `selected` ItemStack. `hand` is a fallback, if specified
 	ItemStack &getWieldedItem(ItemStack *selected, ItemStack *hand) const;
+	ItemStack &getHandItem(ItemStack *hand) const;
 	void setWieldIndex(u16 index);
 	u16 getWieldIndex();
 

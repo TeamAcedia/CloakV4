@@ -487,6 +487,44 @@ PunchDamageResult getPunchDamage(
 
 	return result;
 }
+// modified to check for fleshy instead of immortal. bc mineclonia
+PunchDamageResult getPunchDamageFleshy(
+	const ItemGroupList &armor_groups,
+	const ToolCapabilities *toolcap,
+	const ItemStack *punchitem,
+	float time_from_last_punch,
+	u16 initial_wear
+){
+bool do_hit = true;
+{
+	if (do_hit && punchitem) {
+		if (itemgroup_get(armor_groups, "punch_operable") &&
+				(toolcap == NULL || punchitem->name.empty())) {
+			do_hit = false;
+		}
+	}
+
+	if (do_hit) {
+		if(!itemgroup_get(armor_groups, "fleshy")) {
+			do_hit = false;
+		}
+	}
+}
+
+PunchDamageResult result;
+if(do_hit)
+{
+	HitParams hitparams = getHitParams(armor_groups, toolcap,
+			time_from_last_punch,
+			punchitem->wear);
+	result.did_punch = true;
+	result.wear = hitparams.wear;
+	result.damage = hitparams.hp;
+}
+
+return result;
+}
+
 
 f32 getToolRange(const ItemStack &wielded_item, const ItemStack &hand_item,
 		const IItemDefManager *itemdef_manager)
