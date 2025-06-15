@@ -12,6 +12,15 @@
 #include "client/minimap.h"
 #include "client/shadows/dynamicshadowsrender.h"
 #include <IGUIEnvironment.h>
+#include "client/content_cao.h"
+#include "nodedef.h"
+#include "settings.h"
+#include "client/mapblock_mesh.h"	
+#include "script/scripting_client.h"
+#include "core.h"
+
+// Function to check each neighbor and return the flags of different ones.
+
 
 /// Draw3D pipeline step
 void Draw3D::run(PipelineContext &context)
@@ -51,6 +60,149 @@ void DrawHUD::run(PipelineContext &context)
 		context.client->getCamera()->drawNametags();
 	}
 	context.device->getGUIEnvironment()->drawAll();
+}
+
+u8 DrawTracersAndESP::getDifferentNeighborFlags(v3s16 p, Map &map, const MapNode &node) {
+	u8 flags = 0;
+	for (int i = 0; i < 6; ++i) {
+		MapNode neighbor = map.getNode(p + directions[i]);
+		if (neighbor.getContent() != node.getContent()) {
+			flags |= (1 << i);
+		}
+	}
+	return flags;
+}
+
+void DrawTracersAndESP::run(PipelineContext &context)
+{
+	auto driver = context.device->getVideoDriver();
+
+	draw_entity_esp = g_settings->getBool("enable_entity_esp");
+	draw_entity_tracers = g_settings->getBool("enable_entity_tracers");
+	draw_player_esp = g_settings->getBool("enable_player_esp");
+	draw_player_tracers = g_settings->getBool("enable_player_tracers");
+	draw_node_esp = g_settings->getBool("enable_node_esp");
+	draw_node_tracers = g_settings->getBool("enable_node_tracers");
+	
+	entity_esp_color = video::SColor(255, 255, 255, 255);
+	player_esp_color = video::SColor(255, 0, 255, 0);
+	self_esp_color = video::SColor(255, 255, 255, 0);
+
+	playerDT = g_settings->getU32("esp.player.drawType");
+	playerEO = g_settings->getU32("esp.player.edgeOpacity");
+	playerFO = g_settings->getU32("esp.player.faceOpacity");
+	entityDT = g_settings->getU32("esp.entity.drawType");
+	entityEO = g_settings->getU32("esp.entity.edgeOpacity");
+	entityFO = g_settings->getU32("esp.entity.faceOpacity");
+	nodeDT = g_settings->getU32("esp.node.drawType");
+	nodeEO = g_settings->getU32("esp.node.edgeOpacity");
+	nodeFO = g_settings->getU32("esp.node.faceOpacity");
+
+	LocalPlayer *player = context.client->getEnv().getLocalPlayer();
+	ClientEnvironment &env = context.client->getEnv();
+	ClientMap &clientMap = env.getClientMap();
+	Camera *camera = context.client->getCamera();
+
+	u8 wanted_range  = std::fmin(255.0f, clientMap.getWantedRange());
+
+	v3f camera_offset = intToFloat(camera->getOffset(), BS);
+
+	v3f eye_pos = (camera->getPosition() + 1000.0f*camera->getDirection() - camera_offset);
+
+	video::SMaterial material, oldmaterial;
+	oldmaterial = driver->getMaterial2D();
+	material.MaterialType = video::EMT_TRANSPARENT_VERTEX_ALPHA;
+	material.forEachTexture([] (video::SMaterialLayer &tex) {
+		tex.MinFilter = irr::video::ETMINF_NEAREST_MIPMAP_NEAREST;
+		tex.MagFilter = irr::video::ETMAGF_NEAREST;
+	});
+	material.ZBuffer = irr::video::ECFN_ALWAYS;
+	material.ZWriteEnable = irr::video::EZW_OFF;
+	driver->setMaterial(material);
+
+	int pCnt = 0, eCnt = 0, nCnt = 0;
+
+ 	if (draw_entity_esp || draw_entity_tracers || draw_player_esp || draw_player_tracers) {
+ 		v3f current_pos = context.client->getEnv().getLocalPlayer()->getPosition();
+ 		std::vector<DistanceSortedActiveObject> allObjects;
+		env.getAllActiveObjects(current_pos, allObjects);
+		for (auto &clientobject : allObjects) {
+			ClientActiveObject *cao = clientobject.obj;
+			if ((cao->isLocalPlayer() && !g_settings->getBool("freecam")) || cao->getParent())
+				continue;
+			GenericCAO *obj = dynamic_cast<GenericCAO *>(cao);
+			if (!obj) {
+				continue;
+			}
+			//v3f velocity = obj->getVelocity();
+			//v3f rotation = obj->getRotation();
+			bool is_self = obj->isLocalPlayer();
+			bool is_player = obj->isPlayer();
+			bool draw_esp = is_player ? draw_player_esp : draw_entity_esp;
+			bool draw_tracers = is_player ? draw_player_tracers : draw_entity_tracers;
+			video::SColor color = is_player 
+				? (is_self  
+					? self_esp_color
+			 		: player_esp_color)
+				: entity_esp_color;
+			if (! (draw_esp || draw_tracers))
+				continue;
+			aabb3f box(v3f(0,0,0), v3f(0,0,0));
+			if (!obj->getSelectionBox(&box)) {
+				continue;
+			}
+
+			v3f pos = obj->getPosition() - camera_offset;
+			box.MinEdge += pos;
+			box.MaxEdge += pos;
+
+			if (draw_esp) {
+				if (is_player) {
+					pCnt += 1;
+					driver->draw3DBox(box, color, playerDT, playerEO, playerFO);
+				} else {
+					eCnt += 1;				
+					driver->draw3DBox(box, color, entityDT, entityEO, entityFO);				
+				}
+			}
+			if (draw_tracers)
+				driver->draw3DLine(eye_pos, box.getCenter(), color);
+		}
+	}
+	if (draw_node_esp || draw_node_tracers) {
+		Map &map = env.getMap();
+		std::vector<v3s16> positions;
+		map.listAllLoadedBlocks(positions);
+		for (v3s16 blockp : positions) {
+			MapBlock *block = map.getBlockNoCreate(blockp);
+			if (!block->mesh)
+				continue;
+			for (v3s16 p : block->mesh->esp_nodes) {
+				v3f pos = intToFloat(p, BS) - camera_offset;
+				if ((intToFloat(p, BS) - player->getLegitPosition()).getLengthSQ() > (wanted_range*BS) * (wanted_range*BS))
+					continue;
+				MapNode node = map.getNode(p);
+				nCnt += 1;
+				u8 diffNeighbors = getDifferentNeighborFlags(p, map, node);
+				if (!diffNeighbors)
+					continue;
+				std::vector<aabb3f> boxes;
+				node.getSelectionBoxes(context.client->getNodeDefManager(), &boxes, node.getNeighbors(p, &map));
+				video::SColor color = context.client->getNodeDefManager()->get(node).getNodeEspColor();
+				for (aabb3f box : boxes) {
+					box.MinEdge += pos;
+					box.MaxEdge += pos;
+					if (draw_node_esp) {
+						driver->draw3DBox(box, color, nodeDT, nodeEO, nodeFO, diffNeighbors);
+					}
+					if (draw_node_tracers)
+						driver->draw3DLine(eye_pos, box.getCenter(), color);
+				}
+			}
+		}
+	}
+
+	driver->setMaterial(oldmaterial);
 }
 
 
@@ -144,6 +296,7 @@ void populatePlainPipeline(RenderPipeline *pipeline, Client *client)
 	auto downscale_factor = getDownscaleFactor();
 	auto step3D = pipeline->own(create3DStage(client, downscale_factor));
 	pipeline->addStep(step3D);
+	pipeline->addStep<DrawTracersAndESP>();
 	pipeline->addStep<DrawWield>();
 	pipeline->addStep<MapPostFxStep>();
 

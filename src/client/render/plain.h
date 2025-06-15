@@ -6,6 +6,8 @@
 #pragma once
 #include "core.h"
 #include "pipeline.h"
+#include "map.h"
+#include "mapnode.h"
 
 /**
  * Implements a pipeline step that renders the 3D scene
@@ -47,6 +49,53 @@ public:
 
 	virtual void reset(PipelineContext &context) override {}
 	virtual void run(PipelineContext &context) override;
+};
+
+/**
+ * Implements a pipeline step that renders Tracers and ESP
+*/
+
+class DrawTracersAndESP : public RenderStep
+{
+public:
+	virtual void setRenderSource(RenderSource *) override {}
+	virtual void setRenderTarget(RenderTarget *) override {}
+
+	virtual void reset(PipelineContext &context) override {}
+	virtual void run(PipelineContext &context) override;
+
+private:
+	u8 getDifferentNeighborFlags(v3s16 p, Map &map, const MapNode &node);
+
+	static inline const v3s16 directions[6] = {
+		v3s16(0, 0, -1),  // Front
+		v3s16(0, 0, 1), // Back
+		v3s16(-1, 0, 0), // Left
+		v3s16(1, 0, 0),  // Right
+		v3s16(0, 1, 0),  // Top
+		v3s16(0, -1, 0)  // Bottom
+	};
+
+	bool draw_entity_esp;
+	bool draw_entity_tracers;
+	bool draw_player_esp;
+	bool draw_player_tracers;
+	bool draw_node_esp;
+	bool draw_node_tracers;
+
+	video::SColor entity_esp_color;
+	video::SColor player_esp_color;
+	video::SColor self_esp_color;
+	
+	int playerDT;
+	int playerEO;
+	int playerFO;
+	int entityDT;
+	int entityEO;
+	int entityFO;
+	int nodeDT;
+	int nodeEO;
+	int nodeFO;
 };
 
 class MapPostFxStep : public TrivialRenderStep
