@@ -15,6 +15,7 @@ core.cheats = {
 		["NoParticles"] = "norender.particles",
 		["TaskTracers"] = "enable_task_tracers",
 		["TaskNodes"] = "enable_task_nodes",
+		["DetachedCamera"] = "detached_camera",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",

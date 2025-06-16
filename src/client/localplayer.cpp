@@ -240,8 +240,8 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 
 	// Skip collision detection if noclip mode is used
 	bool fly_allowed = m_client->checkLocalPrivilege("fly") || g_settings->getBool("freecam");
-	bool noclip = m_client->checkLocalPrivilege("noclip") && player_settings.noclip  || g_settings->getBool("freecam");
-	bool free_move = player_settings.free_move && fly_allowed || g_settings->getBool("freecam");
+	bool noclip = (m_client->checkLocalPrivilege("noclip") && player_settings.noclip) || g_settings->getBool("freecam");
+	bool free_move = (player_settings.free_move && fly_allowed) || g_settings->getBool("freecam");
 
 	if (noclip && free_move) {
 		position += m_speed * dtime;
@@ -583,7 +583,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 	bool superspeed = false;
 
 	const f32 speed_walk = movement_speed_walk * physics_override.speed_walk;
-	const f32 speed_fast = movement_speed_fast * physics_override.speed_fast;
+	//const f32 speed_fast = movement_speed_fast * physics_override.speed_fast;
 
 	f32 new_speed_fast = g_settings->getFloat("movement_speed_fast") * BS;
 
@@ -810,9 +810,15 @@ bool LocalPlayer::isDead() const
 // 3D acceleration
 void LocalPlayer::accelerate(const v3f &target_speed, const f32 max_increase_H,
 	const f32 max_increase_V, const bool use_pitch)
-{
-	const f32 yaw = getYaw();
-	const f32 pitch = getPitch();
+{	f32 yaw, pitch;
+
+	if (g_settings->getBool("detached_camera") && !g_settings->getBool("freecam")) {
+		yaw = getLegitYaw();
+		pitch = getLegitPitch();
+	} else {
+		yaw = getYaw();
+		pitch = getPitch();
+	}
 	v3f flat_speed = m_speed;
 	// Rotate speed vector by -yaw and -pitch to make it relative to the player's yaw and pitch
 	flat_speed.rotateXZBy(-yaw);
@@ -869,9 +875,10 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 	PlayerSettings &player_settings = getPlayerSettings();
 
 	// Skip collision detection if noclip mode is used
-	bool fly_allowed = m_client->checkLocalPrivilege("fly")  || g_settings->getBool("freecam");
-	bool noclip = m_client->checkLocalPrivilege("noclip") && player_settings.noclip  || g_settings->getBool("freecam");
-	bool free_move = noclip && fly_allowed && player_settings.free_move  || g_settings->getBool("freecam");
+	bool fly_allowed = m_client->checkLocalPrivilege("fly") || g_settings->getBool("freecam");
+	bool noclip = (m_client->checkLocalPrivilege("noclip") && player_settings.noclip) || g_settings->getBool("freecam");
+	bool free_move = ((noclip && fly_allowed && player_settings.free_move) || g_settings->getBool("freecam"));
+
 	if (free_move) {
 		position += m_speed * dtime;
 		setPosition(position);
@@ -1281,4 +1288,28 @@ void LocalPlayer::handleAutojump(f32 dtime, Environment *env,
 		m_autojump = true;
 		m_autojump_time = 0.1f;
 	}
+}
+
+void LocalPlayer::setPitch(f32 pitch) {
+	m_pitch = pitch;
+	if (!m_freecam && !g_settings->getBool("detached_camera"))
+		m_legit_pitch = m_pitch;
+}
+void LocalPlayer::setLegitPitch(f32 pitch) {
+	if (m_freecam || g_settings->getBool("detached_camera"))
+		m_legit_pitch = pitch;
+	else
+		setPitch(pitch);
+}
+
+void LocalPlayer::setYaw(f32 yaw) {
+	m_yaw = yaw;
+	if (!m_freecam && !g_settings->getBool("detached_camera"))
+		m_legit_yaw = m_yaw;
+}
+void LocalPlayer::setLegitYaw(f32 yaw) {
+	if (m_freecam || g_settings->getBool("detached_camera"))
+		m_legit_yaw = yaw;
+	else
+		setYaw(yaw);
 }

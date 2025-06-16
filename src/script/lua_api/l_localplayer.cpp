@@ -531,7 +531,7 @@ int LuaLocalPlayer::l_set_yaw(lua_State *L)
 	if (lua_isnumber(L, 2)) {
 		double yaw = lua_tonumber(L, 2);
 		player->setLegitYaw(yaw);
-		if (!g_settings->getBool("freecam")) {
+		if (!g_settings->getBool("freecam") && !g_settings->getBool("detached_camera")) {
 			g_game->cam_view_target.camera_yaw = yaw;
 		}
 	}
@@ -547,7 +547,7 @@ int LuaLocalPlayer::l_set_pitch(lua_State *L)
 	if (lua_isnumber(L, 2)) {
 		double pitch = lua_tonumber(L, 2);
 		player->setLegitPitch(pitch);
-		if (!g_settings->getBool("freecam")) {
+		if (!g_settings->getBool("freecam") && !g_settings->getBool("detached_camera")) {
 			g_game->cam_view.camera_pitch = pitch;
 			g_game->cam_view_target.camera_pitch = pitch;
 		}
