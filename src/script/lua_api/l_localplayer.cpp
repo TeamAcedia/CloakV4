@@ -12,6 +12,7 @@
 #include "client/game.h"
 #include "common/c_content.h"
 #include "client/content_cao.h"
+#include "l_clientobject.h"
 
 LuaLocalPlayer::LuaLocalPlayer(LocalPlayer *m) : m_localplayer(m)
 {
@@ -459,6 +460,15 @@ int LuaLocalPlayer::l_hud_get_all(lua_State *L)
 	return 1;
 }
 
+int LuaLocalPlayer::l_get_object(lua_State *L)
+{
+	LocalPlayer *player = getobject(L, 1);
+	ClientEnvironment &env = getClient(L)->getEnv();
+	ClientActiveObject *obj = env.getGenericCAO(player->getCAO()->getId());
+	ClientObjectRef::create(L, obj);
+	return 1;
+}
+
 LocalPlayer *LuaLocalPlayer::getobject(LuaLocalPlayer *ref)
 {
 	return ref->m_localplayer;
@@ -598,13 +608,13 @@ const luaL_Reg LuaLocalPlayer::methods[] = {
 
 		luamethod(LuaLocalPlayer, get_move_resistance),
 
-		//cheats n stuff
 		luamethod(LuaLocalPlayer, get_pointed_thing),
 		luamethod(LuaLocalPlayer, set_velocity),
 		luamethod(LuaLocalPlayer, set_yaw),
 		luamethod(LuaLocalPlayer, set_pitch),
 		luamethod(LuaLocalPlayer, set_wield_index),
 		luamethod(LuaLocalPlayer, set_pos),
+		luamethod(LuaLocalPlayer, get_object),
 
 		{0, 0}
 };

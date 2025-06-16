@@ -115,6 +115,9 @@ private:
 	// get_pointed_thing()
 	static int l_get_pointed_thing(lua_State *L);
 
+	// get_object(self)
+	static int l_get_object(lua_State *L);
+
 public:
 	LuaLocalPlayer(LocalPlayer *m);
 	~LuaLocalPlayer() = default;
