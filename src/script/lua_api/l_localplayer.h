@@ -118,6 +118,9 @@ private:
 	// get_object(self)
 	static int l_get_object(lua_State *L);
 
+	// set_lua_control(self, control)
+	static int l_set_lua_control(lua_State *L);
+
 public:
 	LuaLocalPlayer(LocalPlayer *m);
 	~LuaLocalPlayer() = default;

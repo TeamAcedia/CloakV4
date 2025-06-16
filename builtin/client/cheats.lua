@@ -22,6 +22,7 @@ core.cheats = {
 		["NoFallDamage"] = "prevent_natural_damage",
 		["Reach"] = "reach",
 		["AutoRespawn"] = "autorespawn",
+		["LuaControl"] = "lua_control",
     },
 	["Movement"] = {
 		["Freecam"] = "freecam",
@@ -60,7 +61,7 @@ function core.register_cheat(cheatname, category, func)
 	core.cheats[category][cheatname] = func
 end
 
--- task node and tracer tests
+-- tests
 core.after(0.5, function()
 	core.add_task_node({x=0, y=0, z=50}, {r=196, g=164, b=132})
 	core.add_task_node({x=-1, y=0, z=50}, {r=196, g=164, b=132})
@@ -69,4 +70,17 @@ core.after(0.5, function()
 	core.add_task_node({x=0, y=2, z=50}, {r=196, g=164, b=132})
 	core.add_task_tracer({x=0, y=2, z=50}, {x=0, y=6, z=50}, {r=255, g=255, b=255})
 	core.add_task_tracer({x=0, y=6, z=50}, {x=1, y=7, z=50}, {r=255, g=255, b=255})	
+
+	core.localplayer:set_lua_control({
+		up = true,
+		down = false,
+		left = false,
+		right = false,
+		jump = false,
+		aux1 = false,
+		sneak = false,
+		dig = false,
+		place = false
+	})
+
 end)

@@ -817,6 +817,24 @@ Methods:
             place = boolean,
         }
         ```
+* `set_lua_control(controls)`:
+    * sets pressed player controls when using `lua_control`
+
+        *   `controls` is a lua table with the fields:
+        *   if any field is not supplied, it defaults to false.
+        ```lua
+        {
+            up = boolean,
+            down = boolean,
+            left = boolean,
+            right = boolean,
+            jump = boolean,
+            aux1 = boolean,
+            sneak = boolean,
+            dig = boolean,
+            place = boolean,
+        }
+        ```
 
 * `get_armor_groups()`
     * returns a table with the armor group ratings

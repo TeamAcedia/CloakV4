@@ -1091,14 +1091,14 @@ void Client::interact(InteractAction action, const PointedThing& pointed)
 	if (myplayer == NULL)
 		return;
 
-		if (g_settings->getBool("autotool") && action == INTERACT_START_DIGGING) {
-			if (pointed.type == POINTEDTHING_NODE) {	
-				setBestHotbarItemForBreak(pointed.node_undersurface);	
-			} else if (pointed.type == POINTEDTHING_OBJECT) {	
-				setBestHotbarItemForHit(pointed.object_id);
-			}
-	
+	if (g_settings->getBool("autotool") && action == INTERACT_START_DIGGING) {
+		if (pointed.type == POINTEDTHING_NODE) {	
+			setBestHotbarItemForBreak(pointed.node_undersurface);	
+		} else if (pointed.type == POINTEDTHING_OBJECT) {	
+			setBestHotbarItemForHit(pointed.object_id);
 		}
+
+	}
 	/*
 		[0] u16 command
 		[2] u8 action
@@ -1633,6 +1633,7 @@ void Client::setPlayerControl(PlayerControl &control)
 	LocalPlayer *player = m_env.getLocalPlayer();
 	assert(player);
 	player->control = control;
+	player->lua_control.setMovementFromKeys();
 }
 
 void Client::setPlayerItem(u16 item)

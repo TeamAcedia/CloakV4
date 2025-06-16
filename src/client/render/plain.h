@@ -146,7 +146,7 @@ private:
 	bool draw_task_blocks;
 	bool draw_task_tracers;
 
-	u32 last_time = 0;
+	//u32 last_time = 0;
 
 	static std::vector<TaskNode> task_nodes;
 	static std::vector<TaskTracer> task_tracers;

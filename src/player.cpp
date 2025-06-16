@@ -202,6 +202,15 @@ void PlayerControl::setMovementFromKeys()
 		movement_direction = std::atan2(x, y);
 }
 
+
+PlayerControl &Player::getPlayerControl() {
+	if (g_settings->getBool("lua_control")) {
+		return lua_control;
+	} else {
+		return control;
+	}
+}
+
 u32 PlayerControl::getKeysPressed() const
 {
 	u32 keypress_bits;

@@ -120,7 +120,7 @@ void DrawTracersAndESP::run(PipelineContext &context)
 	material.ZWriteEnable = irr::video::EZW_OFF;
 	driver->setMaterial(material);
 
-	int pCnt = 0, eCnt = 0, nCnt = 0;
+	//int pCnt = 0, eCnt = 0, nCnt = 0;
 
  	if (draw_entity_esp || draw_entity_tracers || draw_player_esp || draw_player_tracers) {
  		v3f current_pos = context.client->getEnv().getLocalPlayer()->getPosition();
@@ -158,10 +158,10 @@ void DrawTracersAndESP::run(PipelineContext &context)
 
 			if (draw_esp) {
 				if (is_player) {
-					pCnt += 1;
+					//pCnt += 1;
 					driver->draw3DBox(box, color, playerDT, playerEO, playerFO);
 				} else {
-					eCnt += 1;				
+					//eCnt += 1;				
 					driver->draw3DBox(box, color, entityDT, entityEO, entityFO);				
 				}
 			}
@@ -182,7 +182,7 @@ void DrawTracersAndESP::run(PipelineContext &context)
 				if ((intToFloat(p, BS) - player->getLegitPosition()).getLengthSQ() > (wanted_range*BS) * (wanted_range*BS))
 					continue;
 				MapNode node = map.getNode(p);
-				nCnt += 1;
+				//nCnt += 1;
 				u8 diffNeighbors = getDifferentNeighborFlags(p, map, node);
 				if (!diffNeighbors)
 					continue;
@@ -217,13 +217,9 @@ void DrawTaskBlocksAndTracers::run(PipelineContext &context)
 
 	float time = context.device->getTimer()->getTime() / 1000.0f;
 
-	LocalPlayer *player = context.client->getEnv().getLocalPlayer();
-	ClientEnvironment &env = context.client->getEnv();
-	ClientMap &clientMap = env.getClientMap();
 	Camera *camera = context.client->getCamera();
 
 	v3f camera_offset = intToFloat(camera->getOffset(), BS);
-	v3f eye_pos = (camera->getPosition() + 1000.0f*camera->getDirection() - camera_offset);
 
 	video::SMaterial material, oldmaterial;
 	oldmaterial = driver->getMaterial2D();

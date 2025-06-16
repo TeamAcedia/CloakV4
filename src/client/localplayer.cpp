@@ -224,6 +224,8 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 		return;
 	}
 
+	PlayerControl &correct_control = g_settings->getBool("lua_control") ? lua_control : control;
+
 	Map *map = &env->getMap();
 	const NodeDefManager *nodemgr = m_client->ndef();
 
@@ -355,7 +357,7 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 		m_collisionbox, player_stepheight, dtime,
 		&position, &m_speed, accel_f, m_cao);
 
-	bool could_sneak = control.sneak && !free_move && !in_liquid &&
+	bool could_sneak = correct_control.sneak && !free_move && !in_liquid &&
 		!is_climbing && physics_override.sneak;
 
 	// Add new collisions to the vector
@@ -392,7 +394,7 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 		Player is allowed to jump when this is true.
 	*/
 	bool touching_ground_was = touching_ground;
-	touching_ground = result.touching_ground || (g_settings->getBool("airjump") && !control.sneak);
+	touching_ground = result.touching_ground || (g_settings->getBool("airjump") && !correct_control.sneak);
 	bool sneak_can_jump = false;
 
 	// Max. distance (X, Z) over border for sneaking determined by collision box
@@ -516,9 +518,9 @@ void LocalPlayer::move(f32 dtime, Environment *env,
 
 	// Jump/Sneak key pressed while bouncing from a bouncy block
 	float jumpspeed = movement_speed_jump * physics_override.jump;
-	if (m_can_jump && (control.jump || control.sneak) && standing_node_bouncy > 0) {
+	if (m_can_jump && (correct_control.jump || correct_control.sneak) && standing_node_bouncy > 0) {
 		// controllable (>0) bouncy block
-		if (!control.jump) {
+		if (!correct_control.jump) {
 			// sneak pressed, but not jump
 			// Subjective testing indicates 1/3 bounce decrease works well.
 			jumpspeed = -m_speed.Y / 3.0f;
@@ -562,6 +564,8 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 		return;
 	}
 
+	
+	PlayerControl &correct_control = g_settings->getBool("lua_control") ? lua_control : control;
 	PlayerSettings &player_settings = getPlayerSettings();
 
 	// All vectors are relative to the player's yaw,
@@ -576,14 +580,14 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 	bool fast_move = fast_allowed && player_settings.fast_move;
 	bool pitch_move = (free_move || in_liquid) && player_settings.pitch_move;
 	// When aux1_descends is enabled the fast key is used to go down, so fast isn't possible
-	bool fast_climb = fast_move && control.aux1 && !player_settings.aux1_descends;
+	bool fast_climb = fast_move && correct_control.aux1 && !player_settings.aux1_descends;
 	bool always_fly_fast = player_settings.always_fly_fast;
 
 	// Whether superspeed mode is used or not
 	bool superspeed = false;
 
 	const f32 speed_walk = movement_speed_walk * physics_override.speed_walk;
-	//const f32 speed_fast = movement_speed_fast * physics_override.speed_fast;
+	// const f32 speed_fast = movement_speed_fast * physics_override.speed_fast;
 
 	f32 new_speed_fast = g_settings->getFloat("movement_speed_fast") * BS;
 
@@ -597,7 +601,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 			superspeed = true;
 
 		// Auxiliary button 1 (E)
-		if (control.aux1) {
+		if (correct_control.aux1) {
 			if (free_move) {
 				// In free movement mode, aux1 descends
 				if (fast_move)
@@ -620,7 +624,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 		// New minecraft-like descend control
 
 		// Auxiliary button 1 (E)
-		if (control.aux1) {
+		if (correct_control.aux1) {
 			if (!is_climbing) {
 				// aux1 is "Turbo button"
 				if (fast_move)
@@ -628,11 +632,11 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 			}
 		}
 
-		if (control.sneak && !control.jump) {
+		if (correct_control.sneak && !correct_control.jump) {
 			// Descend player in freemove mode, liquids and climbable nodes by sneak key, only if jump key is released
 			if (free_move) {
 				// In free movement mode, sneak descends
-				if (fast_move && (control.aux1 || always_fly_fast))
+				if (fast_move && (correct_control.aux1 || always_fly_fast))
 					speedV.Y = -new_speed_fast;
 				else
 					speedV.Y = -speed_walk;
@@ -651,8 +655,8 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 		}
 	}
 
-	speedH = v3f(std::sin(control.movement_direction), 0.0f,
-			std::cos(control.movement_direction));
+	speedH = v3f(std::sin(correct_control.movement_direction), 0.0f,
+			std::cos(correct_control.movement_direction));
 
 	if (m_autojump) {
 		// release autojump after a given time
@@ -661,9 +665,9 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 			m_autojump = false;
 	}
 
-	if (control.jump) {
+	if (correct_control.jump) {
 		if (free_move) {
-			if (!control.sneak) {
+			if (!correct_control.sneak) {
 				// Don't fly up if sneak key is pressed
 				if (player_settings.aux1_descends || always_fly_fast) {
 					if (fast_move)
@@ -671,7 +675,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 					else
 						speedV.Y = speed_walk;
 				} else {
-					if (fast_move && control.aux1)
+					if (fast_move && correct_control.aux1)
 						speedV.Y = new_speed_fast;
 					else
 						speedV.Y = speed_walk;
@@ -689,13 +693,13 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 				setSpeed(speedJ);
 				m_client->getEventManager()->put(new SimpleTriggerEvent(MtEvent::PLAYER_JUMP));
 			}
-		} else if (in_liquid && !m_disable_jump && !control.sneak) {
+		} else if (in_liquid && !m_disable_jump && !correct_control.sneak) {
 			if (fast_climb)
 				speedV.Y = new_speed_fast;
 			else
 				speedV.Y = speed_walk;
 			swimming_vertical = true;
-		} else if (is_climbing && !m_disable_jump && !control.sneak) {
+		} else if (is_climbing && !m_disable_jump && !correct_control.sneak) {
 			if (fast_climb)
 				speedV.Y = new_speed_fast;
 			else
@@ -707,20 +711,20 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 	if (superspeed || (is_climbing && fast_climb) ||
 			((in_liquid || in_liquid_stable) && fast_climb))
 		speedH = speedH.normalize() * new_speed_fast;
-	else if (control.sneak && !free_move && !in_liquid && !in_liquid_stable && !g_settings->getBool("no_slow"))
+	else if (correct_control.sneak && !free_move && !in_liquid && !in_liquid_stable && !g_settings->getBool("no_slow"))
 		speedH = speedH.normalize() * movement_speed_crouch * physics_override.speed_crouch;
 	else
 		speedH = speedH.normalize() * speed_walk;
 
-	speedH *= control.movement_speed; /* Apply analog input */
+	speedH *= correct_control.movement_speed; /* Apply analog input */
 
 	// Acceleration increase
 	f32 incH = 0.0f; // Horizontal (X, Z)
 	f32 incV = 0.0f; // Vertical (Y)
 	if ((!touching_ground && !free_move && !is_climbing && !in_liquid) ||
-			(!free_move && m_can_jump && control.jump)) {
+			(!free_move && m_can_jump && correct_control.jump)) {
 		// Jumping and falling
-		if (superspeed || (fast_move && control.aux1))
+		if (superspeed || (fast_move && correct_control.aux1))
 			incH = movement_acceleration_fast * physics_override.acceleration_fast * BS * dtime;
 		else
 			incH = movement_acceleration_air * physics_override.acceleration_air * BS * dtime;
@@ -872,6 +876,7 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 		return;
 	}
 
+	PlayerControl &correct_control = g_settings->getBool("lua_control") ? lua_control : control;
 	PlayerSettings &player_settings = getPlayerSettings();
 
 	// Skip collision detection if noclip mode is used
@@ -981,7 +986,7 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 		If sneaking, keep in range from the last walked node and don't
 		fall off from it
 	*/
-	if (control.sneak && m_sneak_node_exists &&
+	if (correct_control.sneak && m_sneak_node_exists &&
 			!(fly_allowed && player_settings.free_move) && !in_liquid &&
 			physics_override.sneak) {
 		f32 maxd = 0.5f * BS + sneak_max;
@@ -1028,7 +1033,7 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 		Player is allowed to jump when this is true.
 	*/
 	bool touching_ground_was = touching_ground;
-	touching_ground = result.touching_ground || (g_settings->getBool("airjump") && !control.sneak);
+	touching_ground = result.touching_ground || (g_settings->getBool("airjump") && !correct_control.sneak);
 
 	//bool standing_on_unloaded = result.standing_on_unloaded;
 
@@ -1115,7 +1120,7 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 			If sneaking, the player's collision box can be in air, so
 			this has to be set explicitly
 		*/
-		if (sneak_node_found && control.sneak)
+		if (sneak_node_found && correct_control.sneak)
 			touching_ground = true;
 	}
 
@@ -1176,9 +1181,9 @@ void LocalPlayer::old_move(f32 dtime, Environment *env,
 
 	// Jump/Sneak key pressed while bouncing from a bouncy block
 	float jumpspeed = movement_speed_jump * physics_override.jump;
-	if (m_can_jump && (control.jump || control.sneak) && standing_node_bouncy > 0) {
+	if (m_can_jump && (correct_control.jump || correct_control.sneak) && standing_node_bouncy > 0) {
 		// controllable (>0) bouncy block
-		if (!control.jump) {
+		if (!correct_control.jump) {
 			// sneak pressed, but not jump
 			// Subjective testing indicates 1/3 bounce decrease works well.
 			jumpspeed = -m_speed.Y / 3.0f;
@@ -1221,6 +1226,8 @@ float LocalPlayer::getSlipFactor(Environment *env, const v3f &speedH)
 void LocalPlayer::handleAutojump(f32 dtime, Environment *env,
 	const collisionMoveResult &result, v3f initial_position, v3f initial_speed)
 {
+	
+	PlayerControl &correct_control = g_settings->getBool("lua_control") ? lua_control : control;
 	PlayerSettings &player_settings = getPlayerSettings();
 	if (!player_settings.autojump)
 		return;
@@ -1229,7 +1236,7 @@ void LocalPlayer::handleAutojump(f32 dtime, Environment *env,
 		return;
 
 	bool could_autojump =
-		m_can_jump && !control.jump && !control.sneak && control.isMoving();
+		m_can_jump && !correct_control.jump && !correct_control.sneak && correct_control.isMoving();
 
 	if (!could_autojump)
 		return;

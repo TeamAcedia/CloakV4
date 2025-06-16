@@ -2636,7 +2636,6 @@ void Game::updatePlayerControl(const CameraOrientation &cam)
 	}
 
 	client->setPlayerControl(control);
-
 	//tt.stop();
 }
 

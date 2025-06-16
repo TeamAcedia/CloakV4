@@ -570,6 +570,46 @@ int LuaLocalPlayer::l_set_wield_index(lua_State *L)
 	return 0;
 }
 
+// set_lua_control(self, control_table)
+int LuaLocalPlayer::l_set_lua_control(lua_State *L)
+{
+	LocalPlayer *player = getobject(L, 1);
+	PlayerControl &c = player->lua_control;
+
+	if (!lua_istable(L, 2)) {
+		return luaL_error(L, "Expected table as second argument");
+	}
+
+	// Helper to read a boolean field, defaulting to false if missing or nil
+	auto get_bool_field = [L](const char *name) -> bool {
+		lua_getfield(L, 2, name);
+		bool value = lua_isboolean(L, -1) ? lua_toboolean(L, -1) : false;
+		lua_pop(L, 1);
+		return value;
+	};
+
+	PlayerControl control(
+		get_bool_field("up"),
+		get_bool_field("down"),
+		get_bool_field("left"),
+		get_bool_field("right"),
+		get_bool_field("jump"),
+		get_bool_field("aux1"),
+		get_bool_field("sneak"),
+
+		false,  // zoom
+		get_bool_field("dig"),
+		get_bool_field("place"),
+		0.0f,   // pitch
+		0.0f,   // yaw
+		0.0f,   // joystick speed
+		0.0f    // joystick direction
+	);
+
+	c = control;
+
+	return 0;
+}
 
 const char LuaLocalPlayer::className[] = "LocalPlayer";
 const luaL_Reg LuaLocalPlayer::methods[] = {
@@ -594,6 +634,7 @@ const luaL_Reg LuaLocalPlayer::methods[] = {
 		luamethod(LuaLocalPlayer, get_last_look_vertical),
 		//
 		luamethod(LuaLocalPlayer, get_control),
+		luamethod(LuaLocalPlayer, set_lua_control),
 		luamethod(LuaLocalPlayer, get_breath),
 		luamethod(LuaLocalPlayer, get_pos),
 		luamethod(LuaLocalPlayer, get_movement_acceleration),

@@ -151,6 +151,7 @@ void set_default_settings()
 	settings->setDefault("xray_nodes", "default:stone,mcl_core:stone");
 	settings->setDefault("freecam", "false");
 	settings->setDefault("detached_camera", "false");
+	settings->setDefault("lua_control", "false");
 	settings->setDefault("enable_task_nodes", "false");
 	settings->setDefault("enable_task_tracers", "false");
 	settings->setDefault("enable_entity_esp", "false");
