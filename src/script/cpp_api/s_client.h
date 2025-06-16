@@ -43,6 +43,9 @@ public:
 
 	bool on_inventory_open(Inventory *inventory);
 
+	bool on_recieve_physics_override(float speed, float jump, float gravity, bool sneak, bool sneak_glitch, bool new_move, float speed_climb, float speed_crouch, float liquid_fluidity, 
+		float liquid_fluidity_smooth, float liquid_sink, float acceleration_default, float acceleration_air);
+
 	bool on_block_data(v3s16 pos);
 	bool on_player_join(std::string name);
 	bool on_player_leave(std::string name);

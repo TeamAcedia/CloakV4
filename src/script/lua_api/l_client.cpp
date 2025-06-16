@@ -928,15 +928,6 @@ int ModApiClient::l_clear_task_tracer(lua_State *L)
 	return 0;
 }
 
-//take_screenshot()
-int ModApiClient::l_take_screenshot(lua_State *L)
-{
-  getClient(L)->makeScreenshot();
-  lua_pushboolean(L, true);
-  return 1;
-
-
-}
 
 void ModApiClient::Initialize(lua_State *L, int top)
 {
@@ -987,5 +978,4 @@ void ModApiClient::Initialize(lua_State *L, int top)
 	API_FCT(clear_task_node);
 	API_FCT(add_task_tracer);
 	API_FCT(clear_task_tracer);
-	API_FCT(take_screenshot);
 }

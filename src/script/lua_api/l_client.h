@@ -141,8 +141,6 @@ private:
 
 >>>>>>> c6d777ef1 (WIP implementation of various csm api functions and stuff)
 
-	//take_screenshot()
-     static int l_take_screenshot(lua_State *L);
 
 public:
 	static void Initialize(lua_State *L, int top);

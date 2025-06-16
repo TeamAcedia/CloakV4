@@ -2582,6 +2582,51 @@ void push_collision_move_result(lua_State *L, const collisionMoveResult &res)
 	/**/
 }
 
+void push_physics_override(lua_State *L, float speed, float jump, float gravity, bool sneak, bool sneak_glitch, bool new_move, float speed_climb, float speed_crouch, float liquid_fluiditiy, 
+								float liquid_fluidity_smooth, float liquid_sink, float acceleration_default, float acceleration_air)
+
+{
+	lua_createtable(L, 0, 13);
+
+	lua_pushnumber(L, speed);
+	lua_setfield(L, -2, "speed");
+
+	lua_pushnumber(L, jump);
+	lua_setfield(L, -2, "jump");
+
+	lua_pushnumber(L, gravity);
+	lua_setfield(L, -2, "gravity");
+
+	lua_pushboolean(L, sneak);
+	lua_setfield(L, -2, "sneak");
+
+	lua_pushboolean(L, sneak_glitch);
+	lua_setfield(L, -2, "sneak_glitch");
+
+	lua_pushboolean(L, new_move);
+	lua_setfield(L, -2, "new_move");
+
+	lua_pushnumber(L, speed_climb);
+	lua_setfield(L, -2, "speed_climb");
+
+	lua_pushnumber(L, speed_crouch);
+	lua_setfield(L, -2, "speed_crouch");
+
+	lua_pushnumber(L, liquid_fluiditiy);
+	lua_setfield(L, -2, "liquid_fluiditiy");
+
+	lua_pushnumber(L, liquid_fluidity_smooth);
+	lua_setfield(L, -2, "liquid_fluidity_smooth");
+
+	lua_pushnumber(L, liquid_sink);
+	lua_setfield(L, -2, "liquid_sink");
+
+	lua_pushnumber(L, acceleration_default);
+	lua_setfield(L, -2, "acceleration_default");
+
+	lua_pushnumber(L, acceleration_air);
+	lua_setfield(L, -2, "acceleration_air");
+}
 
 void push_mod_spec(lua_State *L, const ModSpec &spec, bool include_unsatisfied)
 {

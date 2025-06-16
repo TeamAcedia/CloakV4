@@ -173,4 +173,6 @@ bool read_hud_change(lua_State *L, HudElementStat &stat, HudElement *elem, void 
 
 void push_collision_move_result(lua_State *L, const collisionMoveResult &res);
 
+void push_physics_override(lua_State *L, float speed, float jump, float gravity, bool sneak, bool sneak_glitch, bool new_move, float speed_climb, float speed_crouch, float liquid_fluiditiy, float liquid_fluidity_smooth, float liquid_sink, float acceleration_default, float acceleration_air);
+
 void push_mod_spec(lua_State *L, const ModSpec &spec, bool include_unsatisfied);

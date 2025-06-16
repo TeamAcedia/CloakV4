@@ -214,6 +214,23 @@ bool ScriptApiClient::on_item_use(const ItemStack &item, const PointedThing &poi
 	return readParam<bool>(L, -1);
 }
 
+bool ScriptApiClient::on_recieve_physics_override(float speed, float jump, float gravity, bool sneak, bool sneak_glitch, bool new_move, float speed_climb, float speed_crouch, float liquid_fluidity, 
+													  float liquid_fluidity_smooth, float liquid_sink, float acceleration_default, float acceleration_air)
+{
+	SCRIPTAPI_PRECHECKHEADER
+
+	// Get core.registered_on_recieve_physics_override
+	lua_getglobal(L, "core");
+	lua_getfield(L, -1, "registered_on_recieve_physics_override");
+
+	// Push data
+	push_physics_override(L, speed, jump, gravity, sneak, sneak_glitch, new_move, speed_climb, speed_crouch, liquid_fluidity, liquid_fluidity_smooth, liquid_sink, acceleration_default, acceleration_air);
+
+	// Call functions
+	runCallbacks(1, RUN_CALLBACKS_MODE_OR);
+	return readParam<bool>(L, -1);
+}
+
 bool ScriptApiClient::on_inventory_open(Inventory *inventory)
 {
 	SCRIPTAPI_PRECHECKHEADER

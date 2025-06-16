@@ -45,6 +45,7 @@ private:
 	static int l_swimming_vertical(lua_State *L);
 
 	static int l_get_physics_override(lua_State *L);
+	static int l_set_physics_override(lua_State *L);
 
 	static int l_get_override_pos(lua_State *L);
 
