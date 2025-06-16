@@ -246,8 +246,8 @@ void DrawTaskBlocksAndTracers::run(PipelineContext &context)
 		aabb3f outer_box(pos - v3f(BS / 2.f), pos + v3f(BS / 2.f));
 		driver->draw3DBox(outer_box, node.color);
 
-		v3f min_pos = pos - v3f(BS / 2.f, BS / 2.f, BS / 2.f); // smaller footprint
-		v3f max_pos = pos + v3f(BS / 2.f, -BS / 2.f + BS * anim, BS / 2.f); // grows upward
+		v3f min_pos = pos - v3f(BS / 2.f, BS / 2.f, BS / 2.f);
+		v3f max_pos = pos + v3f(BS / 2.f, -BS / 2.f + BS * anim, BS / 2.f);
 
 		driver->draw3DBox(aabb3f(min_pos, max_pos), node.color);
 	}
