@@ -88,7 +88,7 @@ public:
 
 	PointerType getLastPointerType() { return last_pointer_type; }
 
-private:
+//private:
 	void listenForKey(KeyPress keyCode, GameKeyType action)
 	{
 		if (keyCode)
@@ -155,6 +155,8 @@ public:
 	virtual bool wasKeyDown(GameKeyType k) = 0;
 	virtual bool wasKeyPressed(GameKeyType k) = 0;
 	virtual bool wasKeyReleased(GameKeyType k) = 0;
+	virtual void setKeypress(const KeyPress &keyCode) = 0;
+	virtual void unsetKeypress(const KeyPress &keyCode) = 0;
 	virtual bool cancelPressed() = 0;
 
 	virtual float getJoystickSpeed() = 0;
@@ -218,6 +220,16 @@ public:
 		return m_receiver->WasKeyReleased(k) || joystick.wasKeyReleased(k);
 	}
 
+	virtual void setKeypress(const KeyPress &keyCode)
+	{
+		m_receiver->keyIsDown.set(keyCode);
+		m_receiver->keyWasDown.set(keyCode);
+	}
+	virtual void unsetKeypress(const KeyPress &keyCode)
+	{
+		m_receiver->keyIsDown.reset(keyCode);
+	}
+
 	virtual float getJoystickSpeed();
 
 	virtual float getJoystickDirection();
@@ -277,6 +289,15 @@ public:
 	}
 
 	virtual bool isKeyDown(GameKeyType k) { return keydown[k]; }
+
+	virtual void setKeypress(const KeyPress &keyCode)
+	{
+		keydown.set(keyCode);
+	}
+	virtual void unsetKeypress(const KeyPress &keyCode)
+	{
+		keydown.reset(keyCode);
+	}
 	virtual bool wasKeyDown(GameKeyType k) { return false; }
 	virtual bool wasKeyPressed(GameKeyType k) { return false; }
 	virtual bool wasKeyReleased(GameKeyType k) { return false; }

@@ -169,6 +169,10 @@ public:
 	}
 	void initialize(const std::string &data) override;
 
+	inline const v3f getAcceleration() const { return m_acceleration; }
+
+	inline u16 getHp() const { return m_hp; }
+
 	void processInitData(const std::string &data);
 
 	bool getCollisionBox(aabb3f *toset) const override;

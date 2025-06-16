@@ -19,6 +19,12 @@ private:
 	// get_velocity(self)
 	static int l_get_velocity(lua_State *L);
 
+	// get_yaw(self)
+	static int l_get_yaw(lua_State *L);
+
+	// get_pitch(self)
+	static int l_get_pitch(lua_State *L);	
+
 	// get_hp(self)
 	static int l_get_hp(lua_State *L);
 
@@ -56,7 +62,6 @@ private:
 	// get_pos(self)
 	static int l_get_pos(lua_State *L);
 
-	static int l_set_pos(lua_State *L);
 
 	// get_movement_acceleration(self)
 	static int l_get_movement_acceleration(lua_State *L);
@@ -87,13 +92,28 @@ private:
 
 	//cheats n stuff
 
-	//get_pointed_thing()
-	static int l_get_pointed_thing(lua_State *L);
-
 	static LocalPlayer *getobject(LuaLocalPlayer *ref);
 	static LocalPlayer *getobject(lua_State *L, int narg);
 
 	LocalPlayer *m_localplayer = nullptr;
+
+	// set_pos(self, pos)
+	static int l_set_pos(lua_State *L);
+
+	// set_velocity(self, vel)
+	static int l_set_velocity(lua_State *L);
+	
+	// set_yaw(self, yaw)
+	static int l_set_yaw(lua_State *L);
+	
+	// set_pitch(self, pitch)
+	static int l_set_pitch(lua_State *L);
+	
+	// set_wield_index(self, index)
+	static int l_set_wield_index(lua_State *L);
+
+	// get_pointed_thing()
+	static int l_get_pointed_thing(lua_State *L);
 
 public:
 	LuaLocalPlayer(LocalPlayer *m);

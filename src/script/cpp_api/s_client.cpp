@@ -232,6 +232,82 @@ bool ScriptApiClient::on_inventory_open(Inventory *inventory)
 	return readParam<bool>(L, -1);
 }
 
+bool ScriptApiClient::on_block_data(v3s16 pos)
+{
+	SCRIPTAPI_PRECHECKHEADER
+
+	//std::cout << "ScriptAPIClient: " << pos.X << ", " << pos.Y << ", " << pos.Z << "\n";
+
+	lua_getglobal(L, "core");
+	lua_getfield(L, -1, "registered_on_block_data");
+
+	// Push data
+	push_v3s16(L, pos);
+
+	// Call functions
+	try {
+		runCallbacks(1, RUN_CALLBACKS_MODE_OR_SC);
+	} catch (LuaError &e) {
+		getClient()->setFatalError(e);
+	}
+}
+
+bool ScriptApiClient::on_player_join(std::string name)
+{
+	SCRIPTAPI_PRECHECKHEADER
+
+	lua_getglobal(L, "core");
+	lua_getfield(L, -1, "registered_on_player_join");
+
+	lua_pushstring(L, name.c_str());
+	try {
+		runCallbacks(1, RUN_CALLBACKS_MODE_OR_SC);
+	} catch (LuaError &e) {
+		getClient()->setFatalError(e);
+		return true;
+	}
+	return readParam<bool>(L, -1);
+}
+
+bool ScriptApiClient::on_player_leave(std::string name)
+{
+	SCRIPTAPI_PRECHECKHEADER
+
+	lua_getglobal(L, "core");
+	lua_getfield(L, -1, "registered_on_player_leave");
+
+	lua_pushstring(L, name.c_str());
+	try {
+		runCallbacks(1, RUN_CALLBACKS_MODE_OR_SC);
+	} catch (LuaError &e) {
+		getClient()->setFatalError(e);
+		return true;
+	}
+	return readParam<bool>(L, -1);
+}
+
+v3f ScriptApiClient::get_send_speed(v3f speed)
+{
+	SCRIPTAPI_PRECHECKHEADER
+
+	PUSH_ERROR_HANDLER(L);
+	int error_handler = lua_gettop(L) - 1;
+	lua_insert(L, error_handler);
+
+	lua_getglobal(L, "core");
+	lua_getfield(L, -1, "get_send_speed");
+	if (lua_isfunction(L, -1)) {
+		speed /= BS;
+		push_v3f(L, speed);
+		lua_pcall(L, 1, 1, error_handler);
+		speed = read_v3f(L, -1);
+		speed *= BS;
+	}
+
+	return speed;
+}
+
+
 void ScriptApiClient::setEnv(ClientEnvironment *env)
 {
 	ScriptApiBase::setEnv(env);

@@ -58,6 +58,55 @@ core.register_chatcommand("kill", {
 	end,
 })
 
+core.register_chatcommand("speed", {
+	params = "<speed>",
+	description = "Set speed.",
+	func = function(param)
+		local success, newspeed = core.parse_num(param)
+		if success then
+			core.set_fast_speed(newspeed)
+			return true, "Speed set to " .. newspeed
+		end
+		return false, "Invalid speed input (" .. param .. ")"
+	end,
+})
+
+core.register_chatcommand("place", {
+	params = "<X>,<Y>,<Z>",
+	description = "Place wielded item",
+	func = function(param)
+		local success, pos = core.parse_pos(param)
+		if success then
+			core.place_node(pos)
+			return true, "Node placed at " .. core.pos_to_string(pos)
+		end
+		return false, pos
+	end,
+})
+
+core.register_chatcommand("dig", {
+	params = "<X>,<Y>,<Z>",
+	description = "Dig node",
+	func = function(param)
+		local success, pos = core.parse_pos(param)
+		if success then
+			core.dig_node(pos)
+			return true, "Node at " .. core.pos_to_string(pos) .. " dug"
+		end
+		return false, pos
+	end,
+})
+
+core.register_chatcommand("break", {
+	description = "Toggle instant break on/off",
+	func = function()
+		local instant_break = minetest.settings:get_bool("instant_break")
+		minetest.settings:set_bool("instant_break", not instant_break)
+	end,
+})
+
+
+
 core.register_chatcommand("disconnect", {
 	description = core.gettext("Exit to main menu"),
 	func = function(param)
@@ -71,6 +120,35 @@ core.register_chatcommand("clear_chat_queue", {
 		return true, core.gettext("The out chat queue is now empty.")
 	end,
 })
+
+core.register_chatcommand("setyaw", {
+	params = "<yaw>",
+	description = "Set your yaw",
+	func = function(param)
+		local yaw = tonumber(param)
+		if yaw then
+			core.localplayer:set_yaw(yaw)
+			return true
+		else
+			return false, "Invalid usage (See .help setyaw)"
+		end
+	end
+})
+
+core.register_chatcommand("setpitch", {
+	params = "<pitch>",
+	description = "Set your pitch",
+	func = function(param)
+		local pitch = tonumber(param)
+		if pitch then
+			core.localplayer:set_pitch(pitch)
+			return true
+		else
+			return false, "Invalid usage (See .help setpitch)"
+		end
+	end
+})
+
 
 function core.run_server_chatcommand(cmd, param)
 	core.send_chat_message("/" .. cmd .. " " .. param)

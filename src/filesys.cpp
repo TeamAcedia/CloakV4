@@ -959,7 +959,69 @@ bool safeWriteToFile(const std::string &path, std::string_view content)
 
 	return true;
 }
+bool safeAppendToFile(const std::string &path, std::string_view content)
+{
+	std::string tmp_file = path + ".~mt";
 
+	// Write existing data and the new content to a tmp file
+	bool tmp_success = false;
+	std::string existingData;
+
+	// Read the existing content
+	std::ifstream ifs(path, std::ios::binary);
+	if (ifs.is_open()) {
+		existingData = std::string((std::istreambuf_iterator<char>(ifs)), std::istreambuf_iterator<char>());
+	}
+	ifs.close();
+
+#ifdef _WIN32
+	HANDLE tmp_handle = CreateFile(
+		tmp_file.c_str(), GENERIC_WRITE, 0, nullptr, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	if (tmp_handle == INVALID_HANDLE_VALUE) {
+		return false;
+	}
+	DWORD bytes_written;
+	tmp_success = (WriteFile(tmp_handle, existingData.data(), existingData.size(), &bytes_written, nullptr) &&
+					WriteFile(tmp_handle, content.data(), content.size(), &bytes_written, nullptr) &&
+					FlushFileBuffers(tmp_handle));
+	CloseHandle(tmp_handle);
+#else
+	std::ofstream os(tmp_file.c_str(), std::ios::binary);
+	if (!os.good()) {
+		return false;
+	}
+	os << existingData << content;
+	os.flush();
+	os.close();
+	tmp_success = !os.fail();
+#endif
+
+	if (!tmp_success) {
+		remove(tmp_file.c_str());
+		return false;
+	}
+
+	bool rename_success = false;
+
+#ifdef _WIN32
+	for (int attempt = 0; attempt < 5; attempt++) {
+		rename_success = MoveFileEx(tmp_file.c_str(), path.c_str(),
+				MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH);
+		if (rename_success)
+			break;
+		sleep_ms(1);
+	}
+#else
+	rename_success = rename(tmp_file.c_str(), path.c_str()) == 0;
+#endif
+	if (!rename_success) {
+		warningstream << "Failed to append to file: " << path.c_str() << std::endl;
+		remove(tmp_file.c_str());
+		return false;
+	}
+
+	return true;
+}
 #if CHECK_CLIENT_BUILD()
 bool extractZipFile(io::IFileSystem *fs, const char *filename, const std::string &destination)
 {

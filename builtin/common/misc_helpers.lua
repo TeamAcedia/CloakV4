@@ -872,3 +872,16 @@ function core.parse_coordinates(x, y, z, relative_to)
 	local rz = core.parse_relative_number(z, relative_to.z)
 	return rx and ry and rz and vector.new(rx, ry, rz)
 end
+
+function core.get_pointed_thing_position(pointed_thing, above)
+	if pointed_thing.type == "node" then
+		if above then
+			-- The position where a node would be placed
+			return pointed_thing.above
+		end
+		-- The position where a node would be dug
+		return pointed_thing.under
+	elseif pointed_thing.type == "object" then
+		return pointed_thing.ref and pointed_thing.ref:get_pos()
+	end
+end

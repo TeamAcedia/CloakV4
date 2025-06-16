@@ -2,6 +2,8 @@
 // SPDX-License-Identifier: LGPL-2.1-or-later
 // Copyright (C) 2010-2013 celeron55, Perttu Ahola <celeron55@gmail.com>
 
+#include <iostream>
+
 #include "localplayer.h"
 #include <cmath>
 #include "mtevent.h"
@@ -12,6 +14,7 @@
 #include "map.h"
 #include "client.h"
 #include "content_cao.h"
+#include "client/game.h"
 
 /*
 	PlayerSettings
@@ -582,6 +585,8 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 	const f32 speed_walk = movement_speed_walk * physics_override.speed_walk;
 	const f32 speed_fast = movement_speed_fast * physics_override.speed_fast;
 
+	f32 new_speed_fast = g_settings->getFloat("movement_speed_fast") * BS;
+
 	if (always_fly_fast && free_move && fast_move)
 		superspeed = true;
 
@@ -596,7 +601,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 			if (free_move) {
 				// In free movement mode, aux1 descends
 				if (fast_move)
-					speedV.Y = -speed_fast;
+					speedV.Y = -new_speed_fast;
 				else
 					speedV.Y = -speed_walk;
 			} else if ((in_liquid || in_liquid_stable) && !m_disable_descend) {
@@ -628,18 +633,18 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 			if (free_move) {
 				// In free movement mode, sneak descends
 				if (fast_move && (control.aux1 || always_fly_fast))
-					speedV.Y = -speed_fast;
+					speedV.Y = -new_speed_fast;
 				else
 					speedV.Y = -speed_walk;
 			} else if ((in_liquid || in_liquid_stable) && !m_disable_descend) {
 				if (fast_climb)
-					speedV.Y = -speed_fast;
+					speedV.Y = -new_speed_fast;
 				else
 					speedV.Y = -speed_walk;
 				swimming_vertical = true;
 			} else if (is_climbing && !m_disable_descend) {
 				if (fast_climb)
-					speedV.Y = -speed_fast;
+					speedV.Y = -new_speed_fast;
 				else
 					speedV.Y = -movement_speed_climb * physics_override.speed_climb;
 			}
@@ -662,12 +667,12 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 				// Don't fly up if sneak key is pressed
 				if (player_settings.aux1_descends || always_fly_fast) {
 					if (fast_move)
-						speedV.Y = speed_fast;
+						speedV.Y = new_speed_fast;
 					else
 						speedV.Y = speed_walk;
 				} else {
 					if (fast_move && control.aux1)
-						speedV.Y = speed_fast;
+						speedV.Y = new_speed_fast;
 					else
 						speedV.Y = speed_walk;
 				}
@@ -686,13 +691,13 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 			}
 		} else if (in_liquid && !m_disable_jump && !control.sneak) {
 			if (fast_climb)
-				speedV.Y = speed_fast;
+				speedV.Y = new_speed_fast;
 			else
 				speedV.Y = speed_walk;
 			swimming_vertical = true;
 		} else if (is_climbing && !m_disable_jump && !control.sneak) {
 			if (fast_climb)
-				speedV.Y = speed_fast;
+				speedV.Y = new_speed_fast;
 			else
 				speedV.Y = movement_speed_climb * physics_override.speed_climb;
 		}
@@ -701,7 +706,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 	// The speed of the player (Y is ignored)
 	if (superspeed || (is_climbing && fast_climb) ||
 			((in_liquid || in_liquid_stable) && fast_climb))
-		speedH = speedH.normalize() * speed_fast;
+		speedH = speedH.normalize() * new_speed_fast;
 	else if (control.sneak && !free_move && !in_liquid && !in_liquid_stable && !g_settings->getBool("no_slow"))
 		speedH = speedH.normalize() * movement_speed_crouch * physics_override.speed_crouch;
 	else
@@ -774,6 +779,16 @@ v3s16 LocalPlayer::getFootstepNodePos()
 v3s16 LocalPlayer::getLightPosition() const
 {
 	return floatToInt(m_position + v3f(0.0f, BS * 1.5f, 0.0f), BS);
+}
+
+v3f LocalPlayer::getSendSpeed()
+{
+	v3f speed = getLegitSpeed();
+
+	if (m_client->modsLoaded())
+		speed = m_client->getScript()->get_send_speed(speed);
+
+	return speed;
 }
 
 v3f LocalPlayer::getEyeOffset() const

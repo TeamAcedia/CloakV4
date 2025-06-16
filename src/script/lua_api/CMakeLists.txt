@@ -43,4 +43,5 @@ set(client_SCRIPT_LUA_API_SRCS
 	${CMAKE_CURRENT_SOURCE_DIR}/l_pause_menu.cpp
 	${CMAKE_CURRENT_SOURCE_DIR}/l_storage.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/l_inventoryaction.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/l_clientobject.cpp
 	PARENT_SCOPE)

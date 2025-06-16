@@ -610,7 +610,14 @@ public:
 	const PointedThing &getPointedOld() const { return runData.pointed_old; }
 	GameRunData& getRunData() { return runData; }
 	Camera* getCamera() const { return camera; }
+	InputHandler* getInput() { return input; }
+	
 	void processItemSelection(u16 *new_playeritem);
+
+	void dropSelectedItem(bool single_item = false);
+
+	CameraOrientation cam_view_target = {}; // added by a crazy otter that can speak
+	CameraOrientation cam_view  = {};       // added by a crazy otter that can speak
 
 
 protected:
@@ -648,7 +655,6 @@ protected:
 	void processKeyInput();
 	bool shouldShowTouchControls();
 
-	void dropSelectedItem(bool single_item = false);
 	void openConsole(float scale, const wchar_t *line=NULL);
 	void toggleFreeMove();
 	void toggleFreeMoveAlt();
