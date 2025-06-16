@@ -46,3 +46,8 @@ function core.switch_to_item(item)
 		return false
 	end
 end
+
+function core.get_nearby_objects(radius)
+
+	return core.get_objects_inside_radius(core.localplayer:get_pos(), radius)
+end
