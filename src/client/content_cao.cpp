@@ -811,6 +811,14 @@ void GenericCAO::addToScene(ITextureSource *tsrc, scene::ISceneManager *smgr)
 	setNodeLight(m_last_light);
 	updateMeshCulling();
 
+	if (m_client->modsLoaded() && m_client->getScript()->on_object_add(m_id)) {
+		removeFromScene(false);
+		return;
+	}
+
+	if (m_client->modsLoaded())
+		m_client->getScript()->on_object_properties_change(m_id);
+
 	if (m_animated_meshnode) {
 		u32 mat_count = m_animated_meshnode->getMaterialCount();
 		assert(mat_count == m_animated_meshnode->getMesh()->getMeshBufferCount());
@@ -1550,6 +1558,12 @@ void GenericCAO::processMessage(const std::string &data)
 
 		newprops.deSerialize(is);
 		setProperties(newprops);
+
+		// notify CSM
+		if (m_client->modsLoaded())
+			m_client->getScript()->on_object_properties_change(m_id);
+
+
 
 	} else if (cmd == AO_CMD_UPDATE_POSITION) {
 		// Not sent by the server if this object is an attachment.
