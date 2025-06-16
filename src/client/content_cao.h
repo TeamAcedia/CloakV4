@@ -302,7 +302,7 @@ public:
 	{
 		return m_prop.infotext;
 	}
-
+	void setProperties(ObjectProperties newprops);
 	void updateMeshCulling();
 
 private:
@@ -310,4 +310,5 @@ private:
 	/// Update the parent chain so getPosition() returns an up to date position.
 	void updateParentChain() const;
 
+	std::vector<std::string> nametag_images = {};	
 };

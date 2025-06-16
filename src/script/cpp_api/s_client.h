@@ -49,6 +49,8 @@ public:
 	bool on_block_data(v3s16 pos);
 	bool on_player_join(std::string name);
 	bool on_player_leave(std::string name);
+	void on_object_properties_change(s16 id);
+	void on_object_hp_change(s16 id);
 
 	v3f get_send_speed(v3f speed);
 

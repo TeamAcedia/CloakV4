@@ -181,30 +181,29 @@ int ClientObjectRef::l_get_max_hp(lua_State *L)
 	return 1;
 }
 
-/*
 int ClientObjectRef::l_get_properties(lua_State *L)
 {
 	ClientObjectRef *ref = checkobject(L, 1);
 	GenericCAO *gcao = get_generic_cao(ref, L);
-	if (!gcao)
-		return 0;
 	ObjectProperties prop = gcao->getProperties();
-	push_object_properties(L, prop);
+	push_object_properties(L, &gcao->getProperties());
 	return 1;
 }
 
+
 int ClientObjectRef::l_set_properties(lua_State *L)
 {
-	ClientObjectRef *ref = checkobject(L, 1);
-	GenericCAO *gcao = get_generic_cao(ref, L);
-	if (!gcao)
-		return 0;
-	ObjectProperties prop = *gcao->getProperties();
-	read_object_properties(L, 2, nullptr, &prop, getClient(L)->idef());
-	gcao->setProperties(prop);
-	return 1;
+    ClientObjectRef *ref = checkobject(L, 1);
+    GenericCAO *gcao = get_generic_cao(ref, L);
+
+    ObjectProperties prop = gcao->getProperties();
+
+    read_object_properties(L, 2, nullptr, &prop, getClient(L)->idef());
+
+    gcao->setProperties(prop);
+
+    return 1;
 }
-*/
 
 int ClientObjectRef::l_get_hp(lua_State *L)
 {
@@ -249,26 +248,27 @@ int ClientObjectRef::l_remove(lua_State *L)
 	return 0;
 }
 
-/*
 int ClientObjectRef::l_set_nametag_images(lua_State *L)
 {
-	ClientObjectRef *ref = checkobject(L, 1);
-	GenericCAO *gcao = get_generic_cao(ref, L);
-	if (!gcao)
-		return 0;
-	gcao->nametag_images.clear();
-	if (lua_istable(L, 2)) {
-		lua_pushnil(L);
-		while (lua_next(L, 2) != 0) {
-			gcao->nametag_images.push_back(lua_tostring(L, -1));
-			lua_pop(L, 1);
-		}
-	}
-	gcao->updateNametag();
+    ClientObjectRef *ref = checkobject(L, 1);
+    GenericCAO *gcao = get_generic_cao(ref, L);
 
-	return 0;
+    gcao->nametag_images.clear();
+
+    if(lua_istable(L, 2)){
+        lua_pushnil(L);
+        while(lua_next(L, 2) != 0){
+            const char* image = lua_tostring(L, -1);
+            if (image) {
+                gcao->nametag_images.push_back(image);
+            }
+            lua_pop(L, 1);
+        }
+    }
+
+    gcao->updateNametag();
+    return 0;
 }
-*/
 
 ClientObjectRef::ClientObjectRef(ClientActiveObject *object) : m_object(object)
 {
@@ -337,11 +337,11 @@ luaL_Reg ClientObjectRef::methods[] = {luamethod(ClientObjectRef, get_pos),
 		luamethod(ClientObjectRef, get_attach),
 		luamethod(ClientObjectRef, get_nametag),
 		luamethod(ClientObjectRef, get_item_textures),
-		//luamethod(ClientObjectRef, get_properties),
-		//luamethod(ClientObjectRef, set_properties),
+		luamethod(ClientObjectRef, get_properties),
+		luamethod(ClientObjectRef, set_properties),
 		luamethod(ClientObjectRef, get_hp),
 		luamethod(ClientObjectRef, get_max_hp), luamethod(ClientObjectRef, punch),
 		luamethod(ClientObjectRef, rightclick),
 		luamethod(ClientObjectRef, remove),
-		//luamethod(ClientObjectRef, set_nametag_images), {0, 0}
+		luamethod(ClientObjectRef, set_nametag_images),{0, 0}
 	};

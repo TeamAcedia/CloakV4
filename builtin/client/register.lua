@@ -20,3 +20,8 @@ core.registered_on_modchannel_message, core.register_on_modchannel_message = mak
 core.registered_on_modchannel_signal, core.register_on_modchannel_signal = make_registration()
 core.registered_on_inventory_open, core.register_on_inventory_open = make_registration()
 core.registered_on_recieve_physics_override, core.register_on_recieve_physics_override = make_registration()
+core.registered_on_object_properties_change, core.register_on_object_properties_change = make_registration()
+core.registered_on_object_hp_change, core.register_on_object_hp_change = make_registration()
+
+core.registered_nodes = {}
+core.registered_items = {}

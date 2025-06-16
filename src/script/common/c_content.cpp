@@ -323,14 +323,14 @@ void read_object_properties(lua_State *L, int index,
 		if (prop->hp_max == 0 && sao->getType() != ACTIVEOBJECT_TYPE_PLAYER)
 			throw LuaError("The hp_max property may not be 0 for entities!");
 
-		if (prop->hp_max < sao->getHP()) {
+		if (sao && prop->hp_max < sao->getHP()) {
 			PlayerHPChangeReason reason(PlayerHPChangeReason::SET_HP_MAX);
 			sao->setHP(prop->hp_max, reason);
 		}
 	}
 
 	if (getintfield(L, -1, "breath_max", prop->breath_max)) {
-		if (sao->getType() == ACTIVEOBJECT_TYPE_PLAYER) {
+		if (sao && sao->getType() == ACTIVEOBJECT_TYPE_PLAYER) {
 			PlayerSAO *player = (PlayerSAO *)sao;
 			if (prop->breath_max < player->getBreath())
 				player->setBreath(prop->breath_max);

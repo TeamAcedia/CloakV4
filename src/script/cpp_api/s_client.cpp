@@ -10,6 +10,7 @@
 #include "common/c_content.h"
 #include "lua_api/l_item.h"
 #include "itemdef.h"
+#include "lua_api/l_clientobject.h"
 #include "s_item.h"
 
 void ScriptApiClient::on_mods_loaded()
@@ -229,6 +230,30 @@ bool ScriptApiClient::on_recieve_physics_override(float speed, float jump, float
 	// Call functions
 	runCallbacks(1, RUN_CALLBACKS_MODE_OR);
 	return readParam<bool>(L, -1);
+}
+
+void ScriptApiClient::on_object_properties_change(s16 id)
+{
+	SCRIPTAPI_PRECHECKHEADER
+	// Get core.on_object_properties_change
+	lua_getglobal(L, "core");
+	lua_getfield(L, -1, "registered_on_object_properties_change");
+	// Push data
+	ClientObjectRef::create(L, id);
+	// Call functions
+	runCallbacks(1, RUN_CALLBACKS_MODE_FIRST);
+}
+
+void ScriptApiClient::on_object_hp_change(s16 id)
+{
+	SCRIPTAPI_PRECHECKHEADER
+	// Get core.on_object_hp_change
+	lua_getglobal(L, "core");
+	lua_getfield(L, -1, "registered_on_object_hp_change");
+	// Push data
+	ClientObjectRef::create(L, id);
+	// Call functions
+	runCallbacks(1, RUN_CALLBACKS_MODE_FIRST);
 }
 
 bool ScriptApiClient::on_inventory_open(Inventory *inventory)
