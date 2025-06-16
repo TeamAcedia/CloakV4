@@ -128,7 +128,7 @@ core.register_chatcommand("setyaw", {
 		local yaw = tonumber(param)
 		if yaw then
 			core.localplayer:set_yaw(yaw)
-			return true
+			return true, "Yaw set to " .. yaw
 		else
 			return false, "Invalid usage (See .help setyaw)"
 		end
@@ -142,7 +142,7 @@ core.register_chatcommand("setpitch", {
 		local pitch = tonumber(param)
 		if pitch then
 			core.localplayer:set_pitch(pitch)
-			return true
+			return true, "Pitch set to " .. pitch
 		else
 			return false, "Invalid usage (See .help setpitch)"
 		end

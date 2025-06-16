@@ -991,10 +991,8 @@ void GenericCAO::step(float dtime, ClientEnvironment *env)
 		LocalPlayer *player = m_env->getLocalPlayer();
 		m_position = player->getLegitPosition();
 		pos_translator.val_current = m_position;
-		if (!g_settings->getBool("freecam")) {
-			m_rotation.Y = wrapDegrees_0_360(player->getYaw());
-			rot_translator.val_current = m_rotation;
-		}
+		m_rotation.Y = wrapDegrees_0_360(player->getLegitYaw());
+		rot_translator.val_current = m_rotation;
 		if (m_is_visible) {
 			LocalPlayerAnimation old_anim = player->last_animation;
 			float old_anim_speed = player->last_animation_speed;

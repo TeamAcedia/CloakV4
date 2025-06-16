@@ -15,9 +15,8 @@ class EnrichedString;
 class GUIChatConsole;
 struct MapDrawControl;
 struct PointedThing;
-class RunStats;
-class CameraOrientation;
-
+struct RunStats;
+struct CameraOrientation;
 /*
  * This object intend to contain the core UI elements
  * It includes:
