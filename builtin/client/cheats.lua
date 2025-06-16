@@ -61,7 +61,11 @@ end
 
 -- task node and tracer tests
 core.after(0.5, function()
-	core.add_task_node({x=0, y=0, z=0}, {r=255, g=0, b=0})
-	core.add_task_node({x=10, y=0, z=0}, {r=0, g=255, b=0})
-	core.add_task_tracer({x=0, y=0, z=0}, {x=10, y=0, z=0}, {r=255, g=0, b=0})
+	core.add_task_node({x=0, y=0, z=50}, {r=196, g=164, b=132})
+	core.add_task_node({x=-1, y=0, z=50}, {r=196, g=164, b=132})
+	core.add_task_node({x=1, y=0, z=50}, {r=196, g=164, b=132})
+	core.add_task_node({x=0, y=1, z=50}, {r=196, g=164, b=132})
+	core.add_task_node({x=0, y=2, z=50}, {r=196, g=164, b=132})
+	core.add_task_tracer({x=0, y=2, z=50}, {x=0, y=6, z=50}, {r=255, g=255, b=255})
+	core.add_task_tracer({x=0, y=6, z=50}, {x=1, y=7, z=50}, {r=255, g=255, b=255})	
 end)

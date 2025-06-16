@@ -167,6 +167,10 @@ private:
 	// nodenames: eg. {"ignore", "group:tree"} or "default:dirt"
 	static int l_find_nodes_in_area_under_air(lua_State *L);
 
+	// find_nodes_near_under_air(pos, radius, nodenames, search_center) -> list of positions
+	// nodenames: eg. {"ignore", "group:tree"} or "default:dirt"
+	static int l_find_nodes_near_under_air_except(lua_State *L);
+
 	// find_nodes_near(pos, radius, nodenames, search_center) -> list of positions
 	// nodenames: eg. {"ignore", "group:tree"} or "default:dirt"
 	static int l_find_nodes_near(lua_State *L);
