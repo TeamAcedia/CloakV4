@@ -298,6 +298,8 @@ int ModApiClient::l_get_server_info(lua_State *L)
 	lua_setfield(L, -2, "port");
 	lua_pushinteger(L, client->getProtoVersion());
 	lua_setfield(L, -2, "protocol_version");
+	lua_pushinteger(L, client->getMapSeed());
+	lua_setfield(L, -2, "seed");
 	return 1;
 }
 
@@ -406,6 +408,7 @@ int ModApiClient::l_dig_node(lua_State *L)
 	pointed.node_undersurface = pos;
 	client->interact(INTERACT_START_DIGGING, pointed);
 	client->interact(INTERACT_DIGGING_COMPLETED, pointed);
+	client->removeNode(pos);
 	return 0;
 }
 
