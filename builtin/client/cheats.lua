@@ -23,6 +23,7 @@ core.cheats = {
 		["Reach"] = "reach",
 		["AutoRespawn"] = "autorespawn",
 		["LuaControl"] = "lua_control",
+		["NoForceRotate"] = "no_force_rotate",
     },
 	["Movement"] = {
 		["Freecam"] = "freecam",

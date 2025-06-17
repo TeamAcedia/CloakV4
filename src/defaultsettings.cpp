@@ -193,6 +193,7 @@ void set_default_settings()
 	settings->setDefault("antislip", "false");
 	settings->setDefault("airjump", "false");
 	settings->setDefault("autotool", "false");
+	settings->setDefault("no_force_rotate", "false");
 
 	// Keymap
 #if USE_SDL2
