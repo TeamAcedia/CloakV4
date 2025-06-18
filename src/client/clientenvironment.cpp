@@ -77,8 +77,8 @@ void ClientEnvironment::step(float dtime)
 	stepTimeOfDay(dtime);
 
 	// Get some settings
-	bool fly_allowed = m_client->checkLocalPrivilege("fly") || g_settings->getBool("freecam");
-	bool free_move = (fly_allowed && g_settings->getBool("free_move")) || g_settings->getBool("freecam");
+	bool fly_allowed = m_client->checkLocalPrivilege("fly");
+	bool free_move = (fly_allowed && g_settings->getBool("free_move"));
 
 	// Get local player
 	LocalPlayer *lplayer = getLocalPlayer();
@@ -91,7 +91,7 @@ void ClientEnvironment::step(float dtime)
 	*/
 	bool is_climbing = lplayer->is_climbing;
 
-	f32 player_speed = lplayer->getSpeed().getLength();
+	f32 player_speed = lplayer->getLegitSpeed().getLength();
 
 	/*
 		Maximum position increment
@@ -125,10 +125,13 @@ void ClientEnvironment::step(float dtime)
 
 		// Control local player
 		lplayer->applyControl(dtime_part, this);
+		if (g_settings->getBool("freecam")){
+			lplayer->applyFreecamControl(dtime_part, this);
+		}
 
 		// Apply physics
 		lplayer->gravity = 0;
-		if (!free_move && !g_settings->getBool("freecam")) {
+		if (!free_move) {
 			// Gravity
 			if (!is_climbing && !lplayer->in_liquid)
 				// HACK the factor 2 for gravity is arbitrary and should be removed eventually
@@ -143,7 +146,7 @@ void ClientEnvironment::step(float dtime)
 
 			// Movement resistance
 			if (lplayer->move_resistance > 0 && !g_settings->getBool("no_slow")) {
-				v3f speed = lplayer->getSpeed();
+				v3f speed = lplayer->getLegitSpeed();
 
 				// How much the node's move_resistance blocks movement, ranges
 				// between 0 and 1. Should match the scale at which liquid_viscosity
@@ -170,7 +173,7 @@ void ClientEnvironment::step(float dtime)
 				v3f d = d_wanted.normalize() * (dl * dtime_part * 100.0f);
 				speed += d;
 
-				lplayer->setSpeed(speed);
+				lplayer->setLegitSpeed(speed);
 			}
 		}
 
@@ -178,8 +181,10 @@ void ClientEnvironment::step(float dtime)
 			Move the local player.
 			This also does collision detection.
 		*/
-
 		lplayer->move(dtime_part, this, &player_collisions);
+		if (g_settings->getBool("freecam")){
+			lplayer->moveFreecam(dtime_part, this, &player_collisions);
+		}
 	}
 
 	bool player_immortal = false;

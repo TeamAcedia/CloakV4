@@ -119,25 +119,90 @@ function core.register_cheat_description(cheatname, category, func, description)
 	core.get_description()
 end
 -----------------------------------------------------------TESTS, PRESET VALUES, ETC-----------------------------------------------------------
+local pos_y = 0
+local corners = {
+	{x=0, y=pos_y, z=50},
+	{x=2, y=pos_y, z=50},
+	{x=2, y=pos_y, z=52},
+	{x=0, y=pos_y, z=52}
+}
+
+local function add_tracers()
+	for i = 1, #corners do
+		local a = corners[i]
+		local b = corners[i % #corners + 1]
+		core.add_task_tracer(a, b, {r=0, g=0, b=255})
+	end
+end
+
+local function update_corner_colors(current_index)
+	for i = 1, #corners do
+		local pos = corners[i]
+		core.clear_task_node(pos)
+		local color = (i == current_index) and {r=0, g=255, b=0} or {r=255, g=0, b=0}
+		core.add_task_node(pos, color)
+	end
+end
+
+local function round2(num, numDecimalPlaces)
+    return tonumber(string.format("%." .. (numDecimalPlaces or 0) .. "f", num))
+end
+
+local function aim(tpos)
+    local ppos=minetest.localplayer:get_pos()
+    local dir=vector.direction(ppos,tpos)
+    local yyaw=0;
+    if dir.x < 0 then
+        yyaw = math.atan2(-dir.x, dir.z) + (math.pi * 2)
+    else
+        yyaw = math.atan2(-dir.x, dir.z)
+    end
+    yyaw = round2(math.deg(yyaw),2)
+    return yyaw
+end
+
+local function walk_to(pos, next_step_callback)
+	local interval = 0.01
+	local tolerance = 0.5
+	local function step()
+		local ppos = core.localplayer:get_pos()
+		local dx = pos.x - ppos.x
+		local dz = pos.z - ppos.z
+		local dist = math.sqrt(dx * dx + dz * dz)
+
+		if dist < tolerance then
+			if next_step_callback then next_step_callback() end
+			return
+		end
+
+		local yaw = aim(pos)
+		core.localplayer:set_yaw(yaw)
+		core.after(interval, step)
+	end
+	step()
+end
+
+local function walk_rectangle(index)
+	if index > #corners then index = 1 end
+	local next_index = (index % #corners) + 1
+
+	update_corner_colors(next_index)
+
+	walk_to(corners[next_index], function()
+		core.after(0.01, function()
+			walk_rectangle(next_index)
+		end)
+	end)
+end
+
+-- Main entry point
 core.after(0.5, function()
-	core.add_task_node({x=0, y=0, z=50}, {r=196, g=164, b=132})
-	core.add_task_node({x=-1, y=0, z=50}, {r=196, g=164, b=132})
-	core.add_task_node({x=1, y=0, z=50}, {r=196, g=164, b=132})
-	core.add_task_node({x=0, y=1, z=50}, {r=196, g=164, b=132})
-	core.add_task_node({x=0, y=2, z=50}, {r=196, g=164, b=132})
-	core.add_task_tracer({x=0, y=2, z=50}, {x=0, y=6, z=50}, {r=255, g=255, b=255})
-	core.add_task_tracer({x=0, y=6, z=50}, {x=1, y=7, z=50}, {r=255, g=255, b=255})	
-
-	core.localplayer:set_lua_control({
-		up = true,
-		down = false,
-		left = false,
-		right = false,
-		jump = false,
-		aux1 = false,
-		sneak = false,
-		dig = false,
-		place = false
-	})
-
+	add_tracers()
+	update_corner_colors(1)
+	core.after(0.5, function()
+		core.localplayer:set_lua_control({
+			up = true
+		})
+		walk_rectangle(1)
+	end)
 end)

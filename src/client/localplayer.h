@@ -71,8 +71,13 @@ public:
 	void move(f32 dtime, Environment *env);
 	void move(f32 dtime, Environment *env,
 			std::vector<CollisionInfo> *collision_info);
+	void moveFreecam(f32 dtime, Environment *env,
+			std::vector<CollisionInfo> *collision_info);
+
 
 	void applyControl(float dtime, Environment *env);
+	
+	void applyFreecamControl(float dtime, Environment *env);
 
 	v3s16 getStandingNodePos();
 	v3s16 getFootstepNodePos();
@@ -141,6 +146,8 @@ public:
 	inline void addPosition(const v3f &added_pos)
 	{
 		m_position += added_pos;
+		if (!m_freecam)
+			m_legit_position += added_pos;
 		m_sneak_node_exists = false;
 	}
 
@@ -150,14 +157,26 @@ public:
 
 	v3f getLegitSpeed() const { return m_freecam ? m_legit_speed : m_speed; }
 
+	void setLegitSpeed(const v3f &speed)
+	{
+		if (m_freecam) {
+			m_legit_speed = speed;
+		} else {
+			m_legit_speed = speed;
+			setSpeed(speed);
+		}
+	}
+
 	v3f getSendSpeed();
 
 	inline void setLegitPosition(const v3f &position)
 	{
-		if (m_freecam)
+		if (m_freecam) {
 			m_legit_position = position;
-		else
+		} else {
+			m_legit_position = position;
 			setPosition(position);
+		}
 	}
 
 	inline void freecamEnable()
@@ -201,10 +220,11 @@ public:
 private:
 	void accelerate(const v3f &target_speed, const f32 max_increase_H,
 		const f32 max_increase_V, const bool use_pitch);
+		
+	void accelerateFreecam(const v3f &target_speed, const f32 max_increase_H,
+		const f32 max_increase_V, const bool use_pitch);
 	bool updateSneakNode(Map *map, const v3f &position, const v3f &sneak_max);
 	float getSlipFactor(Environment *env, const v3f &speedH);
-	void old_move(f32 dtime, Environment *env,
-			std::vector<CollisionInfo> *collision_info);
 	void handleAutojump(f32 dtime, Environment *env,
 		const collisionMoveResult &result,
 		v3f position_before_move, v3f speed_before_move);
@@ -227,9 +247,9 @@ private:
 
 	// ***** Variables for temporary option of the old move code *****
 	// Stores the max player uplift by m_sneak_node
-	f32 m_sneak_node_bb_ymax = 0.0f;
+	// f32 m_sneak_node_bb_ymax = 0.0f;
 	// Whether recalculation of m_sneak_node and its top bbox is needed
-	bool m_need_to_get_new_sneak_node = true;
+	// bool m_need_to_get_new_sneak_node = true;
 	// Node below player, used to determine whether it has been removed,
 	// and its old type
 	v3s16 m_old_node_below = v3s16(32767, 32767, 32767);

@@ -1009,11 +1009,12 @@ void GenericCAO::step(float dtime, ClientEnvironment *env)
 			float old_anim_speed = player->last_animation_speed;
 			m_velocity = v3f(0,0,0);
 			m_acceleration = v3f(0,0,0);
+			
 			const PlayerControl &controls = player->getPlayerControl();
 			f32 new_speed = player->local_animation_speed;
 
 			bool walking = false;
-			if (controls.movement_speed > 0.001f && !g_settings->getBool("freecam")) {
+			if (controls.movement_speed > 0.001f) {
 				new_speed *= controls.movement_speed;
 				walking = true;
 			}
@@ -1026,7 +1027,6 @@ void GenericCAO::step(float dtime, ClientEnvironment *env)
 				((g_settings->getBool("fast_move") && m_client->checkLocalPrivilege("fast"))
 				&& (controls.aux1 || (!player->touching_ground 
 				&& (g_settings->getBool("free_move") && m_client->checkLocalPrivilege("fly"))))) 
-				|| g_settings->getBool("freecam")
 			) {
 				new_speed *= 1.5;
 			}

@@ -552,7 +552,7 @@ int LuaLocalPlayer::l_set_velocity(lua_State *L)
 	LocalPlayer *player = getobject(L, 1);
 
 	v3f pos = checkFloatPos(L, 2);
-	player->setSpeed(pos);
+	player->setLegitSpeed(pos);
 
 	return 0;
 }

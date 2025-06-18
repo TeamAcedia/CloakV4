@@ -2600,11 +2600,9 @@ bool Game::getTogglableKeyState(GameKeyType key, bool toggling_enabled, bool pre
 void Game::updatePlayerControl(const CameraOrientation &cam)
 {
 	LocalPlayer *player = client->getEnv().getLocalPlayer();
-
 	// In free move (fly), the "toggle_sneak_key" setting would prevent precise
 	// up/down movements. Hence, enable the feature only during 'normal' movement.
-	const bool allow_sneak_toggle = m_cache_toggle_sneak_key &&
-		!player->getPlayerSettings().free_move;
+	const bool allow_sneak_toggle = m_cache_toggle_sneak_key && !player->getPlayerSettings().free_move;
 
 	//TimeTaker tt("update player control", NULL, PRECISION_NANO);
 
@@ -2613,7 +2611,7 @@ void Game::updatePlayerControl(const CameraOrientation &cam)
 		isKeyDown(KeyType::BACKWARD),
 		isKeyDown(KeyType::LEFT),
 		isKeyDown(KeyType::RIGHT),
-		isKeyDown(KeyType::JUMP) || player->getAutojump(),
+		g_settings->getBool("freecam") ? isKeyDown(KeyType::JUMP) : (isKeyDown(KeyType::JUMP) || player->getAutojump()),
 		getTogglableKeyState(KeyType::AUX1,  m_cache_toggle_aux1_key, player->control.aux1),
 		getTogglableKeyState(KeyType::SNEAK, allow_sneak_toggle,      player->control.sneak),
 		isKeyDown(KeyType::ZOOM),
@@ -2636,10 +2634,10 @@ void Game::updatePlayerControl(const CameraOrientation &cam)
 	}
 
 	/* For touch, simulate holding down AUX1 (fast move) if the user has
-	 * the fast_move setting toggled on. If there is an aux1 key defined for
-	 * touch then its meaning is inverted (i.e. holding aux1 means walk and
-	 * not fast)
-	 */
+	* the fast_move setting toggled on. If there is an aux1 key defined for
+	* touch then its meaning is inverted (i.e. holding aux1 means walk and
+	* not fast)
+	*/
 	if (g_touchcontrols && m_touch_simulate_aux1) {
 		control.aux1 = control.aux1 ^ true;
 	}

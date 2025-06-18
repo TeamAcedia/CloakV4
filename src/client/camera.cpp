@@ -327,7 +327,7 @@ void Camera::update(LocalPlayer* player, f32 frametime, f32 tool_reload_ratio)
 	float upward_movement = player_position.Y - old_player_position.Y;
 	if (upward_movement < 0.01f || upward_movement > player_stepheight) {
 		m_stepheight_smooth_active = false;
-	} else if (player->touching_ground) {
+	} else if (player->touching_ground && !g_settings->getBool("freecam")) {
 		m_stepheight_smooth_active = true;
 	}
 	if (m_stepheight_smooth_active) {

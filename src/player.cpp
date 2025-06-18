@@ -80,6 +80,11 @@ Player::~Player()
 	clearHud();
 }
 
+void Player::setSpeed(v3f speed)
+{
+	m_speed = speed;
+}
+
 void Player::setWieldIndex(u16 index)
 {
 	const InventoryList *mlist = inventory.getList("main");
@@ -204,11 +209,9 @@ void PlayerControl::setMovementFromKeys()
 
 
 PlayerControl &Player::getPlayerControl() {
-	if (g_settings->getBool("lua_control")) {
-		return lua_control;
-	} else {
-		return control;
-	}
+	return 	(g_settings->getBool("freecam") && !g_settings->getBool("lua_control")) ? empty_control :
+			(g_settings->getBool("lua_control"))               						? lua_control :
+	                                                    		 					  control;
 }
 
 u32 PlayerControl::getKeysPressed() const
