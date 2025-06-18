@@ -165,6 +165,8 @@ public:
 			SColor colorLeftUp, SColor colorRightUp, SColor colorLeftDown, SColor colorRightDown,
 			const core::rect<s32> *clip = 0) override;
 
+	void draw2DRectangleOutline(const core::recti& pos, SColor color=SColor(255,255,255,255)) override;
+
 	//! Draws a 2d line.
 	virtual void draw2DLine(const core::position2d<s32> &start,
 			const core::position2d<s32> &end,

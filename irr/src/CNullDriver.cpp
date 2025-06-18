@@ -653,6 +653,17 @@ void CNullDriver::draw2DImage(const video::ITexture *texture, const core::positi
 {
 }
 
+//! Draw a 2d rectangle outline
+void CNullDriver::draw2DRectangleOutline(const core::recti& pos, SColor color)
+{
+	draw2DLine(pos.UpperLeftCorner, core::position2di(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y), color);
+	draw2DLine(core::position2di(pos.LowerRightCorner.X, pos.UpperLeftCorner.Y), pos.LowerRightCorner, color);
+	draw2DLine(pos.LowerRightCorner, core::position2di(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y), color);
+	draw2DLine(core::position2di(pos.UpperLeftCorner.X, pos.LowerRightCorner.Y), pos.UpperLeftCorner, color);
+}
+
+
+
 //! Draw a 2d rectangle
 void CNullDriver::draw2DRectangle(SColor color, const core::rect<s32> &pos, const core::rect<s32> *clip)
 {

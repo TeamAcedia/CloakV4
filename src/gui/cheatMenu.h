@@ -23,7 +23,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include "irrlichttypes_bloated.h"
 #include "script/scripting_client.h"
 #include <IVideoDriver.h>
-#include "client/fontengine.h"
+#include "client/fontengine.h"	
 #include <cstddef>
 #include <string>
 #include <iostream>
@@ -58,6 +58,7 @@ public:
 	void drawHUD(video::IVideoDriver *driver, double dtime);
 
 	void draw2DRectangleOutline(video::IVideoDriver *driver, const core::recti& pos, video::SColor color);
+
 
 	void drawEntry(video::IVideoDriver *driver, std::string name, int number,
 			bool selected, bool active,

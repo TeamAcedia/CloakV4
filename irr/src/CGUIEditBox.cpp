@@ -1122,7 +1122,7 @@ void CGUIEditBox::breakText()
 			// We also break whitespace, otherwise cursor would vanish beside the right border.
 			s32 whitelgth = font->getDimension(whitespace.c_str()).Width;
 			s32 worldlgth = font->getDimension(word.c_str()).Width;
-
+			
 			if (WordWrap && length + worldlgth + whitelgth > elWidth && line.size() > 0) {
 				// break to next line
 				length = worldlgth;

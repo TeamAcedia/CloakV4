@@ -670,7 +670,7 @@ MapBlockMesh::MapBlockMesh(Client *client, MeshMakeData *data):
 	std::set<content_t> xraySet;
 	if (g_settings->getBool("xray"))
 		xraySet = splitToContentT(
-			g_settings->get("xray_nodes"), data->m_nodedef);
+			g_settings->get("xray.nodes"), data->m_nodedef);
 	// algin vertices to mesh grid, not meshgen area
 	v3f offset = intToFloat((data->m_blockpos - mesh_grid.getMeshPos(data->m_blockpos)) * MAP_BLOCKSIZE, BS);
 

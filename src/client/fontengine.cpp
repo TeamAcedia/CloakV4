@@ -29,6 +29,7 @@ static const char *settings[] = {
 	"font_shadow", "font_shadow_alpha",
 	"font_path", "font_path_bold", "font_path_italic", "font_path_bold_italic",
 	"mono_font_path", "mono_font_path_bold", "mono_font_path_italic",
+	"font_path_hd", "hd_font_size",
 	"mono_font_path_bold_italic",
 	"fallback_font_path",
 	"dpi_change_notifier", "display_density_factor", "gui_scaling",
@@ -154,6 +155,7 @@ void FontEngine::readSettings()
 	m_default_size[FM_Standard]  = rangelim(g_settings->getU16("font_size"), 5, 72);
 	m_default_size[_FM_Fallback] = m_default_size[FM_Standard];
 	m_default_size[FM_Mono]      = rangelim(g_settings->getU16("mono_font_size"), 5, 72);
+	m_default_size[FM_HD]      = m_default_size[FM_Standard];
 
 	m_default_bold = g_settings->getBool("font_bold");
 	m_default_italic = g_settings->getBool("font_italic");
@@ -298,6 +300,8 @@ gui::IGUIFont *FontEngine::initFont(FontSpec spec)
 	std::string path_setting;
 	if (spec.mode == _FM_Fallback)
 		path_setting = "fallback_font_path";
+	else if (spec.mode == FM_HD)
+		path_setting = "font_path_hd";
 	else
 		path_setting = setting_prefix + "font_path" + setting_suffix;
 

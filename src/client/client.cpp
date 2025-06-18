@@ -241,8 +241,16 @@ void Client::loadMods()
 	// Run a callback when mods are loaded
 	m_script->on_mods_loaded();
 
+	// Initialize cheats
 	m_script->init_cheats();
 
+	// Initialize cheat settings
+	m_script->init_cheat_settings();
+
+	m_script->get_description();
+
+	// Initialize info texts
+	m_script->update_infotexts();
 
 	// Create objects if they're ready
 	if (m_state == LC_Ready)

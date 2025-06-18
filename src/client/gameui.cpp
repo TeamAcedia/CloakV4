@@ -244,7 +244,12 @@ void GameUI::updateChatSize()
 
 	//core::rect<s32> chat_size(10, chat_y, window_size.X - 20, 0);
 
-int cwidth = g_settings->getU32("cheat_menu_entry_width");
+	int cwidth;
+		if (g_settings->getBool("use_old_menu")) {
+			cwidth = g_settings->getU32("cheat_menu_entry_width")+5;	
+		} else {	
+			cwidth = 0;	
+		}
 	int chat_length = g_settings->getBool("cheat_hud") ? window_size.X - cwidth : window_size.X;
 	int chat_start;
 	if (!m_flags.show_cheat_menu) {

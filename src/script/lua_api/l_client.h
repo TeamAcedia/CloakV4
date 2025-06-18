@@ -147,6 +147,13 @@ private:
 	// send_nodemeta_fields(position, formname, fields)
 	static int l_send_nodemeta_fields(lua_State *L);
 
+	// update_infotexts()
+	static int l_update_infotexts(lua_State *L);
+
+	static int l_get_description(lua_State* L);
+
+
+
 public:
 	static void Initialize(lua_State *L, int top);
 };

@@ -16,19 +16,23 @@ You should have received a copy of the GNU Lesser General Public License along
 with this program; if not, write to the Free Software Foundation, Inc.,
 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+#include <iostream>
 
 #include "script/scripting_client.h"
 #include "client/client.h"
 #include "client/fontengine.h"
 #include "cheatMenu.h"
+#include "client/minimap.h"
 #include "settings.h"
 #include <cstddef>
-#include <iostream>
+
 
 FontMode CheatMenu::fontStringToEnum(std::string str)
 {
 	if (str == "FM_Standard")
 		return FM_Standard;
+	else if (str == "FM_HD")
+		return FM_HD;
 	else if (str == "FM_Mono")
 		return FM_Mono;
 	else if (str == "FM_Fallback")
@@ -47,9 +51,10 @@ CheatMenu::CheatMenu(Client *client) : m_client(client)
 	v3f bg_color, active_bg_color, font_color, selected_font_color;
 
 	bg_color = g_settings->getV3F("cheat_menu_bg_color").value_or(v3f(10, 15, 20));
-	active_bg_color = g_settings->getV3F("cheat_menu_active_bg_color").value_or(v3f(50, 80, 175));
-	font_color = g_settings->getV3F("cheat_menu_font_color").value_or(v3f(255, 255, 255));
-	selected_font_color = g_settings->getV3F("cheat_menu_selected_font_color").value_or(v3f(0, 0, 0));
+    active_bg_color = g_settings->getV3F("cheat_menu_active_bg_color").value_or(v3f(50, 80, 175));
+    font_color = g_settings->getV3F("cheat_menu_font_color").value_or(v3f(255, 255, 255));
+    selected_font_color = g_settings->getV3F("cheat_menu_selected_font_color").value_or(v3f(0, 0, 0));
+
 
 	m_bg_color = video::SColor(g_settings->getU32("cheat_menu_bg_color_alpha"),
 			bg_color.X, bg_color.Y, bg_color.Z);
@@ -70,7 +75,8 @@ CheatMenu::CheatMenu(Client *client) : m_client(client)
 	m_entry_height = g_settings->getU32("cheat_menu_entry_height");
 	m_entry_width = g_settings->getU32("cheat_menu_entry_width");
 
-	m_font = g_fontengine->getFont(FONT_SIZE_UNSPECIFIED, fontMode);
+	FontSpec fontSpec(g_fontengine->getDefaultFontSize(), fontMode, true /* bold */, false /* italic */);
+	m_font = g_fontengine->getFont(fontSpec);
 
 	if (!m_font) {
 		errorstream << "CheatMenu: Unable to load font" << std::endl;
@@ -91,58 +97,58 @@ void CheatMenu::draw2DRectangleOutline(video::IVideoDriver *driver, const core::
 }
 
 void CheatMenu::drawRect(video::IVideoDriver *driver, std::string name,
-        int x, int y,
-        int width, int height,
-        bool active, bool selected)
+		int x, int y,
+		int width, int height,
+		bool active, bool selected)
 {
-        video::SColor *bgcolor = &m_bg_color,
-                                  *fontcolor = &m_font_color;
+		video::SColor *bgcolor = &m_bg_color,
+								  *fontcolor = &m_font_color;
 
-        if (active)
-                bgcolor = &m_active_bg_color;
-        if (selected)
-                fontcolor = &m_selected_font_color;
+		if (active)
+				bgcolor = &m_active_bg_color;
+		if (selected)
+				fontcolor = &m_selected_font_color;
 
-        driver->draw2DRectangle(*bgcolor, core::rect<s32>(x, y, x + width, y + height));
+		driver->draw2DRectangle(*bgcolor, core::rect<s32>(x, y, x + width, y + height));
 
-        if (selected)
-                draw2DRectangleOutline(
-                	driver,
-                    core::rect<s32>(x - 1, y - 1, x + width, y + height),
-                    *fontcolor);
+		if (selected)
+				driver->draw2DRectangleOutline(
+					core::rect<s32>(x - 1, y - 1, x + width, y + height),
+					*fontcolor);
 
-        int fx = x + 5,
-                fy = y + (height - m_fontsize.Y) / 2;
+		int fx = x + 5,
+				fy = y + (height - m_fontsize.Y) / 2;
 
-        core::rect<s32> fontbounds(
-                        fx, fy, fx + m_fontsize.X * name.size(), fy + m_fontsize.Y);
-        m_font->draw(name.c_str(), fontbounds, *fontcolor, false, false);
+		core::rect<s32> fontbounds(
+						fx, fy, fx + m_fontsize.X * name.size(), fy + m_fontsize.Y);
+		m_font->draw(name.c_str(), fontbounds, *fontcolor, false, false);
 }
 
 void CheatMenu::drawEntry(video::IVideoDriver *driver, std::string name, int number,
 		bool selected, bool active, CheatMenuEntryType entry_type)
 {
-	int x = m_gap, y = m_gap, width = m_entry_width, height = m_entry_height;
+	int x = m_gap+5, y = m_gap+5, width = m_entry_width, height = m_entry_height;
 	video::SColor *bgcolor = &m_bg_color, *fontcolor = &m_font_color;
 	if (entry_type == CHEAT_MENU_ENTRY_TYPE_HEAD) {
 		bgcolor = &m_active_bg_color;
 		height = m_head_height;
 	} else {
 		bool is_category = entry_type == CHEAT_MENU_ENTRY_TYPE_CATEGORY;
-		y += m_gap + m_head_height +
-		     (number + (is_category ? 0 : m_selected_category)) *
-				     (m_entry_height + m_gap);
+		y += m_head_height +	
+			 (number + (is_category ? 0 : m_selected_category)) *
+					 (m_entry_height);
 		x += (is_category ? 0 : m_gap + m_entry_width);
 		if (active)
 			bgcolor = &m_active_bg_color;
 		if (selected)
 			fontcolor = &m_selected_font_color;
+        if (selected && is_category)
+            bgcolor = &m_active_bg_color;
 	}
 	driver->draw2DRectangle(*bgcolor, core::rect<s32>(x, y, x + width, y + height));
 	if (selected)
-		draw2DRectangleOutline(
-			driver,
-			core::rect<s32>(x - 1, y - 1, x + width, y + height),
+		driver->draw2DRectangleOutline(
+			core::rect<s32>(x, y, x, y),
 			*fontcolor);
 	int fx = x + 5, fy = y + (height - m_fontsize.Y) / 2;
 	core::rect<s32> fontbounds(
@@ -152,57 +158,82 @@ void CheatMenu::drawEntry(video::IVideoDriver *driver, std::string name, int num
 
 int negmod(int n, int base)
 {
-        n = n % base;
-        return (n < 0) ? base + n : n;
+	n = n % base;
+	return (n < 0) ? base + n : n;
 }
 
 void CheatMenu::draw(video::IVideoDriver *driver, bool show_debug)
 {
-        CHEAT_MENU_GET_SCRIPTPTR
+    CHEAT_MENU_GET_SCRIPTPTR
 
-        if (! show_debug)
-                drawEntry(driver, "Nameless", 0, false, false, CHEAT_MENU_ENTRY_TYPE_HEAD);
-        int category_count = 0;
-        for (auto category = script->m_cheat_categories.begin();
-                        category != script->m_cheat_categories.end(); category++) {
-                bool is_selected = category_count == m_selected_category;
-                drawEntry(driver, (*category)->m_name, category_count, is_selected, false,
-                                CHEAT_MENU_ENTRY_TYPE_CATEGORY);
-                if (is_selected && m_cheat_layer) {
-                        int cheat_n = (*category)->m_cheats.size();
-                        int height = driver->getScreenSize().Height;
-                        int target = height / (m_entry_height + m_gap) + 1; // +1 for the "and more" effect
-                        int target_normal =
-                                (height - (m_selected_category * (m_entry_height + m_gap)))
-                                / (m_entry_height + m_gap);
+    m_head_height = (!show_debug ? 1 : g_settings->getU32("cheat_menu_head_height"));
+    int category_count = 0;
 
-                        if (cheat_n < target_normal) {
-                                int cheat_count = 0;
-                                for (auto cheat = (*category)->m_cheats.begin();
-                                                cheat != (*category)->m_cheats.end(); cheat++) {
-                                        drawEntry(driver, (*cheat)->m_name, cheat_count,
-                                                        cheat_count == m_selected_cheat,
-                                                        (*cheat)->is_enabled());
-                                        cheat_count++;
-                                }
-                        } else {
-                                int base = m_selected_cheat - m_selected_category - 1;
-                                int drawn = 0;
-                                for (int i = base; i < base + target; i++, drawn++) {
-                                        int idx = negmod(i, cheat_n);
-                                        ScriptApiCheatsCheat *cheat = (*category)->m_cheats[idx];
-                                        int y = (drawn * (m_entry_height + m_gap)) + m_gap;
-                                        drawRect(driver, cheat->m_name,
-                                                        m_gap * 2 + m_entry_width, y,
-                                                        m_entry_width, m_entry_height,
-                                                        cheat->is_enabled(),
-                                                        idx == m_selected_cheat);
-                                }
-                        }
+    // Calculate dimensions for the category section outline
+    int category_section_x = m_gap+5; // Starting X position
+    int category_section_y = m_gap+5+m_head_height; // Starting Y position
+    int category_section_width = m_entry_width; // Width of categories
+    int category_section_height = (m_head_height + (m_entry_height * script->m_cheat_categories.size()))-m_head_height; // Total height based on number of categories
+
+    // Define padding for the outline and thickness
+    const int padding = 0; // Space between outline and categories
+    const int outline_thickness = 3; // Thickness of the outline
+
+    // Draw multiple rectangles to create a thicker outline
+    for (int i = 0; i < outline_thickness; ++i) {
+        driver->draw2DRectangleOutline(
+            core::rect<s32>(
+                category_section_x - padding - i, 
+                category_section_y - padding - i,
+                category_section_x + category_section_width + padding + i,
+                category_section_y + category_section_height + padding + i),
+            m_active_bg_color); // Use selected font color for outline
+    }
+
+    for (auto category = script->m_cheat_categories.begin();
+             category != script->m_cheat_categories.end(); category++) {
+        bool is_selected = category_count == m_selected_category;
+        drawEntry(driver, (*category)->m_name, category_count, is_selected, false,
+                    CHEAT_MENU_ENTRY_TYPE_CATEGORY);
+        
+        if (is_selected && m_cheat_layer) {
+            int cheat_n = (*category)->m_cheats.size();
+            int height = driver->getScreenSize().Height;
+            int target = height / (m_entry_height) + 1; // +1 for "and more" effect
+            int target_normal =
+                (height - (m_selected_category * (m_entry_height)))
+                / (m_entry_height);
+
+            if (cheat_n < target_normal) {
+                int cheat_count = 0;
+                for (auto cheat = (*category)->m_cheats.begin();
+                             cheat != (*category)->m_cheats.end(); cheat++) {
+                    drawEntry(driver, (*cheat)->m_name, cheat_count,
+                                    cheat_count == m_selected_cheat,
+                                    (*cheat)->is_enabled());
+                    cheat_count++;
                 }
-                category_count++;
+            } else {
+                int base = m_selected_cheat - m_selected_category - 1;
+                int drawn = 0;
+                for (int i = base; i < base + target; i++, drawn++) {
+                    int idx = negmod(i, cheat_n);
+                    ScriptApiCheatsCheat *cheat = (*category)->m_cheats[idx];
+                    int y = (drawn * (m_entry_height));
+                    drawRect(driver, cheat->m_name,
+                                    m_gap * 2 + m_entry_width, y,
+                                    m_entry_width, m_entry_height,
+                                    cheat->is_enabled(),
+                                    idx == m_selected_cheat);
+                }
+            }
         }
+        category_count++;
+    }
 }
+
+
+
 
 void CheatMenu::drawHUD(video::IVideoDriver *driver, double dtime)
 {
@@ -212,7 +243,7 @@ void CheatMenu::drawHUD(video::IVideoDriver *driver, double dtime)
 
 	m_rainbow_offset = fmod(m_rainbow_offset, 6.0f);
 
-	std::vector<std::string> enabled_cheats;
+	std::vector<std::pair<std::string, core::dimension2d<u32>>> enabled_cheats;
 
 	int cheat_count = 0;
 
@@ -221,7 +252,14 @@ void CheatMenu::drawHUD(video::IVideoDriver *driver, double dtime)
 		for (auto cheat = (*category)->m_cheats.begin();
 				cheat != (*category)->m_cheats.end(); cheat++) {
 			if ((*cheat)->is_enabled()) {
-				enabled_cheats.push_back((*cheat)->m_name);
+				std::string cheat_str = (*cheat)->m_name;
+				std::string info_text = (*cheat)->get_info_text();
+				if (!info_text.empty()) {
+					cheat_str += " [" + info_text + "]";
+				}
+				core::dimension2d<u32> dim =
+							m_font->getDimension(utf8_to_wide(cheat_str).c_str());
+				enabled_cheats.push_back(std::make_pair(cheat_str, dim));
 				cheat_count++;
 			}
 		}
@@ -229,6 +267,22 @@ void CheatMenu::drawHUD(video::IVideoDriver *driver, double dtime)
 
 	if (enabled_cheats.empty())
 		return;
+
+	core::dimension2d<u32> screensize = driver->getScreenSize();
+	u32 y = 5 + g_settings->getS32("cheat_hud.offset");
+	
+	std::sort(enabled_cheats.begin(), enabled_cheats.end(),
+			  [](const auto &a, const auto &b) {
+				  return a.second.Width > b.second.Width;
+			  });
+
+	Minimap *mapper = m_client->getMinimap();
+
+	bool renderBottom = (mapper != nullptr && mapper->getModeIndex() != 0) || g_settings->get("cheat_hud.position") == "Bottom";
+
+	if (renderBottom) {
+		y = (screensize.Height - 18) - g_settings->getS32("cheat_hud.offset");
+	}
 
 	std::vector<video::SColor> colors;
 
@@ -261,20 +315,42 @@ void CheatMenu::drawHUD(video::IVideoDriver *driver, double dtime)
 		colors.push_back(color);
 	}
 
-	core::dimension2d<u32> screensize = driver->getScreenSize();
-
-	u32 y = 5;
-
 	int i = 0;
-	for (std::string cheat : enabled_cheats) {
-		core::dimension2d<u32> dim =
-				m_font->getDimension(utf8_to_wide(cheat).c_str());
-		u32 x = screensize.Width - 5 - dim.Width;
+	video::SColor infoColor(230, 230, 230, 230);
+	for (std::pair<std::string, core::dimension2d<u32>> &cheat : enabled_cheats) {
+		std::string cheat_full_str = cheat.first;
+		core::dimension2d<u32> dim = cheat.second;
 
-		core::rect<s32> fontbounds(x, y, x + dim.Width, y + dim.Height);
-		m_font->draw(cheat.c_str(), fontbounds, colors[i], false, false);
+		size_t brace_position = cheat_full_str.find('[');
+		if (brace_position != std::string::npos) {
+			std::string cheat_str = cheat_full_str.substr(0, brace_position);
+			std::string info_str = cheat_full_str.substr(brace_position);
 
-		y += dim.Height;
+			core::dimension2d<u32> cheat_dim = m_font->getDimension(utf8_to_wide(cheat_str).c_str());
+			core::dimension2d<u32> info_dim = m_font->getDimension(utf8_to_wide(info_str).c_str());
+
+			u32 x_cheat = screensize.Width - 5 - dim.Width;
+			u32 x_info = x_cheat + cheat_dim.Width;
+
+			core::rect<s32> cheat_bounds(x_cheat, y, x_cheat + cheat_dim.Width, y + cheat_dim.Height);
+			m_font->draw(cheat_str.c_str(), cheat_bounds, colors[i], false, false);
+
+			core::rect<s32> info_bounds(x_info, y, x_info + info_dim.Width, y + info_dim.Height);
+			m_font->draw(info_str.c_str(), info_bounds, infoColor, false, false);
+
+		} else {
+			u32 x = screensize.Width - 5 - dim.Width;
+
+			core::rect<s32> cheat_bounds(x, y, x + dim.Width, y + dim.Height);
+			m_font->draw(cheat_full_str.c_str(), cheat_bounds, colors[i], false, false);
+		}
+
+		if (renderBottom) {
+			y -= dim.Height;
+		} else {
+			y += dim.Height;
+		}
+
 		i++;
 	}
 }
@@ -328,5 +404,5 @@ void CheatMenu::selectConfirm()
 
 	if (m_cheat_layer)
 		script->toggle_cheat(script->m_cheat_categories[m_selected_category]
-						     ->m_cheats[m_selected_cheat]);
+							 ->m_cheats[m_selected_cheat]);
 }

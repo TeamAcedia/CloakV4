@@ -128,7 +128,7 @@ void set_default_settings()
 	settings->setDefault("enable_raytraced_culling", "true");
 	settings->setDefault("chat_weblink_color", "#8888FF");
 	// Cheat Menu
-	settings->setDefault("cheat_menu_font", "FM_FallBack");
+	settings->setDefault("cheat_menu_font", "FM_HD");
 	settings->setDefault("cheat_menu_bg_color", "(10, 15, 20)"); //greyish
 	settings->setDefault("cheat_menu_bg_color_alpha", "173");
 	settings->setDefault("cheat_menu_active_bg_color", "(50, 80, 175)"); //blueish
@@ -139,16 +139,22 @@ void set_default_settings()
 	settings->setDefault("cheat_menu_selected_font_color_alpha", "235");
 	settings->setDefault("cheat_menu_head_height", "40");
 	settings->setDefault("cheat_menu_entry_height", "25");
-	settings->setDefault("cheat_menu_entry_width", "165");
+	settings->setDefault("cheat_menu_entry_width", "175");
 	settings->setDefault("cheat_menu_debug_on", "false");
+	settings->setDefault("use_old_menu", "false");
+	settings->setDefault("use_hints", "true");
+	settings->setDefault("save_menu_category_positions", "true");
+	settings->setDefault("use_menu_grid", "true");
 	
 	//Cheats
 	settings->setDefault("cheat_hud", "true");
+	settings->setDefault("cheat_hud.position", "Top");
+	settings->setDefault("cheat_hud.offset", "true");
 	settings->setDefault("priv_bypass", "false");
 	settings->setDefault("fullbright", "false"); 
 	settings->setDefault("no_night", "false");
 	settings->setDefault("xray", "false");
-	settings->setDefault("xray_nodes", "default:stone,mcl_core:stone");
+	settings->setDefault("xray.nodes", "default:stone,mcl_core:stone");
 	settings->setDefault("freecam", "false");
 	settings->setDefault("detached_camera", "false");
 	settings->setDefault("lua_control", "false");
@@ -458,6 +464,7 @@ void set_default_settings()
 
 	// General font settings
 	settings->setDefault("font_path", porting::getDataPath("fonts" DIR_DELIM "Arimo-Regular.ttf"));
+	settings->setDefault("font_path_hd", porting::getDataPath("fonts" DIR_DELIM "hd.ttf"));
 	settings->setDefault("font_path_italic", porting::getDataPath("fonts" DIR_DELIM "Arimo-Italic.ttf"));
 	settings->setDefault("font_path_bold", porting::getDataPath("fonts" DIR_DELIM "Arimo-Bold.ttf"));
 	settings->setDefault("font_path_bold_italic", porting::getDataPath("fonts" DIR_DELIM "Arimo-BoldItalic.ttf"));
@@ -476,6 +483,7 @@ void set_default_settings()
 	std::string font_size_str = std::to_string(TTF_DEFAULT_FONT_SIZE);
 	settings->setDefault("font_size", font_size_str);
 	settings->setDefault("mono_font_size", font_size_str);
+    settings->setDefault("hd_font_size", font_size_str);
 	settings->setDefault("chat_font_size", "0"); // Default "font_size"
 
 	// ContentDB

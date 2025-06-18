@@ -27,6 +27,9 @@ enum FontMode : u8 {
 	/// Monospace font (settings "mono_font*", overwritable)
 	FM_Mono,
 
+	// hd font lol
+	FM_HD,
+
 	/// Use only in `FontEngine`. Fallback font to render glyphs that are not present
 	/// in the originally requested font (setting "fallback_font_path")
 	_FM_Fallback,

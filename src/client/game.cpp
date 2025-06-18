@@ -909,7 +909,7 @@ Game::Game() :
 		&updateAllMapBlocksCallback, this);
 	g_settings->registerChangedCallback("xray",
 		&updateAllMapBlocksCallback, this);	
-	g_settings->registerChangedCallback("xray_nodes",	
+	g_settings->registerChangedCallback("xray.nodes",	
 		&updateAllMapBlocksCallback, this);
 	g_settings->registerChangedCallback("freecam",
 		&freecamChangedCallback, this);
@@ -943,7 +943,7 @@ Game::~Game()
 	g_settings->deregisterAllChangedCallbacks(this);
 	g_settings->deregisterChangedCallback("xray",
 		&updateAllMapBlocksCallback, this);
-	g_settings->deregisterChangedCallback("xray_nodes",
+	g_settings->deregisterChangedCallback("xray.nodes",
 		&updateAllMapBlocksCallback, this);
 	g_settings->deregisterChangedCallback("freecam",
 		&freecamChangedCallback, this);
@@ -1487,6 +1487,12 @@ bool Game::initGui()
 		return false;
 	}
 
+	new_menu = new NewMenu(guienv, guienv->getRootGUIElement(), -1, &g_menumgr, client);
+	if (!new_menu) {
+		*error_message = "Could not allocate memory for cheat menu";
+		errorstream << *error_message << std::endl;
+		return false;
+	}
 
 	// Chat backend and console
 	gui_chat_console = make_irr<GUIChatConsole>(guienv, guienv->getRootGUIElement(),
@@ -1955,16 +1961,19 @@ void Game::processUserInput(f32 dtime)
 
 void Game::processKeyInput()
 {
-	if (wasKeyDown(KeyType::SELECT_UP)) {
-		m_cheat_menu->selectUp();
-	} else if (wasKeyDown(KeyType::SELECT_DOWN)) {
-		m_cheat_menu->selectDown();
-	} else if (wasKeyDown(KeyType::SELECT_LEFT)) {
-		m_cheat_menu->selectLeft();
-	} else if (wasKeyDown(KeyType::SELECT_RIGHT)) {
-		m_cheat_menu->selectRight();
-	} else if (wasKeyDown(KeyType::SELECT_CONFIRM)) {
-		m_cheat_menu->selectConfirm();
+
+if (g_settings->getBool("use_old_menu")) {
+		if (wasKeyDown(KeyType::SELECT_UP)) {
+			m_cheat_menu->selectUp();
+		} else if (wasKeyDown(KeyType::SELECT_DOWN)) {
+			m_cheat_menu->selectDown();
+		} else if (wasKeyDown(KeyType::SELECT_LEFT)) {
+			m_cheat_menu->selectLeft();
+		} else if (wasKeyDown(KeyType::SELECT_RIGHT)) {
+			m_cheat_menu->selectRight();
+		} else if (wasKeyDown(KeyType::SELECT_CONFIRM)) {
+			m_cheat_menu->selectConfirm();
+		}
 	}
 
 	if (wasKeyDown(KeyType::DROP)) {
@@ -2038,7 +2047,7 @@ void Game::processKeyInput()
 	} else if (wasKeyPressed(KeyType::TOGGLE_HUD)) {
 		m_game_ui->toggleHud();
 	} else if (wasKeyDown(KeyType::TOGGLE_CHEAT_MENU)) {	
-		m_game_ui->toggleCheatMenu();
+		new_menu->create();
 	} else if (wasKeyPressed(KeyType::MINIMAP)) {
 		toggleMinimap(isKeyDown(KeyType::SNEAK));
 	} else if (wasKeyPressed(KeyType::TOGGLE_CHAT)) {
@@ -4251,7 +4260,7 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats, float dtime)
 	*/
 
 	if (!gui_chat_console->isOpen()) {
-		if (m_game_ui->m_flags.show_cheat_menu)
+		if (m_game_ui->m_flags.show_cheat_menu && g_settings->getBool("use_old_menu"))
 			m_cheat_menu->draw(driver, m_game_ui->m_flags.show_minimal_debug);
 		if (g_settings->getBool("cheat_hud")) {
 			m_cheat_menu->drawHUD(driver, dtime);
