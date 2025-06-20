@@ -141,7 +141,6 @@ void set_default_settings()
 	settings->setDefault("cheat_menu_entry_height", "25");
 	settings->setDefault("cheat_menu_entry_width", "175");
 	settings->setDefault("cheat_menu_debug_on", "false");
-	settings->setDefault("use_old_menu", "false");
 	settings->setDefault("use_hints", "true");
 	settings->setDefault("save_menu_category_positions", "true");
 	settings->setDefault("use_menu_grid", "true");
@@ -149,7 +148,6 @@ void set_default_settings()
 	//============CHEATS============//
 
 	//COMBAT
-
 	settings->setDefault("friends", "{}");
 	settings->setDefault("enemies", "{}");
 	settings->setDefault("allies", "{}");
@@ -180,17 +178,52 @@ void set_default_settings()
 	settings->setDefault("punch_interval", "auto");
 	settings->setDefault("spamclick_multiplier", "6");
 
+	//MOVEMENT
+	settings->setDefault("velocity", "false");
+	settings->setDefault("velocity.jump", "1");
+	settings->setDefault("velocity.speed", "1");
+	settings->setDefault("velocity.speed_crouch", "1");
+	settings->setDefault("velocity.gravity", "1");
+	settings->setDefault("overrides", "false");
+	settings->setDefault("overrides.old_movement", "false");
+	settings->setDefault("overrides.sneak_glitch", "false");
+	settings->setDefault("jesus", "false");
+	settings->setDefault("no_slow", "false");
+	settings->setDefault("spider", "false");
+	settings->setDefault("autosneak", "false");
+	settings->setDefault("jetpack", "false");
+	settings->setDefault("antislip", "false");
+	settings->setDefault("airjump", "false");
+	settings->setDefault("freecam", "false");
+
+	//PLAYER
+	settings->setDefault("autorespawn", "false");
+	settings->setDefault("lua_control", "false");
+	settings->setDefault("prevent_natural_damage", "false");
+	settings->setDefault("use_old_menu", "false");
+	settings->setDefault("reach", "false");
+	settings->setDefault("priv_bypass", "false");
+	settings->setDefault("no_force_rotate", "false");
+
+	//INTERACT
+	settings->setDefault("spamclick", "false");
+	settings->setDefault("autohit", "false");
+	settings->setDefault("fastplace", "false");
+	settings->setDefault("autoplace", "false");
+	settings->setDefault("autodig", "false");
+	settings->setDefault("fastdig", "false");
+	settings->setDefault("instant_break", "false");
+	settings->setDefault("autotool", "false");
+
+	//RENDER
 	settings->setDefault("cheat_hud", "true");
 	settings->setDefault("cheat_hud.position", "Top");
 	settings->setDefault("cheat_hud.offset", "true");
-	settings->setDefault("priv_bypass", "false");
 	settings->setDefault("fullbright", "false"); 
 	settings->setDefault("no_night", "false");
 	settings->setDefault("xray", "false");
 	settings->setDefault("xray.nodes", "default:stone,mcl_core:stone");
-	settings->setDefault("freecam", "false");
 	settings->setDefault("detached_camera", "false");
-	settings->setDefault("lua_control", "false");
 	settings->setDefault("enable_task_nodes", "false");
 	settings->setDefault("enable_task_tracers", "false");
 	settings->setDefault("enable_entity_esp", "false");
@@ -209,29 +242,14 @@ void set_default_settings()
 	settings->setDefault("esp.node.drawType", "2");
 	settings->setDefault("esp.node.edgeOpacity", "255");
 	settings->setDefault("esp.node.faceOpacity", "200");
-	settings->setDefault("hud_flags_bypass", "true");
-	settings->setDefault("prevent_natural_damage", "false");
-	settings->setDefault("no_hurt_cam", "false");
 	settings->setDefault("norender.particles", "false");
-	settings->setDefault("reach", "false");
-	settings->setDefault("autorespawn", "false");
-	settings->setDefault("spamclick", "false");
-	settings->setDefault("autohit", "false");
-	settings->setDefault("fastplace", "false");
-	settings->setDefault("autoplace", "false");
-	settings->setDefault("autodig", "false");
-	settings->setDefault("fastdig", "false");
-	settings->setDefault("instant_break", "false");
-	settings->setDefault("jesus", "false");
-	settings->setDefault("no_slow", "false");
-	settings->setDefault("spider", "false");
-	settings->setDefault("autosneak", "false");
-	settings->setDefault("jetpack", "false");
-	settings->setDefault("antislip", "false");
-	settings->setDefault("airjump", "false");
-	settings->setDefault("autotool", "false");
-	settings->setDefault("no_force_rotate", "false");
+	settings->setDefault("no_hurt_cam", "false");
+
+
+	//UNUSED
 	settings->setDefault("entity_speed", "false"); // not actually used
+	settings->setDefault("hud_flags_bypass", "true"); //yet to be implemented
+
 
 	// Keymap
 #if USE_SDL2
