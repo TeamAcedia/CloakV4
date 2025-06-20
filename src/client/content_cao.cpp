@@ -457,6 +457,8 @@ void GenericCAO::setAttachment(object_t parent_id, const std::string &bone,
 	ClientActiveObject *parent = m_env->getActiveObject(parent_id);
 
 	if (parent_id != old_parent) {
+		if (old_parent)
+			m_waiting_for_reattach = 10;
 		if (auto *o = m_env->getActiveObject(old_parent))
 			o->removeAttachmentChild(m_id);
 		if (parent)
@@ -1863,6 +1865,18 @@ bool GenericCAO::directReportPunch(v3f dir, const ItemStack *punchitem,
 		}
 	}
 
+	return false;
+}
+
+bool GenericCAO::canAttack(int threshold) {
+	for(ItemGroupList::const_iterator i = m_armor_groups.begin();
+			i != m_armor_groups.end(); ++i) {
+		if (m_prop.pointable == PointabilityType::POINTABLE
+			&& i->first == "fleshy"
+			&& i->second >= threshold) {
+				return true;
+		}
+	}
 	return false;
 }
 

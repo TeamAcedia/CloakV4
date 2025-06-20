@@ -425,6 +425,42 @@ int ModApiClient::l_start_dig(lua_State *L)
 	return 0;
 }
 
+// can_attack(object_id)
+int ModApiClient::l_can_attack(lua_State *L)
+{
+	u16 object_id = lua_tointeger(L, 1);
+
+	ClientEnvironment &env = getClient(L)->getEnv();
+	GenericCAO *gcao = env.getGenericCAO(object_id);
+
+	if (!gcao) {
+		lua_pushnil(L);
+		return 0;
+	}
+
+	bool can_attack = gcao->canAttack(1);
+
+	lua_pushboolean(L, can_attack);
+
+	return 1;
+}
+
+// get_server_url
+int ModApiClient::l_get_server_url(lua_State *L)
+{
+	Client *client = getClient(L);
+	if (!client->m_simple_singleplayer_mode) {
+		Address serverAddress = client->getServerAddress();
+		std::string address = client->getAddressName().c_str();
+		u16 port = serverAddress.getPort();
+		std::string server_url = address + ":" + toPaddedString(port);
+		lua_pushstring(L, server_url.c_str());
+		return 1;
+	}
+	lua_pushnil(L);
+	return 0;
+}
+
 // get_inv_item_damage(index, object_id)
 int ModApiClient::l_get_inv_item_damage(lua_State *L)
 {
@@ -1030,6 +1066,8 @@ void ModApiClient::Initialize(lua_State *L, int top)
 	API_FCT(make_screenshot);
 	API_FCT(all_loaded_nodes);
 	API_FCT(nodes_at_block_pos);
+	API_FCT(can_attack);
+	API_FCT(get_server_url);
 	API_FCT(file_write);
 	API_FCT(file_append);
 	API_FCT(get_node_name);

@@ -119,6 +119,15 @@ private:
 	// get_pointed_thing()
 	static int l_get_pointed_thing(lua_State *L);
 
+	// get_entity_relationship(self, object_id)
+	static int l_get_entity_relationship(lua_State *L);
+
+	// punch(self, object_id)
+	static int l_punch(lua_State *L);
+
+	// get_time_from_last_punch(self)
+	static int l_get_time_from_last_punch(lua_State *L);
+	
 	// get_object(self)
 	static int l_get_object(lua_State *L);
 

@@ -11,6 +11,7 @@
 #include <set>
 #include <map>
 #include <mutex>
+#include <json/json.h>
 
 class Settings;
 struct NoiseParams;
@@ -158,6 +159,7 @@ public:
 	bool getNoiseParams(const std::string &name, NoiseParams &np) const;
 	bool getNoiseParamsFromValue(const std::string &name, NoiseParams &np) const;
 	bool getNoiseParamsFromGroup(const std::string &name, NoiseParams &np) const;
+	Json::Value getJson(const std::string &name) const;
 
 	// return all keys used in this object
 	std::vector<std::string> getNames() const;
@@ -182,6 +184,7 @@ public:
 	bool getFloatNoEx(const std::string &name, float &val) const;
 	bool getV2FNoEx(const std::string &name, v2f &val) const;
 	bool getV3FNoEx(const std::string &name, std::optional<v3f> &val) const;
+	bool getJsonNoEx(const std::string& jsonString, Json::Value& outputJson) const;
 
 	// Like other getters, but handling each flag individualy:
 	// 1) Read default flags (or 0)
@@ -212,6 +215,7 @@ public:
 	bool setFlagStr(const std::string &name, u32 flags,
 		const FlagDesc *flagdesc = nullptr, u32 flagmask = U32_MAX);
 	bool setNoiseParams(const std::string &name, const NoiseParams &np);
+	bool setJson(const std::string &name, const Json::Value& jsonData);
 
 	// remove a setting
 	bool remove(const std::string &name);

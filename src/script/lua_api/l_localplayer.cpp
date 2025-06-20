@@ -543,6 +543,47 @@ int LuaLocalPlayer::l_get_pointed_thing(lua_State *L)
 	return 0;
 }
 
+// get_entity_relationship(self, object_id)
+int LuaLocalPlayer::l_get_entity_relationship(lua_State *L)
+{
+	LocalPlayer *player = getobject(L, 1);
+	u16 object_id = lua_tointeger(L, 2);
+
+	ClientEnvironment &env = getClient(L)->getEnv();
+	GenericCAO *gcao = env.getGenericCAO(object_id);
+
+	EntityRelationship relationship = player->getEntityRelationship(gcao);
+
+	lua_pushinteger(L, relationship);
+
+	return 1;
+}
+
+
+// punch(self, object_id)
+int LuaLocalPlayer::l_punch(lua_State *L)
+{
+	u16 object_id = lua_tointeger(L, 2);
+
+	g_game->getRunData().punching = true;
+	g_game->getRunData().time_from_last_punch = 0;
+	g_game->getRunData().object_hit_delay_timer = 0.2;
+
+	PointedThing pointed(object_id, v3f(0, 0, 0), v3f(0, 0, 0), v3f(0, 0, 0), 0, PointabilityType::POINTABLE);
+	getClient(L)->interact(INTERACT_START_DIGGING, pointed);
+
+	return 0;
+}
+
+// get_time_from_last_punch(self)
+int LuaLocalPlayer::l_get_time_from_last_punch(lua_State *L)
+{
+	lua_pushnumber(L, g_game->getRunData().time_from_last_punch);
+
+	return 1;
+}
+
+
 /*
 SETTERS
 */
@@ -691,5 +732,8 @@ const luaL_Reg LuaLocalPlayer::methods[] = {
 		luamethod(LuaLocalPlayer, get_object),
 		luamethod(LuaLocalPlayer, set_physics_override),
 		luamethod(LuaLocalPlayer, get_hotbar_size),
+		luamethod(LuaLocalPlayer, get_entity_relationship),
+		luamethod(LuaLocalPlayer, punch),
+		luamethod(LuaLocalPlayer, get_time_from_last_punch),
 		{0, 0}
 };

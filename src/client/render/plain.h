@@ -83,9 +83,12 @@ private:
 	bool draw_node_esp;
 	bool draw_node_tracers;
 
+
+
 	video::SColor entity_esp_color;
-	video::SColor player_esp_color;
-	video::SColor self_esp_color;
+	video::SColor friend_esp_color;
+	video::SColor enemy_esp_color;
+	video::SColor allied_esp_color;
 	
 	int playerDT;
 	int playerEO;

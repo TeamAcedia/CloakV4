@@ -21,6 +21,7 @@
 #include <cwctype>
 #include <unordered_map>
 #include <optional>
+#include <json/json.h>
 
 class Translations;
 
@@ -811,9 +812,26 @@ std::string sanitize_untrusted(std::string_view str, bool keep_escapes = true);
 void safe_print_string(std::ostream &os, std::string_view str);
 
 /**
+ * Parses a Json string to Json::Value
+ *
+ * @param str string
+ * @return Json::Value object
+ */
+ Json::Value str_to_json(std::string_view str);
+
+/**
  * Parses a string of form `(1, 2, 3)` or `1, 2, 4` to a v3f
  *
  * @param str string
  * @return float vector
  */
 std::optional<v3f> str_to_v3f(std::string_view str);
+
+/**
+ * Pad a string with 0s so the length is at least 4, to convert u16 port num to string
+ *
+ * @param u16 number
+ * @return std::string string
+ */
+ std::string toPaddedString(uint16_t num);
+ 

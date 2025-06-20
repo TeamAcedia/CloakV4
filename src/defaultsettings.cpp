@@ -146,7 +146,62 @@ void set_default_settings()
 	settings->setDefault("save_menu_category_positions", "true");
 	settings->setDefault("use_menu_grid", "true");
 	
-	//Cheats
+	//============CHEATS============//
+
+	//COMBAT
+
+	settings->setDefault("friends", "{}");
+	settings->setDefault("enemies", "{}");
+	settings->setDefault("allies", "{}");
+	settings->setDefault("entity_esp_color", "(255, 255, 255)");
+	settings->setDefault("friend_esp_color", "(255, 0, 255)");
+	settings->setDefault("allied_esp_color", "(0, 255, 0)");
+	settings->setDefault("enemy_esp_color", "(255, 0, 0)");
+
+
+
+	settings->setDefault("antiknockback", "false");
+
+	settings->setDefault("float_above_parent", "false");
+
+	settings->setDefault("critical_hits", "false");
+	settings->setDefault("critical_hits_hitting", "false");
+	settings->setDefault("critical_hits_hit_input", "false");
+
+	settings->setDefault("killaura", "false");
+	settings->setDefault("killaura.lineofsight", "false");
+	settings->setDefault("killaura.assist", "false");
+	settings->setDefault("killaura.manypunches", "false");
+	settings->setDefault("killaura.doubletap", "false"); // not used
+
+	settings->setDefault("autoaim", "false");
+	settings->setDefault("autoaim.y_offset", "5");
+
+	settings->setDefault("orbit", "false");
+	settings->setDefault("orbit.radius", "2");
+
+	settings->setDefault("tpaura", "false");
+	settings->setDefault("tpaura.distance", "5");
+	settings->setDefault("tpaura.delay", "5");
+
+	settings->setDefault("targeting.target_mode", "Nearest");
+	settings->setDefault("targeting.target_type", "Both");
+	settings->setDefault("targeting.distance", "5");
+	settings->setDefault("targeting.enemies_only", "true");
+
+	settings->setDefault("punch_interval", "auto");
+
+	settings->setDefault("spamclick_multiplier", "6");
+
+
+
+
+
+
+
+
+
+
 	settings->setDefault("cheat_hud", "true");
 	settings->setDefault("cheat_hud.position", "Top");
 	settings->setDefault("cheat_hud.offset", "true");
@@ -178,8 +233,6 @@ void set_default_settings()
 	settings->setDefault("esp.node.faceOpacity", "200");
 	settings->setDefault("hud_flags_bypass", "true");
 	settings->setDefault("prevent_natural_damage", "false");
-	settings->setDefault("antiknockback", "false");
-	settings->setDefault("float_above_parent", "false");
 	settings->setDefault("no_hurt_cam", "false");
 	settings->setDefault("norender.particles", "false");
 	settings->setDefault("reach", "false");
@@ -200,6 +253,7 @@ void set_default_settings()
 	settings->setDefault("airjump", "false");
 	settings->setDefault("autotool", "false");
 	settings->setDefault("no_force_rotate", "false");
+	settings->setDefault("entity_speed", "false"); // not actually used
 
 	// Keymap
 #if USE_SDL2

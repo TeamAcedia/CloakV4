@@ -348,24 +348,55 @@ bool ScriptApiClient::on_player_leave(std::string name)
 
 v3f ScriptApiClient::get_send_speed(v3f speed)
 {
-	SCRIPTAPI_PRECHECKHEADER
+    SCRIPTAPI_PRECHECKHEADER
 
-	PUSH_ERROR_HANDLER(L);
-	int error_handler = lua_gettop(L) - 1;
-	lua_insert(L, error_handler);
+    PUSH_ERROR_HANDLER(L);
+    int error_handler = lua_gettop(L) - 1;
+    lua_insert(L, error_handler);
 
-	lua_getglobal(L, "core");
-	lua_getfield(L, -1, "get_send_speed");
-	if (lua_isfunction(L, -1)) {
-		speed /= BS;
-		push_v3f(L, speed);
-		lua_pcall(L, 1, 1, error_handler);
-		speed = read_v3f(L, -1);
-		speed *= BS;
-	}
+    lua_getglobal(L, "core");
+    lua_getfield(L, -1, "get_send_speed");
+    int type = lua_type(L, -1);
 
-	return speed;
+    bool callable = false;
+
+    if (type == LUA_TFUNCTION) {
+        callable = true;
+    } else if (type == LUA_TTABLE) {
+        if (lua_getmetatable(L, -1)) {
+            lua_getfield(L, -1, "__call");
+            if (lua_isfunction(L, -1)) {
+                callable = true;
+            }
+            lua_pop(L, 2);
+        }
+    }
+
+    if (callable) {
+        speed /= BS;
+        push_v3f(L, speed); 
+        if (lua_pcall(L, 1, 1, error_handler) != 0) {
+            const char *error_msg = lua_tostring(L, -1);
+            lua_pop(L, 1);
+
+            lua_getglobal(L, "core");
+            lua_getfield(L, -1, "debug");
+          //  lua_pushfstring(L, "Error calling core.get_send_speed: %s", error_msg);
+            lua_pcall(L, 1, 0, error_handler);
+        } else {
+            speed = read_v3f(L, -1);
+            speed *= BS;
+        }
+    } else {
+        lua_getglobal(L, "core");
+        lua_getfield(L, -1, "debug");
+    //   lua_pushstring(L, "core.get_send_speed is not callable, skipping call");
+        lua_pcall(L, 1, 0, error_handler);
+    }
+
+    return speed;
 }
+
 
 
 void ScriptApiClient::setEnv(ClientEnvironment *env)

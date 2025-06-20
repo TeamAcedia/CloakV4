@@ -109,6 +109,12 @@ private:
 	// get_inventory(location)
 	static int l_get_inventory(lua_State *L);
 
+	// get_server_url()
+	static int l_get_server_url(lua_State *L);
+
+	// can_attack()
+	static int l_can_attack(lua_State *L);
+
 	// set_keypress(key_setting, pressed)
 	static int l_set_keypress(lua_State *L);
 

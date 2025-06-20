@@ -17,6 +17,15 @@ class ClientActiveObject;
 struct CollisionInfo;
 struct collisionMoveResult;
 
+enum EntityRelationship {
+
+
+    FRIEND = 0,
+    ENEMY = 1,
+	ALLY = 2,
+	NEUTRAL = 3
+};
+
 enum class LocalPlayerAnimation
 {
 	NO_ANIM,
@@ -213,7 +222,13 @@ public:
 		m_added_velocity += vel;
 	}
 
+	void tryReattach(int id);
+
+	bool isWaitingForReattach() const;
+
 	inline Lighting& getLighting() { return m_lighting; }
+
+	EntityRelationship getEntityRelationship(GenericCAO *playerObj);
 
 	inline PlayerSettings &getPlayerSettings() { return m_player_settings; }
 

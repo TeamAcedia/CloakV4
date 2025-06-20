@@ -90,6 +90,9 @@ private:
 	// get_hp(self)
 	static int l_get_hp(lua_State *L);
 
+	// get_id(self)
+	static int l_get_id(lua_State *L);
+
 	// get_max_hp(self)
 	static int l_get_max_hp(lua_State *L);
 

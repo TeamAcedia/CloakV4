@@ -84,9 +84,15 @@ void DrawTracersAndESP::run(PipelineContext &context)
 	draw_node_esp = g_settings->getBool("enable_node_esp");
 	draw_node_tracers = g_settings->getBool("enable_node_tracers");
 
-	entity_esp_color = video::SColor(255, 255, 255, 255);
-	player_esp_color = video::SColor(255, 0, 255, 0);
-	self_esp_color = video::SColor(255, 255, 255, 0);
+	v3f entity_color = g_settings->getV3F("entity_esp_color").value();
+	v3f friend_color = g_settings->getV3F("friend_esp_color").value();
+	v3f enemy_color = g_settings->getV3F("enemy_esp_color").value();
+	v3f allied_color = g_settings->getV3F("allied_esp_color").value();
+
+	entity_esp_color = video::SColor(255, entity_color.X, entity_color.Y, entity_color.Z);
+	friend_esp_color = video::SColor(255, friend_color.X, friend_color.Y, friend_color.Z);
+	enemy_esp_color = video::SColor(255, enemy_color.X, enemy_color.Y, enemy_color.Z);
+	allied_esp_color = video::SColor(255, allied_color.X, allied_color.Y, allied_color.Z);
 
 	playerDT = g_settings->getU32("esp.player.drawType");
 	playerEO = g_settings->getU32("esp.player.edgeOpacity");
@@ -128,7 +134,7 @@ void DrawTracersAndESP::run(PipelineContext &context)
 		env.getAllActiveObjects(current_pos, allObjects);
 		for (auto &clientobject : allObjects) {
 			ClientActiveObject *cao = clientobject.obj;
-			if ((cao->isLocalPlayer() && !g_settings->getBool("freecam")) || cao->getParent())
+			if ((cao->isLocalPlayer() && !g_settings->getBool("freecam")))
 				continue;
 			GenericCAO *obj = dynamic_cast<GenericCAO *>(cao);
 			if (!obj) {
@@ -136,17 +142,28 @@ void DrawTracersAndESP::run(PipelineContext &context)
 			}
 			//v3f velocity = obj->getVelocity();
 			//v3f rotation = obj->getRotation();
-			bool is_self = obj->isLocalPlayer();
+			EntityRelationship relationship = player->getEntityRelationship(obj);
 			bool is_player = obj->isPlayer();
 			bool draw_esp = is_player ? draw_player_esp : draw_entity_esp;
 			bool draw_tracers = is_player ? draw_player_tracers : draw_entity_tracers;
-			video::SColor color = is_player 
-				? (is_self  
-					? self_esp_color
-			 		: player_esp_color)
-				: entity_esp_color;
-			if (! (draw_esp || draw_tracers))
+			video::SColor color;
+						switch (relationship) {
+								case EntityRelationship::FRIEND:		
+								color = friend_esp_color;		
+								break;	
+							case EntityRelationship::ENEMY:		
+								color = enemy_esp_color;		
+								break;		
+							case EntityRelationship::ALLY:					
+								color = allied_esp_color;						
+								break;						
+							default:						
+								color = entity_esp_color;						
+								break;	
+						}
+			if (! (draw_esp || draw_tracers)) {
 				continue;
+			}
 			aabb3f box(v3f(0,0,0), v3f(0,0,0));
 			if (!obj->getSelectionBox(&box)) {
 				continue;
@@ -165,8 +182,9 @@ void DrawTracersAndESP::run(PipelineContext &context)
 					driver->draw3DBox(box, color, entityDT, entityEO, entityFO);				
 				}
 			}
-			if (draw_tracers)
+			if (draw_tracers) {
 				driver->draw3DLine(eye_pos, box.getCenter(), color);
+			}
 		}
 	}
 	if (draw_node_esp || draw_node_tracers) {

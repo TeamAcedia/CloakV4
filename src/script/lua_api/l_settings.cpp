@@ -116,6 +116,29 @@ int LuaSettings::l_get(lua_State* L)
 	return 1;
 }
 
+// get_json(self, key) -> table
+int LuaSettings::l_get_json(lua_State *L)
+{
+	NO_MAP_LOCK_REQUIRED;
+	LuaSettings* o = checkObject<LuaSettings>(L, 1);
+
+	std::string key = std::string(luaL_checkstring(L, 2));
+	if (o->m_settings->exists(key)) {
+		int nullindex = 2;
+		if (lua_isnone(L, nullindex)) {
+			lua_pushnil(L);
+			nullindex = lua_gettop(L);
+		}
+		Json::Value value = o->m_settings->getJson(key);
+		push_json_value(L, value, nullindex);
+	} else {
+		// Push default value
+		lua_pushnil(L);
+	}
+
+	return 1;
+}
+
 // get_bool(self, key) -> boolean
 int LuaSettings::l_get_bool(lua_State* L)
 {
@@ -223,6 +246,26 @@ int LuaSettings::l_set_bool(lua_State* L)
 	CHECK_SETTING_SECURITY(L, key);
 
 	o->m_settings->setBool(key, value);
+
+	return 0;
+}
+
+
+// set_json(self, key, value)
+int LuaSettings::l_set_json(lua_State* L)
+{
+	NO_MAP_LOCK_REQUIRED;
+	LuaSettings* o = checkObject<LuaSettings>(L, 1);
+
+	std::string key = std::string(luaL_checkstring(L, 2));
+
+	if (lua_istable(L, 3)) {
+		Json::Value value;
+		read_json_value(L, value, 3, 16);
+		CHECK_SETTING_SECURITY(L, key);
+
+		o->m_settings->setJson(key, value);
+	}
 
 	return 0;
 }
@@ -386,6 +429,8 @@ int LuaSettings::create_object(lua_State* L)
 const char LuaSettings::className[] = "Settings";
 const luaL_Reg LuaSettings::methods[] = {
 	luamethod(LuaSettings, get),
+	luamethod(LuaSettings, get_json),
+	luamethod(LuaSettings, set_json),
 	luamethod(LuaSettings, get_bool),
 	luamethod(LuaSettings, get_np_group),
 	luamethod(LuaSettings, get_flags),

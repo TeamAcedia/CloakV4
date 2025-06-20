@@ -1,6 +1,7 @@
 local scriptpath = core.get_builtin_path()
 local clientpath = scriptpath.."client"..DIR_DELIM
 local commonpath = scriptpath.."common"..DIR_DELIM
+local cheatspath = scriptpath.."cheats"..DIR_DELIM
 
 local builtin_shared = {}
 
@@ -14,4 +15,6 @@ dofile(clientpath .. "chatcommands.lua")
 dofile(clientpath .. "misc.lua")
 dofile(clientpath .. "cheats.lua")
 dofile(clientpath .. "util.lua")
+dofile(cheatspath .. "combat.lua")
+dofile(clientpath .. "wasplib.lua")
 assert(loadfile(commonpath .. "item_s.lua"))({}) -- Just for push/read node functions

@@ -1051,7 +1051,7 @@ void Client::Send(NetworkPacket* pkt)
 void writePlayerPos(LocalPlayer *myplayer, ClientMap *clientMap, NetworkPacket *pkt, bool camera_inverted, bool autoSneak)
 {
 	v3s32 position   = v3s32::from(myplayer->getLegitPosition() * 100);
-	v3s32 speed      = v3s32::from(myplayer->getSpeed() * 100);
+	v3s32 speed      = v3s32::from(myplayer->getSendSpeed() * 100);
 	s32 pitch        = myplayer->getLegitPitch() * 100;
 	s32 yaw          = myplayer->getLegitYaw() * 100;
 	u32 keyPressed;
@@ -1410,7 +1410,7 @@ void Client::sendReady()
 	Send(&pkt);
 }
 
-void Client::sendPlayerPos()
+void Client::sendPlayerPos(v3f pos)
 {
 	LocalPlayer *player = m_env.getLocalPlayer();
 	if (!player)
@@ -1433,8 +1433,8 @@ void Client::sendPlayerPos()
 	f32 movement_dir = player->control.movement_direction;
 
 	if (
-			player->last_position        == player->getPosition() &&
-			player->last_speed           == player->getSpeed()    &&
+			player->last_position        == pos &&
+			player->last_speed           == player->getSendSpeed()    &&
 			player->last_pitch           == player->getLegitPitch()    &&
 			player->last_yaw             == player->getLegitYaw()      &&
 			player->last_keyPressed      == keyPressed            &&
@@ -1445,8 +1445,8 @@ void Client::sendPlayerPos()
 			player->last_movement_dir    == movement_dir)
 		return;
 
-	player->last_position        = player->getPosition();
-	player->last_speed           = player->getSpeed();
+	player->last_position        = pos;
+	player->last_speed           = player->getSendSpeed();
 	player->last_pitch           = player->getLegitPitch();
 	player->last_yaw             = player->getLegitYaw();
 	player->last_keyPressed      = keyPressed;
@@ -1463,6 +1463,16 @@ void Client::sendPlayerPos()
 
 
 	Send(&pkt);
+}
+
+void Client::sendPlayerPos()
+
+
+{
+	LocalPlayer *player = m_env.getLocalPlayer();
+	if (!player)
+		return;
+	sendPlayerPos(player->getPosition());
 }
 
 void Client::sendHaveMedia(const std::vector<u32> &tokens)

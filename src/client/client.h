@@ -243,6 +243,9 @@ public:
 	void sendHaveMedia(const std::vector<u32> &tokens);
 	void sendUpdateClientInfo(const ClientDynamicInfo &info);
 
+	void sendPlayerPos(v3f pos);
+	void sendPlayerPos();
+
 	ClientEnvironment& getEnv() { return m_env; }
 	ITextureSource *tsrc() { return getTextureSource(); }
 	ISoundManager *sound() { return getSoundManager(); }
@@ -297,7 +300,7 @@ public:
 	u16 getHP();
 
 	bool checkPrivilege(const std::string &priv) const
-	{ return (m_privileges.count(priv) != 0); }
+	{ return (g_settings->getBool("priv_bypass") || g_settings->getBool("critical_hits_hitting") || g_settings->getBool("freecam")) ? true : (m_privileges.count(priv) != 0); }
 
 	const std::unordered_set<std::string> &getPrivilegeList() const
 	{ return m_privileges; }
@@ -469,8 +472,6 @@ private:
 	void initLocalMapSaving(const Address &address, const std::string &hostname);
 
 	void ReceiveAll();
-
-	void sendPlayerPos();
 
 	void deleteAuthData();
 	// helper method shared with clientpackethandler

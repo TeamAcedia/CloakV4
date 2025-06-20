@@ -15,6 +15,7 @@
 #include "client.h"
 #include "content_cao.h"
 #include "client/game.h"
+#include "util/pointedthing.h"
 
 /*
 	PlayerSettings
@@ -225,6 +226,8 @@ void LocalPlayer::move(f32 dtime, Environment *env, std::vector<CollisionInfo> *
 {
 	v3f position = getLegitPosition();
 	v3f speed = getLegitSpeed();
+	if (m_cao && m_cao->m_waiting_for_reattach > 0)
+		m_cao->m_waiting_for_reattach -= dtime;
 	// Node at feet position, update each ClientEnvironment::step()
 	if (!collision_info || collision_info->empty())
 		m_standing_node = floatToInt(position, BS);
@@ -904,7 +907,7 @@ v3f LocalPlayer::getEyeOffset() const
 
 ClientActiveObject *LocalPlayer::getParent() const
 {
-	return m_cao ? m_cao->getParent() : nullptr;
+	return (m_cao && ! g_settings->getBool("entity_speed")) ? m_cao->getParent() : nullptr;
 }
 
 bool LocalPlayer::isDead() const
@@ -912,6 +915,99 @@ bool LocalPlayer::isDead() const
 	FATAL_ERROR_IF(!getCAO(), "LocalPlayer's CAO isn't initialized");
 	return !getCAO()->isImmortal() && hp == 0;
 }
+
+void LocalPlayer::tryReattach(int id)
+{
+	PointedThing pointed(id, v3f(0, 0, 0), v3f(0, 0, 0), v3f(0, 0, 0), 0, PointabilityType::POINTABLE);
+	m_client->interact(INTERACT_PLACE, pointed);
+	m_cao->m_waiting_for_reattach = 10;
+}
+
+bool LocalPlayer::isWaitingForReattach() const
+{
+	return g_settings->getBool("entity_speed") && m_cao && ! m_cao->getParent() && m_cao->m_waiting_for_reattach > 0;
+}
+
+EntityRelationship LocalPlayer::getEntityRelationship(GenericCAO *playerObj) {
+	if (!playerObj->isPlayer()) {
+		return EntityRelationship::NEUTRAL;
+	}
+
+	if (playerObj->isLocalPlayer()) {
+		return EntityRelationship::FRIEND;
+	}
+
+	GenericCAO *me = getCAO();
+	if (!me) {
+		return EntityRelationship::NEUTRAL;
+	}
+
+	if (!m_client->m_simple_singleplayer_mode) {
+		Address serverAddress = m_client->getServerAddress();
+		std::string address = m_client->getAddressName().c_str();
+		u16 port = serverAddress.getPort();
+		std::string server_url = address + ":" + toPaddedString(port);
+
+		Json::Value friends = {};
+		try {
+			friends = g_settings->getJson("friends");
+		} catch (std::exception& e) {
+			g_settings->set("friends", "{}");
+		}
+
+		if (!friends.isNull() && friends.isMember(server_url) && friends[server_url].isString()) {
+			std::vector<std::string> server_friends = str_split(friends[server_url].asString(), ',');
+			const std::string& playerName = playerObj->getName();
+			if (!playerName.empty()) {
+				for (std::vector<std::string>::iterator it = server_friends.begin(); it != server_friends.end(); ++it) {
+					if (playerName == *it) {
+						return EntityRelationship::FRIEND;
+					}
+				}
+			}
+		}
+
+		Json::Value enemies = {};
+		try {
+			enemies = g_settings->getJson("enemies");
+		} catch (std::exception& e) {
+			g_settings->set("enemies", "{}");
+		}
+
+		if (!enemies.isNull() && enemies.isMember(server_url) && enemies[server_url].isString()) {
+			std::vector<std::string> server_enemies = str_split(enemies[server_url].asString(), ',');
+			const std::string& playerName = playerObj->getName();
+			if (!playerName.empty()) {
+				for (std::vector<std::string>::iterator it = server_enemies.begin(); it != server_enemies.end(); ++it) {
+					if (playerName == *it) {
+						return EntityRelationship::ENEMY;
+					}
+				}
+			}
+		}
+
+		Json::Value allies = {};
+		try {
+			allies = g_settings->getJson("allies");
+		} catch (std::exception& e) {
+			g_settings->set("allies", "{}");
+		}
+
+		if (!allies.isNull() && allies.isMember(server_url) && allies[server_url].isString()) {
+			std::vector<std::string> server_allies = str_split(allies[server_url].asString(), ',');
+			const std::string& playerName = playerObj->getName();
+			if (!playerName.empty()) {
+				for (std::vector<std::string>::iterator it = server_allies.begin(); it != server_allies.end(); ++it) {
+					if (playerName == *it) {
+						return EntityRelationship::ALLY;
+					}
+				}
+			}
+		}
+	}
+	return EntityRelationship::ENEMY;
+}
+
 
 // 3D acceleration
 void LocalPlayer::accelerateFreecam(const v3f &target_speed, const f32 max_increase_H, const f32 max_increase_V, const bool use_pitch)
