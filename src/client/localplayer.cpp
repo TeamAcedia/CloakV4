@@ -358,7 +358,9 @@ void LocalPlayer::move(f32 dtime, Environment *env, std::vector<CollisionInfo> *
 	// Player object property step height is multiplied by BS in
 	// /src/script/common/c_content.cpp and /src/content_sao.cpp
 	float player_stepheight = (m_cao == nullptr) ? 0.0f :
-		(touching_ground ? m_cao->getStepHeight() : (0.2f * BS));
+	((touching_ground ? m_cao->getStepHeight() : (0.2f * BS)) * 
+	(g_settings->getBool("step") ? g_settings->getFloat("step.mult") : 
+		(g_settings->getBool("scaffold") ? 2.0f : 1.0f)));
 
 	v3f accel_f(0, -gravity, 0);
 	const v3f initial_position = position;

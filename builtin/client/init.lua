@@ -17,5 +17,6 @@ dofile(clientpath .. "cheats.lua")
 dofile(clientpath .. "util.lua")
 dofile(cheatspath .. "combat.lua")
 dofile(cheatspath .. "physics_override.lua")
+dofile(cheatspath .. "worldutil.lua")
 dofile(clientpath .. "wasplib.lua")
 assert(loadfile(commonpath .. "item_s.lua"))({}) -- Just for push/read node functions

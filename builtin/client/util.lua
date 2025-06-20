@@ -37,6 +37,25 @@ function core.find_item(item, mini, maxi)
 	end
 end
 
+function core.find_additional_items(item, exclude_index)
+    for index, stack in ipairs(core.get_inventory("current_player").main) do
+        if index ~= exclude_index and stack:get_name() == item then
+            return index
+        end
+    end
+    return nil
+end
+
+function core.get_total_items(item)
+    local total_count = 0
+    for _, stack in ipairs(core.get_inventory("current_player").main) do
+        if stack:get_name() == item then
+            total_count = total_count + stack:get_count()
+        end
+    end
+    return total_count
+end
+
 function core.switch_to_item(item)
 	local i = core.find_item(item)
 	if i then

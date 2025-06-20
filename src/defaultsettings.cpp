@@ -195,6 +195,8 @@ void set_default_settings()
 	settings->setDefault("antislip", "false");
 	settings->setDefault("airjump", "false");
 	settings->setDefault("freecam", "false");
+	settings->setDefault("step", "false");
+	settings->setDefault("step.mult", "2.0f");
 
 	//PLAYER
 	settings->setDefault("autorespawn", "false");
@@ -245,6 +247,16 @@ void set_default_settings()
 	settings->setDefault("norender.particles", "false");
 	settings->setDefault("no_hurt_cam", "false");
 
+	//WORLD
+	settings->setDefault("scaffold", "false");	
+	settings->setDefault("scaffold.jump_delay", "0.5");
+	settings->setDefault("nodes_per_tick", "48");
+	settings->setDefault("scaffold_plus", "false");
+	settings->setDefault("block_water", "false");
+	settings->setDefault("block_lava", "false");
+	settings->setDefault("autotnt", "false");
+	settings->setDefault("nuke", "false");
+	settings->setDefault("replace", "false");
 
 	//UNUSED
 	settings->setDefault("entity_speed", "false"); // not actually used

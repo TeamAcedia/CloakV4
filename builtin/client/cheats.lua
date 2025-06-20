@@ -41,6 +41,7 @@ core.cheats = {
 		["AirJump"] = "airjump",
 		["Spider"] = "spider",
 		["AutoSneak"] = "autosneak",
+		["Step"] = "step",
     },
 	["Combat"] = {
 		["AntiKnockback"] = "antiknockback",
@@ -55,7 +56,10 @@ core.cheats = {
 		["FastDig"] = "fastdig",
 		["InstantBreak"] = "instant_break",
 		["AutoTool"] = "autotool",
-    }
+    },
+	["Misc"] = {
+		["Hints"] = "use_hints",
+    },
 }
 -----------------------------------------------------------REGISTER CHEATS-----------------------------------------------------------
 function core.register_cheat(cheatname, category, func)
@@ -272,7 +276,7 @@ local function refresh_path_loop()
 end
 
 -- Start the refresh loop
-core.after(0.5, refresh_path_loop)
+--core.after(0.5, refresh_path_loop) todo: fix massive lag when joining minetest game
 
 --Combat
 core.register_cheat_description("AntiKnockback", "Combat", "antiknockback", "Ignore knockback")
@@ -318,12 +322,12 @@ core.register_cheat_description("Freecam", "Movement", "freecam", "Spectator mod
 core.register_cheat_description("Jesus", "Movement", "jesus", "Walk on liquids")
 core.register_cheat_description("JetPack", "Movement", "jetpack", "AirJump but you fall after jumping")
 core.register_cheat_description("NoSlow", "Movement", "noslow", "Sneaking doesn't slow you down")
-core.register_cheat_description("Noclip", "Movement", "noclip", "Walk through walls (req. PrivBypass & Flight)")
---core.register_cheat_description("Overrides", "Movement", "overrides", "Movement overrides")
+core.register_cheat_description("Noclip", "Movement", "noclip", "Walk through walls (req. PrivBypass)")
+core.register_cheat_description("Overrides", "Movement", "overrides", "Movement overrides")
 core.register_cheat_description("PitchMove", "Movement", "pitch_move", "While flying, you move where you're pointing")
 core.register_cheat_description("Spider", "Movement", "spider", "Climb walls")
---core.register_cheat_description("Step", "Movement", "step", "Climbs the block you're facing")
---core.register_cheat_description("Velocity", "Movement", "velocity", "Various velocity overrides")
+core.register_cheat_description("Step", "Movement", "step", "Climbs the block you're facing")
+core.register_cheat_description("Velocity", "Movement", "velocity", "Various velocity overrides")
 --Player
 core.register_cheat_description("AutoRespawn", "Player", "autorespawn", "Respawn after dying")
 core.register_cheat_description("NoFallDamage", "Player", "prevent_natural_damage", "Receive no fall damage")
@@ -334,7 +338,7 @@ core.register_cheat_description("QuickMenu", "Player", "use_old_menu", "Add a me
 core.register_cheat_description("Reach", "Player", "reach", "Increase reach")
 --Render
 core.register_cheat_description("BrightNight", "Render", "no_night", "Always daytime")
---core.register_cheat_description("CheatHUD", "Render", "cheathud", "List enabled cheats")
+core.register_cheat_description("CheatHUD", "Render", "cheathud", "List enabled cheats")
 core.register_cheat_description("Coords", "Render", "coords", "Render coordinates in the bottom left corner")
 core.register_cheat_description("EntityESP", "Render", "enable_entity_esp", "See entities through walls")
 core.register_cheat_description("EntityTracers", "Render", "enable_entity_tracers", "Draw tracers to entities")
@@ -353,10 +357,9 @@ core.register_cheat_description("PlayerTracers", "Render", "enable_player_tracer
 core.register_cheat_description("Xray", "Render", "xray", "Don't render specific nodes")
 --core.register_cheat_description("TargetHUD", "Render", "enable_combat_target_hud", "Show currently attacking target on HUD")
 --World
---core.register_cheat_description("AutoTNT", "World", "autotnt", "Puts TNT on the ground")
---core.register_cheat_description("BlockLava", "World", "blocklava", "Replace lava with the block you're holding")
---core.register_cheat_description("BlockWater", "World", "blockwater", "Replace water with the block you're holding")
---core.register_cheat_description("Replace", "World", "replace", "When you break a block it gets replaced by the block you're holding")
---core.register_cheat_description("Scaffold", "World", "scaffold", "Puts blocks below you")
---core.register_cheat_description("ScaffoldPlus", "World", "scaffoldplus", "Puts even more blocks under you")
---core.register_cheat_description("Silence", "World", "silence", "Disables sound")
+core.register_cheat_description("AutoTNT", "World", "autotnt", "Puts TNT on the ground")
+core.register_cheat_description("BlockLava", "World", "blocklava", "Replace lava with the block you're holding")
+core.register_cheat_description("BlockWater", "World", "blockwater", "Replace water with the block you're holding")
+core.register_cheat_description("Replace", "World", "replace", "When you break a block it gets replaced by the block you're holding")
+core.register_cheat_description("Scaffold", "World", "scaffold", "Puts blocks below you")
+core.register_cheat_description("ScaffoldPlus", "World", "scaffoldplus", "Puts even more blocks under you")
