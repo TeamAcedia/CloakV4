@@ -118,9 +118,6 @@ function get_punch_interval(player)
     return interval
 end
 
-core = core or {}
-
--- Your actual function logic
 local function get_send_speed_impl(critspeed)
     if core.settings:get_bool("critical_hits") then 
         critspeed.y = -7
@@ -128,22 +125,15 @@ local function get_send_speed_impl(critspeed)
     return critspeed
 end
 
--- Create a callable table
 local callable = {}
 
--- Set a metatable with __call as a function
 setmetatable(callable, {
     __call = function(_, critspeed)
         return get_send_speed_impl(critspeed)
     end
 })
 
--- Assign the callable table to core.get_send_speed
 core.get_send_speed = callable
-
--- Debug print to verify
-print("Type of core.get_send_speed:", type(core.get_send_speed))
-print("Metatable __call type:", type(getmetatable(core.get_send_speed).__call))
 
 
 function extendPoint(yaw, distance)

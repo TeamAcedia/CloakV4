@@ -205,22 +205,74 @@ core.after(0.5, function()
 	core.add_task_tracer({x=0, y=2, z=50}, {x=0, y=6, z=50}, {r=255, g=255, b=255})
 	core.add_task_tracer({x=0, y=6, z=50}, {x=1, y=7, z=50}, {r=255, g=255, b=255})	
 
-	local player = core.localplayer
-	if not player then return end
-	core.localplayer:set_lua_control({
-		up = true,
-		down = false,
-		left = false,
-		right = false,
-		jump = false,
-		aux1 = false,
-		sneak = false,
-		dig = false,
-		place = false
-	})
+local last_path = {}
+local last_tracers = {}
 
-end)
+-- Clear nodes and tracers from previous path
+local function clear_old_path()
+	for _, pos in ipairs(last_path) do
+		core.clear_task_node(pos)
+	end
+	last_path = {}
 
+	for _, tracer in ipairs(last_tracers) do
+		core.clear_task_tracer(tracer[1], tracer[2])
+	end
+	last_tracers = {}
+end
+
+-- Draws path and records it
+local function draw_path(path, reached_goal, target_pos)
+	clear_old_path()
+	last_path = path
+
+	-- Always show start node (blue)
+	core.add_task_node(start_pos, {r=0, g=0, b=255})
+
+	if reached_goal then
+		core.add_task_node(end_pos, {r=0, g=255, b=0}) -- End node green
+	else
+		local final = path[#path]
+		core.add_task_node(final, {r=255, g=0, b=255}) -- Last reachable node purple
+		core.add_task_node(target_pos, {r=0, g=255, b=0}) 
+	end
+
+	-- Tracers: green if complete path, purple if partial
+	local tracer_color = reached_goal and {r=0, g=255, b=0} or {r=255, g=0, b=255}
+
+	for i = 1, #path - 1 do
+		local a = path[i]
+		local b = path[i+1]
+		core.add_task_tracer(a, b, tracer_color)
+		table.insert(last_tracers, {a, b})
+	end
+end
+
+-- Continuously updates the path
+local function refresh_path_loop()
+	local path = core.find_path(start_pos, end_pos)
+
+	-- Determine if goal was reached (based on last node)
+	local reached_goal = false
+	if path and #path > 0 then
+		local last = path[#path]
+		reached_goal = vector.equals(last, end_pos)
+	end
+
+	if path and #path > 0 then
+		draw_path(path, reached_goal, end_pos)
+	else
+		-- Path is completely empty
+		clear_old_path()
+		core.add_task_node(start_pos, {r=0, g=0, b=255})
+		core.add_task_node(end_pos, {r=255, g=0, b=255}) -- Purple end
+	end
+
+	core.after(0.5, refresh_path_loop)
+end
+
+-- Start the refresh loop
+core.after(0.5, refresh_path_loop)
 
 --Combat
 core.register_cheat_description("AntiKnockback", "Combat", "antiknockback", "Ignore knockback")
