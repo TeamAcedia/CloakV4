@@ -363,3 +363,27 @@ core.register_cheat_description("BlockWater", "World", "blockwater", "Replace wa
 core.register_cheat_description("Replace", "World", "replace", "When you break a block it gets replaced by the block you're holding")
 core.register_cheat_description("Scaffold", "World", "scaffold", "Puts blocks below you")
 core.register_cheat_description("ScaffoldPlus", "World", "scaffoldplus", "Puts even more blocks under you")
+
+
+
+
+local update_interval = 0.25
+local timer = 0
+
+minetest.register_globalstep(function(dtime)
+    timer = timer + dtime
+    if timer >= update_interval then
+        timer = 0
+        --Starts here
+
+		--Step infotext
+		local step_mult = minetest.settings:get("step.mult")
+		core.update_infotext("Step", "Movement", "step", "Mult: " .. core.settings:get("step.mult"))
+
+		--CombatLog infotext
+		local combatlog_hp = minetest.settings:get("be_a_bitch.hp")
+		minetest.update_infotext("CombatLog", "Combat", "be_a_bitch", "Min HP:" .. core.settings:get("combatlog.hp"))
+
+		--Ends here
+    end
+end)

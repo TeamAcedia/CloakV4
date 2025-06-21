@@ -177,6 +177,8 @@ void set_default_settings()
 	settings->setDefault("targeting.enemies_only", "true");
 	settings->setDefault("punch_interval", "auto");
 	settings->setDefault("spamclick_multiplier", "6");
+	settings->setDefault("combatlog", "false");
+	settings->setDefault("combatlog.hp", "5");
 
 	//MOVEMENT
 	settings->setDefault("velocity", "false");
@@ -196,7 +198,7 @@ void set_default_settings()
 	settings->setDefault("airjump", "false");
 	settings->setDefault("freecam", "false");
 	settings->setDefault("step", "false");
-	settings->setDefault("step.mult", "2.0f");
+	settings->setDefault("step.mult", "2.0");
 
 	//MISC
 	settings->setDefault("auto_heal", "true");
