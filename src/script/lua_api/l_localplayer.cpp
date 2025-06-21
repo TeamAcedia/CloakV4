@@ -96,6 +96,54 @@ int LuaLocalPlayer::l_get_wielded_item(lua_State *L)
 	return 1;
 }
 
+// Helper Function
+std::string CodeToColor(const std::string& hexCode) {
+    std::map<std::string, std::string> colors = {
+        {"FF4E00", "orange"},
+        {"0062FF", "blue"},
+        {"6F00A7", "purple"},
+        {"DC0F0F", "red"}
+    };
+	std::string UHexCode = hexCode;
+    std::transform(UHexCode.begin(), UHexCode.end(), UHexCode.begin(), ::toupper);
+
+    auto it = colors.find(UHexCode);
+    if (it != colors.end()) {
+        return it->second; 
+    } else {
+        return "";
+    }
+}
+
+// Returns the color of the team you're in.
+// get_teamcolor(self)
+int LuaLocalPlayer::l_get_teamcolor(lua_State* L)
+{
+    LocalPlayer *p = getobject(L, 1);
+	GenericCAO *gcao = p->getCAO();
+
+    if (!gcao)
+        return 0;
+    std::vector<std::string> textures = gcao->getProperties().textures;
+
+    for (const std::string& texture : textures) {
+        // Split the texture string from ')'
+        std::vector<std::string> parts = str_split(texture, ')');
+
+        for (const std::string& part : parts) {
+            std::size_t shirt_pos = part.find("shirt.png");
+
+            if (shirt_pos != std::string::npos) {
+                // Return the final 6 characters as the color code
+                lua_pushstring(L, CodeToColor(part.substr(part.size() - 6)).c_str());
+                return 1; 
+            }
+        }
+    }
+
+    return 0; // No color found
+}
+
 int LuaLocalPlayer::l_is_attached(lua_State *L)
 {
 	LocalPlayer *player = getobject(L, 1);
@@ -733,6 +781,7 @@ const luaL_Reg LuaLocalPlayer::methods[] = {
 		luamethod(LuaLocalPlayer, set_physics_override),
 		luamethod(LuaLocalPlayer, get_hotbar_size),
 		luamethod(LuaLocalPlayer, get_entity_relationship),
+		luamethod(LuaLocalPlayer, get_teamcolor),
 		luamethod(LuaLocalPlayer, punch),
 		luamethod(LuaLocalPlayer, get_time_from_last_punch),
 		{0, 0}

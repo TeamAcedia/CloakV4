@@ -122,6 +122,9 @@ private:
 	// get_entity_relationship(self, object_id)
 	static int l_get_entity_relationship(lua_State *L);
 
+	// get_teamcolor(self)
+	static int l_get_teamcolor(lua_State *L);
+
 	// punch(self, object_id)
 	static int l_punch(lua_State *L);
 

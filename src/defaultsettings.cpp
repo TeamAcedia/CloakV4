@@ -210,6 +210,9 @@ void set_default_settings()
 	settings->setDefault("spammer", "false");
 	settings->setDefault("spammer.cooldown", "5");
 	settings->setDefault("spammer.message", "message");
+	settings->setDefault("autoteam", "false");
+	settings->setDefault("flagaura", "false");
+	settings->setDefault("flagaura.range", "5");
 
 	//PLAYER
 	settings->setDefault("autorespawn", "false");
