@@ -281,11 +281,11 @@ end
 --Combat
 core.register_cheat_description("AntiKnockback", "Combat", "antiknockback", "Ignore knockback")
 core.register_cheat_description("AttachmentFloat", "Combat", "float_above_parent", "Puts the camera one node higher when attached to an entity")
---core.register_cheat_description("AutoTotem", "Combat", "autototem", "Automatically puts a totem in your offhand")
+core.register_cheat_description("AutoTotem", "Combat", "autototem", "Automatically puts a totem in your offhand")
 core.register_cheat_description("AutoAim", "Combat", "autoaim", "Aims at a specified target")
---core.register_cheat_description("CombatLog", "Combat", "be_a_bitch", "Logs off when certain HP is reached")
+core.register_cheat_description("CombatLog", "Combat", "be_a_bitch", "Logs off when certain HP is reached")
 core.register_cheat_description("Criticals", "Combat", "critical_hits", "Does critical hits in mcl2/mcla")
---core.register_cheat_description("CrystalSpam", "Combat", "crystalspam", "Puts end crystals under the nearest player")
+core.register_cheat_description("CrystalSpam", "Combat", "crystalspam", "Puts end crystals under the nearest player")
 core.register_cheat_description("Killaura", "Combat", "killaura", "Attacks a specified target")
 core.register_cheat_description("Orbit", "Combat", "orbit", "Moves around a specified target")
 --Interact
@@ -299,16 +299,17 @@ core.register_cheat_description("FastHit", "Interact", "spamclick", "Hit faster 
 core.register_cheat_description("AutoHit","Interact", "autohit", "Auto hit when looking at entity")
 core.register_cheat_description("AutoTool", "Interact", "autotool", "Selects the best tool for an action")
 --Inventory
---core.register_cheat_description("Enderchest", "Inventory", minetest.open_enderchest, "Preview enderchest content in mcl/mcla")
---core.register_cheat_description("Hand", "Inventory", minetest.open_handslot, "Open hand formspec in mcl/mcla")
+core.register_cheat_description("Enderchest", "Misc", minetest.open_enderchest, "Preview enderchest content in mcl/mcla")
+core.register_cheat_description("Hand", "Misc", minetest.open_handslot, "Open hand formspec in mcl/mcla")
 --Misc
 --core.register_cheat_description("Anti AFK", "Misc", "anti_afk", "Prevent afk by moving")
---core.register_cheat_description("Auto Staff", "Misc", "autostaff", "Automatically check player privs and assign them as a staff.")
+--core.register_cheat_description("AutoStaff", "Misc", "autostaff", "Automatically check player privs and assign them as a staff.")
 --core.register_cheat_setting("Warn Staff", "Misc", "autostaff", "autostaff.warn_staff", {type="bool"})
---core.register_cheat_description("Auto Team", "Misc", "autoteam", "Sets allied players to your team in ctf")
+core.register_cheat_description("AutoTeam", "Misc", "autoteam", "Sets allied players to your team in ctf")
 --core.register_cheat_description("Nametags", "Misc", "use_colored_nametags", "Sets player nametag colors based on their friend/enemy status")
 --core.register_cheat_description("Panic", "Misc", "panic", "Disables all detectable cheats")
 core.register_cheat_description("Hints", "Misc", "use_hints", "Enable cheat hints")
+core.register_cheat_description("Spammer", "Misc", "spammer", "Sends many chat messages")
 --Movement
 core.register_cheat_description("AirJump", "Movement", "airjump", "Jump on air")
 core.register_cheat_description("AntiSlip", "Movement", "antislip", "Walk on slippery blocks without slipping")
@@ -336,6 +337,7 @@ core.register_cheat_description("NoForceRotate", "Player", "noforcerotate", "Pre
 core.register_cheat_description("PrivBypass", "Player", "priv_bypass", "Bypass fly, noclip, fast and wireframe rendering")
 core.register_cheat_description("QuickMenu", "Player", "use_old_menu", "Add a menu for quicker access to cheats")
 core.register_cheat_description("Reach", "Player", "reach", "Increase reach")
+core.register_cheat_description("LuaControl", "Player", "luacontrol", "The player moves regardless of the received input")
 --Render
 core.register_cheat_description("BrightNight", "Render", "no_night", "Always daytime")
 core.register_cheat_description("CheatHUD", "Render", "cheathud", "List enabled cheats")
@@ -347,7 +349,7 @@ core.register_cheat_description("Fullbright", "Render", "fullbright", "No darkne
 --core.register_cheat_description("HealthESP", "Render", "show_players_hp", "Shows player and entities' HP")
 --core.register_cheat_description("NoDrownCam", "Render", "small_post_effect_color", "Disables drowning camera effect")
 core.register_cheat_description("NoHurtCam", "Render", "no_hurt_cam", "Disables hurt camera effect")
-core.register_cheat_description("NoRender", "Render", "norender.particles", "Don't render particles")
+core.register_cheat_description("NoParticles", "Render", "norender.particles", "Don't render particles")
 core.register_cheat_description("NodeESP", "Render", "enable_node_esp", "See specified nodes through walls")
 core.register_cheat_description("NodeTracers", "Render", "enable_node_tracers", "Draw tracers to specified nodes")
 core.register_cheat_description("PlayerESP", "Render", "enable_player_esp", "See players through walls")
@@ -365,6 +367,14 @@ core.register_cheat_description("Scaffold", "World", "scaffold", "Puts blocks be
 core.register_cheat_description("ScaffoldPlus", "World", "scaffoldplus", "Puts even more blocks under you")
 
 
+
+
+--SOME SETTINGS
+
+core.register_cheat_setting("Nodelist", "Render", "xray", "xray.nodes", {type="text", size=10})
+core.register_cheat_setting("Multiplier", "Movement", "step", "step.mult", {type="slider_float", min=1.0, max=3.5, steps=6})
+core.register_cheat_setting("Y Offset", "Render", "cheat_hud", "cheat_hud.offset", {type="slider_int", min=0, max=200, steps=41})
+core.register_cheat_setting("Position", "Render", "cheat_hud", "cheat_hud.position", {type="selectionbox", options={"Top", "Bottom"}})
 
 
 local update_interval = 0.25

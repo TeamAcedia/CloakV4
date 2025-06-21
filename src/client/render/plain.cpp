@@ -177,7 +177,7 @@ void DrawTracersAndESP::run(PipelineContext &context)
 				if (is_player) {
 					//pCnt += 1;
 					driver->draw3DBox(box, color, playerDT, playerEO, playerFO);
-				} else {
+				} else if (!cao->getParent()) {
 					//eCnt += 1;				
 					driver->draw3DBox(box, color, entityDT, entityEO, entityFO);				
 				}

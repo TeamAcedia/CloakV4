@@ -11,7 +11,7 @@ core.register_cheat_setting("Many Punches", "Combat", "killaura", "killaura.many
 
 -------------- Auto Aim -----------------
 
-core.register_cheat_with_infotext("Autoaim", "Combat", "autoaim", "")
+core.register_cheat_with_infotext("AutoAim", "Combat", "autoaim", "")
 core.register_cheat_setting("Target Mode", "Combat", "autoaim", "targeting.target_mode", {type="selectionbox", options={"Nearest", "Lowest HP", "Highest HP"}})
 core.register_cheat_setting("Target Type", "Combat", "autoaim", "targeting.target_type", {type="selectionbox", options={"Players", "Entities", "Both"}})
 core.register_cheat_setting("Distance", "Combat", "autoaim", "targeting.distance", {type="slider_int", min=1, max=10, steps=10})
@@ -200,7 +200,7 @@ core.register_globalstep(function(dtime)
 		local mode_text = target_mode and target_mode:gsub(" HP", "") or "Unknown"
 	
 		local target_description = core.settings:get("targeting.target_type")
-		core.update_infotext("Autoaim", "Combat", "autoaim", string.format("%s, %s", mode_text, target_description))
+		core.update_infotext("AutoAim", "Combat", "autoaim", string.format("%s, %s", mode_text, target_description))
 	end
 
 	if core.settings:get_bool("orbit") then
