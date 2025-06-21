@@ -182,6 +182,16 @@ invert_hotbar_mouse_wheel (Hotbar: Invert mouse wheel direction) bool false
 
 [**Keybindings]
 
+#    Key for toggling Freecam.
+keymap_toggle_freecam (Freecam) key KEY_KEY_G
+
+#    Key for toggling Killaura.
+keymap_toggle_killaura (Killaura) key KEY_KEY_X
+
+#    Key for toggling AutoAim.
+keymap_toggle_autoaim (AutoAim) key KEY_KEY_N
+
+#    Key for moving the player forward.
 keymap_forward (Move forward) key SYSTEM_SCANCODE_26
 
 #    Will also disable autoforward, when active.
@@ -227,7 +237,12 @@ keymap_fastmove (Toggle fast) key SYSTEM_SCANCODE_13
 
 keymap_noclip (Toggle noclip) key SYSTEM_SCANCODE_11
 
+<<<<<<< HEAD
 keymap_hotbar_next (Hotbar: select next item) key SYSTEM_SCANCODE_17
+=======
+#    Key for selecting the next item in the hotbar.
+keymap_hotbar_next (Hotbar: select next item) key
+>>>>>>> 0bb18ba56 (add keybindings)
 
 keymap_hotbar_previous (Hotbar: select previous item) key SYSTEM_SCANCODE_5
 

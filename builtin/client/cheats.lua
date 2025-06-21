@@ -344,7 +344,7 @@ core.register_cheat_description("CheatHUD", "Render", "cheathud", "List enabled 
 core.register_cheat_description("Coords", "Render", "coords", "Render coordinates in the bottom left corner")
 core.register_cheat_description("EntityESP", "Render", "enable_entity_esp", "See entities through walls")
 core.register_cheat_description("EntityTracers", "Render", "enable_entity_tracers", "Draw tracers to entities")
-core.register_cheat_description("Fullbright", "Render", "fullbright", "No darkness")
+core.register_cheat_description("FullBright", "Render", "fullbright", "No darkness")
 --core.register_cheat_description("HUDBypass", "Render", "hudbypass", "Allows player to toggle hud elements disabled by the game")
 --core.register_cheat_description("HealthESP", "Render", "show_players_hp", "Shows player and entities' HP")
 --core.register_cheat_description("NoDrownCam", "Render", "small_post_effect_color", "Disables drowning camera effect")

@@ -318,11 +318,13 @@ void set_default_settings()
 	USEKEY2("keymap_rangeselect", has_touch ? "SYSTEM_SCANCODE_21" : "", has_touch ? "KEY_KEY_R" : "");
 	
 	settings->setDefault("keymap_toggle_freecam", "KEY_KEY_G");
+	settings->setDefault("keymap_toggle_killaura", "KEY_KEY_X");
+	settings->setDefault("keymap_toggle_autoaim", "KEY_KEY_N");
 	USEKEY2("keymap_freemove", "SYSTEM_SCANCODE_14", "KEY_KEY_K");
 	settings->setDefault("keymap_pitchmove", "");
 	USEKEY2("keymap_fastmove", "SYSTEM_SCANCODE_13", "KEY_KEY_J");
 	USEKEY2("keymap_noclip", "SYSTEM_SCANCODE_11", "KEY_KEY_H");
-	USEKEY2("keymap_hotbar_next", "SYSTEM_SCANCODE_17", "KEY_KEY_N");
+	USEKEY2("keymap_hotbar_next", "SYSTEM_SCANCODE_17", "");
 	USEKEY2("keymap_hotbar_previous", "SYSTEM_SCANCODE_5", "KEY_KEY_B");
 	USEKEY2("keymap_mute", "SYSTEM_SCANCODE_16", "KEY_KEY_M");
 	settings->setDefault("keymap_increase_volume", "");

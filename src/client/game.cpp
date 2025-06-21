@@ -2015,6 +2015,10 @@ if (g_settings->getBool("use_old_menu")) {
 		toggleNoClip();
 	} else if (wasKeyDown(KeyType::FREECAM)) {
 		toggleFreecam();
+	} else if (wasKeyDown(KeyType::KILLAURA)) {
+		toggleKillaura();
+	} else if (wasKeyDown(KeyType::AUTOAIM)) {
+		toggleAutoaim();
 #if USE_SOUND
 	} else if (wasKeyDown(KeyType::MUTE)) {
 		bool new_mute_sound = !g_settings->getBool("mute_sound");
@@ -2281,6 +2285,30 @@ void Game::toggleFreecam()
 		m_game_ui->showTranslatedStatusText("Freecam enabled");
 	} else {
 		m_game_ui->showTranslatedStatusText("Freecam disabled");
+	}
+}
+
+void Game::toggleKillaura()
+{
+	bool killaura = ! g_settings->getBool("killaura");
+	g_settings->set("killaura", bool_to_cstr(killaura));
+
+	if (killaura) {
+		m_game_ui->showTranslatedStatusText("Killaura enabled");
+	} else {
+		m_game_ui->showTranslatedStatusText("Killaura disabled");
+	}
+}
+
+void Game::toggleAutoaim()
+{
+	bool autoaim = ! g_settings->getBool("autoaim");
+	g_settings->set("autoaim", bool_to_cstr(autoaim));
+
+	if (autoaim) {
+		m_game_ui->showTranslatedStatusText("AutoAim enabled");
+	} else {
+		m_game_ui->showTranslatedStatusText("AutoAim disabled");
 	}
 }
 
