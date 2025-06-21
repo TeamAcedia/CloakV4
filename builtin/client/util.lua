@@ -111,3 +111,46 @@ function core.remove_from_player_list(setting, server_url, name)
 	core.set_player_list(setting, server_url, list)
 	return true, "Removed " .. name .. " from the list."
 end
+
+local game
+local awaiting_status = false
+
+function core.get_server_game()
+	if not game then
+		return "not_initialized"
+	else
+		return game
+	end
+end
+
+core.register_on_receiving_chat_message(function(message)
+	message = string.gsub(string.gsub(string.gsub(message, "(T@ctf_teams)", ""), "F", ""), "E", "")
+
+	local game_match = string.match(message, "game:%s*([^|]+)")
+	if game_match then
+		game = game_match:gsub("%s+", ""):lower()
+		if awaiting_status then			
+						awaiting_status = false						
+						return true						
+					else						
+						return false						
+					end						
+				end
+																
+				if string.sub(message, 1, 24) == "— JMA Capture the Flag" then						
+					game = "capturetheflag"					
+					if awaiting_status then						
+						awaiting_status = false						
+						return true						
+					else						
+						return false
+					end
+	end
+end)
+
+core.register_globalstep(function(dtime)
+	if not game and not awaiting_status then
+		core.send_chat_message("/status")
+		awaiting_status = true
+	end
+end)
