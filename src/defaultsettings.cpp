@@ -198,6 +198,17 @@ void set_default_settings()
 	settings->setDefault("step", "false");
 	settings->setDefault("step.mult", "2.0f");
 
+	//MISC
+	settings->setDefault("auto_heal", "true");
+	settings->setDefault("auto_heal.hp", "15");
+	settings->setDefault("auto_heal.delay", "0.1");
+	settings->setDefault("auto_heal.cooldown", "0.5");
+	settings->setDefault("appleaura", "false");
+	settings->setDefault("appleaura.range", "4");
+	settings->setDefault("spammer", "false");
+	settings->setDefault("spammer.cooldown", "5");
+	settings->setDefault("spammer.message", "message");
+
 	//PLAYER
 	settings->setDefault("autorespawn", "false");
 	settings->setDefault("lua_control", "false");
@@ -260,7 +271,7 @@ void set_default_settings()
 
 	//UNUSED
 	settings->setDefault("entity_speed", "false"); // not actually used
-	settings->setDefault("hud_flags_bypass", "true"); //yet to be implemented
+	settings->setDefault("hud_flags_bypass", "false"); // yet to be implemented
 
 
 	// Keymap
