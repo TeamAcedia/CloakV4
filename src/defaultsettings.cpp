@@ -179,6 +179,7 @@ void set_default_settings()
 	settings->setDefault("spamclick_multiplier", "6");
 	settings->setDefault("combatlog", "false");
 	settings->setDefault("combatlog.hp", "5");
+	settings->setDefault("autototem", "false");
 
 	//MOVEMENT
 	settings->setDefault("velocity", "false");
@@ -213,6 +214,10 @@ void set_default_settings()
 	settings->setDefault("autoteam", "false");
 	settings->setDefault("flagaura", "false");
 	settings->setDefault("flagaura.range", "5");
+	//old inventory cheats (moved to misc to prevent having too many categories)
+	settings->setDefault("autoeject", "false");
+	settings->setDefault("autorefill", "false");
+	settings->setDefault("autoplanks", "false");
 
 	//PLAYER
 	settings->setDefault("autorespawn", "false");

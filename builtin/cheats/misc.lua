@@ -35,7 +35,7 @@ core.register_globalstep(function(dtime)
 	end
 end)
 
-core.register_cheat("AutoHeal", "Misc", "auto_heal")
+core.register_cheat_with_infotext("AutoHeal", "Misc", "auto_heal", "CTF")
 core.register_cheat_description("AutoHeal", "Misc", "auto_heal", "Automatically eat food if health is below a set value.")
 
 core.register_cheat_setting("Delay", "Misc", "auto_heal", "auto_heal.delay", {type="slider_float", min=0.0, max=1.5, steps=16})
@@ -66,7 +66,7 @@ minetest.register_globalstep(function()
 end)
   
 
-minetest.register_cheat_with_infotext("AppleAura", "Misc", "appleaura", "")
+minetest.register_cheat_with_infotext("AppleAura", "Misc", "appleaura", "CTF")
 minetest.register_cheat_setting("Radius", "Misc", "appleaura", "appleaura.range", {type="slider_float", min=1, max=6, steps=6})
 core.register_cheat_description("AppleAura", "Misc", "appleaura", "Automatically digs all apples within a specific radius.")
 --[[
