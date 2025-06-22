@@ -122,6 +122,16 @@ function core.register_cheat_description(cheatname, category, func, description)
 	core.descriptions[category][cheatname] = description
 	core.get_description()
 end
+-----------------------------------------------------------PANIC-----------------------------------------------------------
+function core.panic()
+	for category_name, category in pairs(minetest.cheats) do
+		for cheat_name, cheat in pairs(category) do
+			local disable_cheats = minetest.cheats[category_name][cheat_name]
+			if type(disable_cheats) == "string" then core.settings:set(disable_cheats, "false") end
+		end
+	end
+end
+core.register_cheat("Panic", "Misc", core.panic)
 -----------------------------------------------------------TESTS, PRESET VALUES, ETC-----------------------------------------------------------
 local pos_y = 0
 local corners = {
@@ -307,7 +317,7 @@ core.register_cheat_description("Hand", "Misc", minetest.open_handslot, "Open ha
 --core.register_cheat_setting("Warn Staff", "Misc", "autostaff", "autostaff.warn_staff", {type="bool"})
 core.register_cheat_description("AutoTeam", "Misc", "autoteam", "Sets allied players to your team in ctf")
 --core.register_cheat_description("Nametags", "Misc", "use_colored_nametags", "Sets player nametag colors based on their friend/enemy status")
---core.register_cheat_description("Panic", "Misc", "panic", "Disables all detectable cheats")
+core.register_cheat_description("Panic", "Misc", "panic", "Disables all cheats")
 core.register_cheat_description("Hints", "Misc", "use_hints", "Enable cheat hints")
 core.register_cheat_description("Spammer", "Misc", "spammer", "Sends many chat messages")
 --Movement
