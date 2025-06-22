@@ -227,6 +227,7 @@ void set_default_settings()
 	settings->setDefault("reach", "false");
 	settings->setDefault("priv_bypass", "false");
 	settings->setDefault("no_force_rotate", "false");
+	settings->setDefault("nobob", "false");
 
 	//INTERACT
 	settings->setDefault("spamclick", "false");
@@ -324,6 +325,7 @@ void set_default_settings()
 	settings->setDefault("keymap_toggle_freecam", "KEY_KEY_G");
 	settings->setDefault("keymap_toggle_killaura", "KEY_KEY_X");
 	settings->setDefault("keymap_toggle_autoaim", "KEY_KEY_N");
+	settings->setDefault("keymap_toggle_scaffold", "KEY_KEY_Y");
 	USEKEY2("keymap_freemove", "SYSTEM_SCANCODE_14", "KEY_KEY_K");
 	settings->setDefault("keymap_pitchmove", "");
 	USEKEY2("keymap_fastmove", "SYSTEM_SCANCODE_13", "KEY_KEY_J");

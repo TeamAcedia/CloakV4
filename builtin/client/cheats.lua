@@ -27,6 +27,7 @@ core.cheats = {
 		["LuaControl"] = "lua_control",
 		["NoForceRotate"] = "no_force_rotate",
 		["QuickMenu"] = "use_old_menu",
+		["NoViewBob"] = "nobob",
     },
 	["Movement"] = {
 		["Freecam"] = "freecam",

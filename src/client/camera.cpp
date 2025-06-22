@@ -557,7 +557,7 @@ void Camera::update(LocalPlayer* player, f32 frametime, f32 tool_reload_ratio)
 	const bool climbing = movement_Y && player->is_climbing;
 	const bool flying = g_settings->getBool("free_move")
 		&& m_client->checkLocalPrivilege("fly");
-	if ((walking || swimming || climbing) && !flying) {
+	if ((walking || swimming || climbing) && !flying && !g_settings->getBool("nobob")) {
 		// Start animation
 		m_view_bobbing_state = 1;
 		m_view_bobbing_speed = MYMIN(speed.getLength(), 70);
