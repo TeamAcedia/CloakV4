@@ -620,7 +620,7 @@ MapBlockMesh::MapBlockMesh(Client *client, MeshMakeData *data):
 {
 	ZoneScoped;
 
-	std::set<content_t> nodeESPSet = splitToContentT(g_settings->get("node_esp_nodes"), data->m_nodedef);
+	std::set<content_t> nodeESPSet = splitToContentT(g_settings->get("enable_node_esp.nodes"), data->m_nodedef);
 
 	for (auto &m : m_mesh)
 		m = make_irr<scene::SMesh>();

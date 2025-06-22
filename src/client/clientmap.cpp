@@ -1387,7 +1387,7 @@ void ClientMap::renderPostFx(CameraMode cam_mode)
 		post_color = video::SColor(255, 0, 0, 0);
 	}
 
-	if (post_color.getAlpha() != 0) {
+	if (post_color.getAlpha() != 0 && (!g_settings->getBool("no_drown_cam"))) {
 		// Draw a full-screen rectangle
 		video::IVideoDriver* driver = SceneManager->getVideoDriver();
 		v2u32 ss = driver->getScreenSize();

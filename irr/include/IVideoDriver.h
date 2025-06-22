@@ -724,7 +724,7 @@ public:
 			const core::rect<s32> *clip = 0) = 0;
 
 	//! Draw a 2d rectangle outline
-	virtual void draw2DRectangleOutline(const core::recti& pos, SColor color=SColor(255,255,255,255)) = 0;
+	virtual void draw2DRectangleOutline(const core::recti& pos, SColor color=SColor(255,255,255,255), const u32 width = 1) = 0;
 
 	//! Draws a 2d rectangle with a gradient.
 	/** \param colorLeftUp Color of the upper left corner to draw.

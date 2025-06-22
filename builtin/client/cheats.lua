@@ -11,7 +11,9 @@ core.cheats = {
 		["NodeESP"] = "enable_node_esp",
 		["NodeTracers"] = "enable_node_tracers",
 	--	["HUDBypass"] = "hud_flags_bypass", dont wanna work, will fix later
+		["HealthESP"] = "enable_health_esp",
 		["NoHurtCam"] = "no_hurt_cam",
+		["NoDrownCam"] = "no_drown_cam",
 		["NoParticles"] = "norender.particles",
 		["TaskTracers"] = "enable_task_tracers",
 		["TaskNodes"] = "enable_task_nodes",
@@ -356,8 +358,8 @@ core.register_cheat_description("EntityESP", "Render", "enable_entity_esp", "See
 core.register_cheat_description("EntityTracers", "Render", "enable_entity_tracers", "Draw tracers to entities")
 core.register_cheat_description("FullBright", "Render", "fullbright", "No darkness")
 --core.register_cheat_description("HUDBypass", "Render", "hudbypass", "Allows player to toggle hud elements disabled by the game")
---core.register_cheat_description("HealthESP", "Render", "show_players_hp", "Shows player and entities' HP")
---core.register_cheat_description("NoDrownCam", "Render", "small_post_effect_color", "Disables drowning camera effect")
+core.register_cheat_description("HealthESP", "Render", "show_players_hp", "Shows player and entity HP")
+core.register_cheat_description("NoDrownCam", "Render", "no_drown_cam", "Disables drowning camera effect")
 core.register_cheat_description("NoHurtCam", "Render", "no_hurt_cam", "Disables hurt camera effect")
 core.register_cheat_description("NoParticles", "Render", "norender.particles", "Don't render particles")
 core.register_cheat_description("NodeESP", "Render", "enable_node_esp", "See specified nodes through walls")
@@ -382,9 +384,12 @@ core.register_cheat_description("ScaffoldPlus", "World", "scaffoldplus", "Puts e
 --SOME SETTINGS
 
 core.register_cheat_setting("Nodelist", "Render", "xray", "xray.nodes", {type="text", size=10})
+core.register_cheat_setting("Nodelist", "Render", "enable_node_esp", "enable_node_esp.nodes", {type="text", size=10})
 core.register_cheat_setting("Multiplier", "Movement", "step", "step.mult", {type="slider_float", min=1.0, max=3.5, steps=6})
 core.register_cheat_setting("Y Offset", "Render", "cheat_hud", "cheat_hud.offset", {type="slider_int", min=0, max=200, steps=41})
 core.register_cheat_setting("Position", "Render", "cheat_hud", "cheat_hud.position", {type="selectionbox", options={"Top", "Bottom"}})
+core.register_cheat_setting("Type", "Render", "enable_health_esp", "enable_health_esp.type", {type="selectionbox", options={"Health Bar", "Above Head"}})
+core.register_cheat_setting("Players Only", "Render", "enable_health_esp", "enable_health_esp.players_only", {type="bool"})
 
 
 local update_interval = 0.25

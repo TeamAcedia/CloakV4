@@ -255,7 +255,7 @@ void set_default_settings()
 	settings->setDefault("enable_player_tracers", "false");
 	settings->setDefault("enable_node_esp", "false");
 	settings->setDefault("enable_node_tracers", "false");
-	settings->setDefault("node_esp_nodes", "mcl_chests:chest_small,mcl_chests:chest_left,mcl_chests:black_shulker_box_small,mcl_chests:blue_shulker_box_small,mcl_chests:brown_shulker_box_small,mcl_chests:cyan_shulker_box_small,mcl_chests:dark_green_shulker_box_small,mcl_chests:dark_grey_shulker_box_small,mcl_chests:lightblue_shulker_box_small,mcl_chests:green_shulker_box_small,mcl_chests:orange_shulker_box_small,mcl_chests:magenta_shulker_box_small,mcl_chests:pink_shulker_box_small,mcl_chests:violet_shulker_box_small,mcl_chests:red_shulker_box_small,mcl_chests:grey_shulker_box_small,mcl_chests:white_shulker_box_small,mcl_chests:yellow_shulker_box_small");
+	settings->setDefault("enable_node_esp.nodes", "mcl_chests:chest_small,mcl_chests:chest_left,mcl_chests:black_shulker_box_small,mcl_chests:blue_shulker_box_small,mcl_chests:brown_shulker_box_small,mcl_chests:cyan_shulker_box_small,mcl_chests:dark_green_shulker_box_small,mcl_chests:dark_grey_shulker_box_small,mcl_chests:lightblue_shulker_box_small,mcl_chests:green_shulker_box_small,mcl_chests:orange_shulker_box_small,mcl_chests:magenta_shulker_box_small,mcl_chests:pink_shulker_box_small,mcl_chests:violet_shulker_box_small,mcl_chests:red_shulker_box_small,mcl_chests:grey_shulker_box_small,mcl_chests:white_shulker_box_small,mcl_chests:yellow_shulker_box_small");
 	settings->setDefault("esp.player.drawType", "0");
 	settings->setDefault("esp.player.edgeOpacity", "255");
 	settings->setDefault("esp.player.faceOpacity", "100");
@@ -267,6 +267,10 @@ void set_default_settings()
 	settings->setDefault("esp.node.faceOpacity", "200");
 	settings->setDefault("norender.particles", "false");
 	settings->setDefault("no_hurt_cam", "false");
+	settings->setDefault("enable_health_esp", "false");
+	settings->setDefault("enable_health_esp.players_only", "true");
+	settings->setDefault("enable_health_esp.type", "Health Bar");
+	settings->setDefault("no_drown_cam", "false");
 
 	//WORLD
 	settings->setDefault("scaffold", "false");	

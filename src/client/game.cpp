@@ -913,7 +913,7 @@ Game::Game() :
 		&updateAllMapBlocksCallback, this);
 	g_settings->registerChangedCallback("freecam",
 		&freecamChangedCallback, this);
-	g_settings->registerChangedCallback("node_esp_nodes",
+	g_settings->registerChangedCallback("enable_node_esp.nodes",
 		&updateAllMapBlocksCallback, this);
 
 	readSettings();
@@ -947,7 +947,7 @@ Game::~Game()
 		&updateAllMapBlocksCallback, this);
 	g_settings->deregisterChangedCallback("freecam",
 		&freecamChangedCallback, this);
-	g_settings->deregisterChangedCallback("node_esp_nodes",
+	g_settings->deregisterChangedCallback("enable_node_esp.nodes",
 		&updateAllMapBlocksCallback, this);
 
 	if (m_rendering_engine)
