@@ -170,13 +170,13 @@ void set_default_settings()
 	settings->setDefault("airjump", "false");
 	settings->setDefault("spider", "false");
 	settings->setDefault("hud_flags_bypass", "true");
-	settings->setDefault("enable_entity_esp", "true");
+	settings->setDefault("enable_entity_esp", "false");
 	settings->setDefault("appleaura.range", "3");
 	settings->setDefault("enable_entity_tracers", "false");
-	settings->setDefault("enable_combat_target_hud", "true");
+	settings->setDefault("enable_combat_target_hud", "false");
 	settings->setDefault("enable_player_esp.type", "Above Head");
-	settings->setDefault("enable_player_esp", "true");
-	settings->setDefault("enable_player_tracers", "true");
+	settings->setDefault("enable_player_esp", "false");
+	settings->setDefault("enable_player_tracers", "false");
 	settings->setDefault("enable_node_esp", "false");
 	settings->setDefault("enable_node_tracers", "false");
 	settings->setDefault("enable_tunnel_esp", "false");
@@ -199,10 +199,10 @@ void set_default_settings()
 	settings->setDefault("enemies", "{}");
 	settings->setDefault("allies", "{}");
 	settings->setDefault("staff", "{}");
-	settings->setDefault("autostaff", "true");
+	settings->setDefault("autostaff", "false");
 	settings->setDefault("autostaff.warn_staff", "true");
 	settings->setDefault("autoteam", "false");
-	settings->setDefault("auto_heal", "true");
+	settings->setDefault("auto_heal", "false");
 	settings->setDefault("auto_heal.hp", "15");
 	settings->setDefault("auto_heal.delay", "0.1");
 	settings->setDefault("auto_heal.cooldown", "0.5");
@@ -261,12 +261,13 @@ void set_default_settings()
 	settings->setDefault("fov_setting", "true");
 	settings->setDefault("fov.step", "72.0f");
 	settings->setDefault("appleaura.range", "5");
-	settings->setDefault("flagaura", "true");
+	settings->setDefault("flagaura", "false");
 	settings->setDefault("flagaura.range", "5");
 	settings->setDefault("background", "default");
 	settings->setDefault("spammer", "false");
 	settings->setDefault("spammer.cooldown", "5");
 	settings->setDefault("spammer.message", "message");
+	settings->setDefault("hud_elements_advice", "true");
 
 	settings->setDefault("esp.player.drawType", "0");
 	settings->setDefault("esp.player.edgeOpacity", "255");
