@@ -226,8 +226,15 @@ void DrawTracersAndESP::run(PipelineContext &context)
 	driver->setMaterial(oldmaterial);
 }
 
+
 std::vector<TaskNode> DrawTaskBlocksAndTracers::task_nodes;
 std::vector<TaskTracer> DrawTaskBlocksAndTracers::task_tracers;
+
+void DrawTaskBlocksAndTracers::clearAllTasks()
+{
+    task_nodes.clear();
+    task_tracers.clear();
+}
 
 void DrawTaskBlocksAndTracers::run(PipelineContext &context)
 {

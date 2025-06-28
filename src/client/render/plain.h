@@ -127,6 +127,8 @@ public:
 	virtual void reset(PipelineContext &context) override {}
 	virtual void run(PipelineContext &context) override;
 
+	static void clearAllTasks();
+
 	static void addTaskNode(const TaskNode &node) {
 		task_nodes.push_back(node);
 	}

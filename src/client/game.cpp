@@ -18,6 +18,7 @@
 #include "client/joystick_controller.h"
 #include "client/mapblock_mesh.h"
 #include "client/sound.h"
+#include "client/render/plain.h"
 #include "clientmap.h"
 #include "clientmedia.h" // For clientMediaUpdateCacheCopy
 #include "clouds.h"
@@ -1137,6 +1138,7 @@ void Game::shutdown()
 	// Delete text and menus first
 	m_game_ui->clearText();
 	m_game_formspec.reset();
+	DrawTaskBlocksAndTracers::clearAllTasks();
 	while (g_menumgr.menuCount() > 0) {
 		g_menumgr.deleteFront();
 	}
