@@ -120,6 +120,11 @@ public:
 	{
 		return m_ao_manager.getAllActiveObjects(origin, dest);
 	}
+	void getAllActiveObjectsLegacy(std::unordered_map<u16, ClientActiveObject*> &dest)
+	{
+		return m_ao_manager.getAllActiveObjectsLegacy(dest);
+	}
+
 
 	bool hasClientEnvEvents() const { return !m_client_event_queue.empty(); }
 

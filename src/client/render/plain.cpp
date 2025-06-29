@@ -97,6 +97,9 @@ void DrawTracersAndESP::run(PipelineContext &context)
 	enemy_esp_color = video::SColor(255, enemy_color.X, enemy_color.Y, enemy_color.Z);
 	allied_esp_color = video::SColor(255, allied_color.X, allied_color.Y, allied_color.Z);
 
+	int targetDT = 2;
+	int targetEO = 255;
+	int targetFO = 127;
 	playerDT = g_settings->getU32("esp.player.drawType");
 	playerEO = g_settings->getU32("esp.player.edgeOpacity");
 	playerFO = g_settings->getU32("esp.player.faceOpacity");
@@ -164,6 +167,13 @@ void DrawTracersAndESP::run(PipelineContext &context)
 								color = entity_esp_color;						
 								break;	
 						}
+						if (!RenderingCore::ESPplayersNames.empty()) {		
+							for (auto &it : RenderingCore::ESPplayersNames) {				
+								if (it.first == obj->getName()) {			
+									color = video::SColor(255, it.second[0], it.second[1], it.second[2]);		
+								}
+							}
+						}
 			if (! (draw_esp || draw_tracers)) {
 				continue;
 			}
@@ -177,12 +187,16 @@ void DrawTracersAndESP::run(PipelineContext &context)
 			box.MaxEdge += pos;
 
 			if (draw_esp) {
-				if (is_player) {
-					//pCnt += 1;
-					driver->draw3DBox(box, color, playerDT, playerEO, playerFO);
-				} else if (!cao->getParent()) {
-					//eCnt += 1;				
-					driver->draw3DBox(box, color, entityDT, entityEO, entityFO);				
+				if (RenderingCore::combat_target != NULL && obj->getId() == RenderingCore::combat_target && (g_settings->getBool("enable_combat_target_hud.target_highlight") && g_settings->getBool("enable_combat_target_hud"))) {
+					driver->draw3DBox(box, RenderingCore::target_esp_color, targetDT, targetEO, targetFO);
+				} else {
+					if (is_player) {
+						//pCnt += 1;
+						driver->draw3DBox(box, color, playerDT, playerEO, playerFO);
+					} else if (!cao->getParent()) {
+						//eCnt += 1;
+						driver->draw3DBox(box, color, entityDT, entityEO, entityFO);
+					}			
 				}
 			}
 			if (draw_tracers) {

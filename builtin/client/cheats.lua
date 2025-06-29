@@ -18,6 +18,8 @@ core.cheats = {
 		["TaskTracers"] = "enable_task_tracers",
 		["TaskNodes"] = "enable_task_nodes",
 		["DetachedCamera"] = "detached_camera",
+		["TargetHUD"] = "enable_combat_target_hud",
+		["Coords"] = "coords",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
@@ -192,7 +194,7 @@ core.register_cheat_description("Velocity", "Movement", "velocity", "Various vel
 core.register_cheat_description("AutoRespawn", "Player", "autorespawn", "Respawn after dying")
 core.register_cheat_description("NoFallDamage", "Player", "prevent_natural_damage", "Receive no fall damage")
 core.register_cheat_description("NoForceRotate", "Player", "noforcerotate", "Prevent server from changing the player's view direction")
---core.register_cheat_description("NoViewBob", "Player", "nobob", "Disable view bobbing")
+core.register_cheat_description("NoViewBob", "Player", "nobob", "Disable view bobbing")
 core.register_cheat_description("PrivBypass", "Player", "priv_bypass", "Bypass fly, noclip, fast and wireframe rendering")
 core.register_cheat_description("QuickMenu", "Player", "use_old_menu", "Add a menu for quicker access to cheats")
 core.register_cheat_description("Reach", "Player", "reach", "Increase reach")
@@ -216,7 +218,8 @@ core.register_cheat_description("PlayerTracers", "Render", "enable_player_tracer
 --core.register_cheat_description("TunnelESP", "Render", "enable_tunnel_esp", "See tunnels through walls")
 --core.register_cheat_description("TunnelTracers", "Render", "enable_tunnel_tracers", "Draw tracers to tunnels")
 core.register_cheat_description("Xray", "Render", "xray", "Don't render specific nodes")
---core.register_cheat_description("TargetHUD", "Render", "enable_combat_target_hud", "Show currently attacking target on HUD")
+core.register_cheat_description("TargetHUD", "Render", "enable_combat_target_hud", "Shows best target on a HUD (depends on your combat settings)")
+core.register_cheat_description("DetachedCamera", "Render", "detached_camera", "Move forward regardless of where you're looking at")
 --World
 core.register_cheat_description("AutoTNT", "World", "autotnt", "Puts TNT on the ground")
 core.register_cheat_description("BlockLava", "World", "blocklava", "Replace lava with the block you're holding")
@@ -237,6 +240,7 @@ core.register_cheat_setting("Y Offset", "Render", "cheat_hud", "cheat_hud.offset
 core.register_cheat_setting("Position", "Render", "cheat_hud", "cheat_hud.position", {type="selectionbox", options={"Top", "Bottom"}})
 core.register_cheat_setting("Type", "Render", "enable_health_esp", "enable_health_esp.type", {type="selectionbox", options={"Health Bar", "Above Head"}})
 core.register_cheat_setting("Players Only", "Render", "enable_health_esp", "enable_health_esp.players_only", {type="bool"})
+core.register_cheat_setting("Target highlight", "Render", "enable_combat_target_hud", "enable_combat_target_hud.target_highlight", {type="bool"})
 
 
 local update_interval = 0.25

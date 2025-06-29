@@ -32,28 +32,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <IVideoDriver.h>
 #include <IGUIFont.h>
 #include <chrono>
-
-struct Sprite
-{
-    int x = 0, y = 0;
-    int width = 0;
-    int height = 0;
-
-    core::rect<s32> get_rect() {return core::rect<s32>(x, y, x + width, y + height);}
-    bool isDragging = false;
-
-    bool changedPos = false;
-
-    void save(s32 screenWidth, s32 screenHeight) {
-        if (x < 0) {
-            x = 0;
-        } else if (y + height > screenHeight) {
-            y = screenHeight - height;
-        }
-
-        g_settings->setV2F("coords_sprite", v2f(x, y));
-    }
-};
+#include "gui/targetHUD.h"
+#include "gui/coordsHUD.h"
 
 using namespace irr;
 using namespace gui;
@@ -83,26 +63,36 @@ public:
 
     virtual bool OnEvent(const irr::SEvent& event);
     virtual void draw() override;
-    void drawHints(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t i);
-    void drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t category_index, float dtime);
-    void drawSelectionBox(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t i, const size_t c, const size_t s);
     bool isOpen() { return m_is_open; }
     
     ~NewMenu();
-    static Sprite coords_sprite;
 
+    bool m_initialized = false;
 private:
     double roundToNearestStep(double number, double m_min, double m_max, double m_steps);
     void calculateSliderSplit(const core::rect<s32>& sliderRect, double value, double minValue, double maxValue, core::rect<s32>& filledRect, core::rect<s32>& remainingRect);
     double calculateSliderValueFromPosition(const core::rect<s32>& sliderBarRect, const core::position2d<s32>& pointerPosition, double m_min, double m_max, double m_steps);
     void drawInterpolatedRectangle(video::IVideoDriver* driver, const core::rect<s32>& rect, video::SColor innerColor, video::SColor outerColor, float interpolation);
-    
+    void drawHints(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t i);
+    void drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t category_index, float dtime);
+    void drawSelectionBox(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t i, const size_t c, const size_t s);
+    void drawEditHudButton(video::IVideoDriver* driver, gui::IGUIFont* font);
+    s32 roundToGrid(s32 num);
+
+    core::rect<s32> editHUDbuttonBounds;
     core::vector2d<s32> offset; 
     IMenuManager* m_menumgr; 
     bool isDragging = false;
+    bool isEditing = false;
+    bool isEditingHovered = false;
     bool isSliding = false;
     bool isSelecting = false;
-    bool m_initialized = false;
+    bool isResizingHUDElement = false;
+    size_t resizingHUDElementIndex = 0;
+    core::vector2d<s32> resizingHUDElementOffset;
+    bool isDraggingHUDElement = false;
+    size_t draggingHUDElementIndex = 0;
+    core::vector2d<s32> draggingHUDElementOffset;
     const s32 category_height = 34;
     const s32 category_width = category_height * 5;
     const s32 setting_width = category_height * 4.6;
@@ -166,6 +156,8 @@ private:
     static float getDeltaTime();
 
     static std::chrono::high_resolution_clock::time_point lastTime;
+
+    std::vector<CheatUIElement*> hudElements;
 };
 
 #endif

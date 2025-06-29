@@ -30,12 +30,11 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  *                                                                                                 *
  *                            This code is cursed as fuck, but it works.                           *
  *                       When you work on this file, increment the counter:                        *
- *                                   Total hours spent here: 96                                    *
+ *                                   Total hours spent here: 175                                   *
  *                                                                                                 *
  ***************************************************************************************************/
 
-#include "NewMenu.h"
-
+ #include "NewMenu.h"
 
  std::chrono::high_resolution_clock::time_point NewMenu::lastTime = std::chrono::high_resolution_clock::now();
  
@@ -46,8 +45,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  
      return deltaTime.count();
  }
- 
- Sprite NewMenu::coords_sprite = Sprite();
  
  NewMenu::NewMenu(gui::IGUIEnvironment* env, 
      gui::IGUIElement* parent, 
@@ -60,18 +57,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  {    
      infostream << "[NEWMENU] Successfully created" << std::endl;
      this->env = env;
-         
-     coords_sprite.width = 140;
-     coords_sprite.height = 30;
- 
-     if (!g_settings->exists("coords_sprite")) {
-         coords_sprite.x = 5;
-         coords_sprite.y = (Environment->getVideoDriver()->getScreenSize().Height - coords_sprite.height / 2 + g_fontengine->getTextHeight() - coords_sprite.height);
-     } else {
-         v2f data = g_settings->getV2F("coords_sprite");
-         coords_sprite.x = data[0];
-         coords_sprite.y = data[1];
-     }
  }
  
  NewMenu::~NewMenu()
@@ -83,6 +68,15 @@ with this program; if not, write to the Free Software Foundation, Inc.,
              }
          }
      }
+ 
+     for (auto element : hudElements) {
+         delete element;
+     }
+     hudElements.clear();
+ }
+ 
+ s32 NewMenu::roundToGrid(s32 num) {
+     return std::round(num / (category_height / 2)) * (category_height / 2);
  }
  
  void NewMenu::create()
@@ -96,6 +90,43 @@ with this program; if not, write to the Free Software Foundation, Inc.,
      if (!m_initialized) {
          video::IVideoDriver* driver = Environment->getVideoDriver();
          lastScreenSize = driver->getScreenSize();
+ 
+         // INITIALIZE CHEAT HUD ELEMENTS
+         if (g_settings->exists("HudElement_Position1_target")) {
+             v2f position = g_settings->getV2F("HudElement_Position1_target");
+             v2f position2 = g_settings->getV2F("HudElement_Position2_target");
+             if (g_settings->exists("use_menu_grid") && g_settings->getBool("use_menu_grid")) {
+                 hudElements.push_back(new TargetHUD(core::rect<s32>(roundToGrid(position.X), roundToGrid(position.Y), roundToGrid(position2.X), roundToGrid(position2.Y))));
+             } else {
+                 hudElements.push_back(new TargetHUD(core::rect<s32>(position.X, position.Y, position2.X, position2.Y)));
+             }
+         } else {
+             hudElements.push_back(new TargetHUD(core::rect<s32>(400, 400, 600, 500)));
+         }
+ 
+        hudElements[0]->elementName = "target";
+
+        if (g_settings->exists("HudElement_Position1_coords")) {
+            v2f position = g_settings->getV2F("HudElement_Position1_coords");
+            v2f position2 = g_settings->getV2F("HudElement_Position2_coords");
+             if (g_settings->exists("use_menu_grid") && g_settings->getBool("use_menu_grid")) {
+                 hudElements.push_back(new coordsHUD(core::rect<s32>(roundToGrid(position.X), roundToGrid(position.Y), roundToGrid(position2.X), roundToGrid(position2.Y))));
+             } else {
+                 hudElements.push_back(new coordsHUD(core::rect<s32>(position.X, position.Y, position2.X, position2.Y)));
+             }
+         } else {
+             hudElements.push_back(new coordsHUD(core::rect<s32>(400, 400, 600, 500)));
+         }
+
+         hudElements[1]->elementName = "coords";
+         editHUDbuttonBounds = core::rect<s32>(
+             roundToGrid(lastScreenSize.Width - ((category_height/2) * 9)),
+             roundToGrid(lastScreenSize.Height - ((category_height/2) * 3)),
+             roundToGrid(lastScreenSize.Width - (category_height/2)) + 1,
+             roundToGrid(lastScreenSize.Height - (category_height/2)) + 1
+         );
+ 
+         // START RESIZING ALL ARRAYS
          category_positions.resize(script->m_cheat_categories.size(), core::position2d<s32>(0, 0));
          categoryRects.resize(script->m_cheat_categories.size(), core::rect<s32>(0,0,0,0));
          dropdownRects.resize(script->m_cheat_categories.size(), core::rect<s32>(0,0,0,0));
@@ -245,7 +276,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
      m_is_open = false;
  }
  
- 
  double NewMenu::roundToNearestStep(double number, double m_min, double m_max, double m_steps)
  {
      double stepSize = (m_max - m_min) / (m_steps - 1);
@@ -323,7 +353,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  
      return roundToNearestStep(sliderValue, m_min, m_max, m_steps);
  }
- 
  
  s32 NewMenu::respaceMenu(size_t i)
  {
@@ -447,14 +476,8 @@ with this program; if not, write to the Free Software Foundation, Inc.,
          }
      }
      
-     if (event.EventType == irr::EET_MOUSE_INPUT_EVENT) {
+     if (event.EventType == irr::EET_MOUSE_INPUT_EVENT && !isEditing) {
          if (event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN) {
- 
-         if (coords_sprite.get_rect().isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y))) {
-             coords_sprite.isDragging = true;
-             offset = core::vector2d<s32>(event.MouseInput.X - coords_sprite.x, event.MouseInput.Y - coords_sprite.y);
-             return true;
-         }
              if (isSelecting) {
                  for (size_t o = 0; o < script->m_cheat_categories[selectingCategoryIndex]->m_cheats[selectingCheatIndex]->m_cheat_settings[selectingSettingIndex]->m_options.size(); ++o) {
                      if (cheatSettingOptionRects[selectingCategoryIndex][selectingCheatIndex][selectingSettingIndex][o].isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y))) {
@@ -466,6 +489,12 @@ with this program; if not, write to the Free Software Foundation, Inc.,
                  isSelecting=false;
                  return true;
              }
+ 
+             if (editHUDbuttonBounds.isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y))) {
+                 isEditing = !isEditing;
+                 return true;
+             }
+ 
              for (size_t i = 0; i < script->m_cheat_categories.size(); ++i) {
                  if (dropdownRects[i].isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y))) {
                      selectedCategory[i] = !selectedCategory[i];
@@ -520,7 +549,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
              }
              return false; 
          } else if (event.MouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP) {
-             coords_sprite.isDragging = false;
              isDragging = false;
              isSliding = false;
              draggedRectIndex = -1;
@@ -535,11 +563,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
              ScriptApiCheatsCheatSetting* cheatSetting = script->m_cheat_categories[draggedSliderCategoryIndex]->m_cheats[draggedSliderCheatIndex]->m_cheat_settings[draggedSliderSettingIndex];
              cheatSetting->set_value(calculateSliderValueFromPosition(cheatSliderBarRects[draggedSliderCategoryIndex][draggedSliderCheatIndex][draggedSliderSettingIndex], core::position2d<s32>(event.MouseInput.X, event.MouseInput.Y), cheatSetting->m_min, cheatSetting->m_max, cheatSetting->m_steps));
          } else if (event.MouseInput.Event == irr::EMIE_MOUSE_MOVED) {
-             if (coords_sprite.isDragging) {
-                 coords_sprite.x = event.MouseInput.X - offset.X;
-                 coords_sprite.y = event.MouseInput.Y - offset.Y;
-                 coords_sprite.save(screenWidth, screenHeight);
-             }
+             isEditingHovered = editHUDbuttonBounds.isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y));
  
              for (size_t i = 0; i < script->m_cheat_categories.size(); ++i) {
  
@@ -565,8 +589,93 @@ with this program; if not, write to the Free Software Foundation, Inc.,
                  }
              }
          }
-     }
+     } else if (event.EventType == irr::EET_MOUSE_INPUT_EVENT) {
+         if (event.MouseInput.Event == irr::EMIE_LMOUSE_PRESSED_DOWN) {
+             if (editHUDbuttonBounds.isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y))) {
+                 isEditing = !isEditing;
+                 return true;
+             }
+             for (size_t e = 0; e < hudElements.size(); ++e) {
+                 if (hudElements[e]->resizeBounds.isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y))) {
+                     isResizingHUDElement = true;
+                     resizingHUDElementIndex = e;
+                     resizingHUDElementOffset = core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y) - hudElements[e]->bounds.LowerRightCorner;
+                     return true;
+                 } else if (hudElements[e]->bounds.isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y)))
+                 {
+                     isDraggingHUDElement = true;
+                     draggingHUDElementIndex = e;
+                     draggingHUDElementOffset = hudElements[e]->bounds.UpperLeftCorner - core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y);
+                     return true;
+                 }
+             }
+         } else if (event.MouseInput.Event == irr::EMIE_LMOUSE_LEFT_UP) {
+             isResizingHUDElement = false;
+             isDraggingHUDElement = false;
+         } else if (event.MouseInput.Event == irr::EMIE_MOUSE_MOVED) {
+             isEditingHovered = editHUDbuttonBounds.isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y));
  
+             if (isResizingHUDElement) {
+                 if (g_settings->exists("use_menu_grid") && g_settings->getBool("use_menu_grid")) {
+                     hudElements[resizingHUDElementIndex]->bounds = core::rect<s32>(
+                         roundToGrid(hudElements[resizingHUDElementIndex]->bounds.UpperLeftCorner.X),
+                         roundToGrid(hudElements[resizingHUDElementIndex]->bounds.UpperLeftCorner.Y),
+                         roundToGrid(event.MouseInput.X + resizingHUDElementOffset.X),
+                         roundToGrid(event.MouseInput.Y + resizingHUDElementOffset.Y)
+                     );
+                 } else {
+                     hudElements[resizingHUDElementIndex]->bounds = core::rect<s32>(
+                         hudElements[resizingHUDElementIndex]->bounds.UpperLeftCorner.X,
+                         hudElements[resizingHUDElementIndex]->bounds.UpperLeftCorner.Y,
+                         event.MouseInput.X + resizingHUDElementOffset.X,
+                         event.MouseInput.Y + resizingHUDElementOffset.Y
+                     );
+                 }
+                 hudElements[resizingHUDElementIndex]->resizeBounds = core::rect<s32>(
+                     hudElements[resizingHUDElementIndex]->bounds.LowerRightCorner.X - 5,
+                     hudElements[resizingHUDElementIndex]->bounds.LowerRightCorner.Y - 5,
+                     hudElements[resizingHUDElementIndex]->bounds.LowerRightCorner.X + 5,
+                     hudElements[resizingHUDElementIndex]->bounds.LowerRightCorner.Y + 5
+                 );
+ 
+                 g_settings->setV2F("HudElement_Position1_" + hudElements[resizingHUDElementIndex]->elementName, v2f(hudElements[resizingHUDElementIndex]->bounds.UpperLeftCorner.X, hudElements[resizingHUDElementIndex]->bounds.UpperLeftCorner.Y));
+                 g_settings->setV2F("HudElement_Position2_" + hudElements[resizingHUDElementIndex]->elementName, v2f(hudElements[resizingHUDElementIndex]->bounds.LowerRightCorner.X, hudElements[resizingHUDElementIndex]->bounds.LowerRightCorner.Y));
+             } else if (isDraggingHUDElement) {
+                 s32 rectWidth = hudElements[draggingHUDElementIndex]->bounds.getWidth();
+                 s32 rectHeight = hudElements[draggingHUDElementIndex]->bounds.getHeight();
+                 if (g_settings->exists("use_menu_grid") && g_settings->getBool("use_menu_grid")) {
+                     hudElements[draggingHUDElementIndex]->bounds = core::rect<s32>(
+                         roundToGrid(event.MouseInput.X + draggingHUDElementOffset.X),
+                         roundToGrid(event.MouseInput.Y + draggingHUDElementOffset.Y),
+                         roundToGrid(event.MouseInput.X + draggingHUDElementOffset.X + rectWidth),
+                         roundToGrid(event.MouseInput.Y + draggingHUDElementOffset.Y + rectHeight)
+                     );
+                 } else {
+                     hudElements[draggingHUDElementIndex]->bounds = core::rect<s32>(
+                         event.MouseInput.X + draggingHUDElementOffset.X,
+                         event.MouseInput.Y + draggingHUDElementOffset.Y,
+                         event.MouseInput.X + draggingHUDElementOffset.X + rectWidth,
+                         event.MouseInput.Y + draggingHUDElementOffset.Y + rectHeight
+                     );
+                 }
+                 hudElements[draggingHUDElementIndex]->resizeBounds = core::rect<s32>(
+                     hudElements[draggingHUDElementIndex]->bounds.LowerRightCorner.X - 5,
+                     hudElements[draggingHUDElementIndex]->bounds.LowerRightCorner.Y - 5,
+                     hudElements[draggingHUDElementIndex]->bounds.LowerRightCorner.X + 5,
+                     hudElements[draggingHUDElementIndex]->bounds.LowerRightCorner.Y + 5
+                 );
+                 g_settings->setV2F("HudElement_Position1_" + hudElements[draggingHUDElementIndex]->elementName, v2f(hudElements[draggingHUDElementIndex]->bounds.UpperLeftCorner.X, hudElements[draggingHUDElementIndex]->bounds.UpperLeftCorner.Y));
+                 g_settings->setV2F("HudElement_Position2_" + hudElements[draggingHUDElementIndex]->elementName, v2f(hudElements[draggingHUDElementIndex]->bounds.LowerRightCorner.X, hudElements[draggingHUDElementIndex]->bounds.LowerRightCorner.Y));
+             }
+             
+             for (auto element : hudElements) {
+                 element->isResizeHovered = element->resizeBounds.isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y));
+                 element->isHovered = (element->bounds.isPointInside(core::vector2d<s32>(event.MouseInput.X, event.MouseInput.Y)) && !element->isResizeHovered);
+             }
+             return true;
+         }
+     }
+     
      return Parent ? Parent->OnEvent(event) : false; 
  }
  
@@ -885,6 +994,28 @@ with this program; if not, write to the Free Software Foundation, Inc.,
      driver->draw2DRectangleOutline(outlineBox, settingBarColor);
  }
  
+ void NewMenu::drawEditHudButton(video::IVideoDriver *driver, gui::IGUIFont *font)
+ {
+     const video::SColor outline_color = video::SColor(255, 0, 0, 0);
+     const video::SColor background_color = video::SColor(255, 25, 25, 25);
+ 
+     driver->draw2DRectangle(background_color, editHUDbuttonBounds);
+     driver->draw2DRectangleOutline(editHUDbuttonBounds, outline_color, 2);
+ 
+     std::wstring editHUDtext = isEditing ? L"Stop Editing" : L"Edit HUD";
+ 
+     video::SColor text_color = isEditingHovered ? video::SColor(255, 127, 127, 127) : video::SColor(255, 255, 255, 255);
+ 
+     core::dimension2d<u32> textSizeU32 = font->getDimension(editHUDtext.c_str());
+     core::dimension2d<s32> textSize(textSizeU32.Width, textSizeU32.Height);
+ 
+     s32 textX = editHUDbuttonBounds.UpperLeftCorner.X + (editHUDbuttonBounds.getWidth() - textSize.Width) / 2;
+     s32 textY = editHUDbuttonBounds.UpperLeftCorner.Y + (editHUDbuttonBounds.getHeight() - textSize.Height) / 2;
+ 
+ 
+     font->draw(editHUDtext.c_str(), core::rect<s32>(textX, textY, textX + textSize.Width, textY + textSize.Height), text_color);
+ }
+ 
  void NewMenu::drawHints(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t i)
  {
      GET_SCRIPT_POINTER
@@ -908,7 +1039,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  
                  if (!wCheatDes.empty()) {
                      driver->draw2DRectangle(video::SColor(255, 40, 5, 20), core::rect<s32>(backgroundX, backgroundY, backgroundX + backgroundWidth, backgroundY + backgroundHeight));
-                     driver->draw2DRectangleOutline(core::rect<s32>(backgroundX, backgroundY, backgroundX + backgroundWidth, backgroundY + backgroundHeight), video::SColor(255, 125, 15, 60));
+                     driver->draw2DRectangleOutline(core::rect<s32>(backgroundX, backgroundY, backgroundX + backgroundWidth, backgroundY + backgroundHeight), video::SColor(255, 125, 15, 60), 2);
                  }
  
                  // Text should be inside the padded area
@@ -923,8 +1054,6 @@ with this program; if not, write to the Free Software Foundation, Inc.,
      }
  }
  
- 
- 
  void NewMenu::draw() 
  {
      if (m_client == nullptr || m_client->isShutdown()) {
@@ -936,32 +1065,53 @@ with this program; if not, write to the Free Software Foundation, Inc.,
      float dtime = getDeltaTime();
  
      video::IVideoDriver* driver = Environment->getVideoDriver();
-     gui::IGUIFont* font = g_fontengine->getFont(FONT_SIZE_UNSPECIFIED, FM_HD);
-     if (g_settings->exists("use_menu_grid") && g_settings->getBool("use_menu_grid") == true) {
-         if (isDragging) {
-             for (size_t x = 0; x <= driver->getScreenSize().Width; x += category_height / 2) {
-                 driver->draw2DLine(core::position2d<s32>(x, 0), core::position2d<s32>(x, driver->getScreenSize().Height), video::SColor(50, 255, 255, 255));
-             }
  
-             for (size_t y = 0; y <= driver->getScreenSize().Height; y += category_height / 2) {
-                 driver->draw2DLine(core::position2d<s32>(0, y), core::position2d<s32>(driver->getScreenSize().Width, y), video::SColor(50, 255, 255, 255));
-             }
+     const irr::core::dimension2du screensize = driver->getScreenSize();
+ 
+     gui::IGUIFont* font = g_fontengine->getFont(FONT_SIZE_UNSPECIFIED, FM_HD);
+ 
+     if (g_settings->exists("use_menu_grid") && g_settings->getBool("use_menu_grid") && (isDragging || isEditing)) {
+         for (size_t x = 0; x <= screensize.Width; x += category_height / 2) {
+             driver->draw2DLine(core::position2d<s32>(x, 0), core::position2d<s32>(x, screensize.Height), video::SColor(50, 255, 255, 255));
+         }
+ 
+         for (size_t y = 0; y <= screensize.Height; y += category_height / 2) {
+             driver->draw2DLine(core::position2d<s32>(0, y), core::position2d<s32>(screensize.Width, y), video::SColor(50, 255, 255, 255));
          }
      }
      
      if (m_is_open) {
-         for (size_t i = 0; i < script->m_cheat_categories.size(); i++) {
-             if (driver->getScreenSize() != lastScreenSize) {
-                 moveMenu(i, category_positions[i]);
+         if (isEditing) {
+             for (auto element : hudElements) {
+                 element->draw(driver, font, dtime, m_client->getEnv(), true);
+                 video::SColor move_color = element->isHovered ? video::SColor(127, 50, 50, 50) : video::SColor(127, 127, 127, 127);
+ 
+                 driver->draw2DRectangle(move_color, element->bounds);
+ 
+                 video::SColor resize_color = element->isResizeHovered ? video::SColor(255, 127, 127, 127) : video::SColor(255, 200, 200, 200);
+ 
+                 driver->draw2DRectangle(resize_color, element->resizeBounds);
              }
-             drawCategory(driver, font, i, dtime);
+         } else {
+             for (size_t i = 0; i < script->m_cheat_categories.size(); i++) {
+                 if (screensize != lastScreenSize) {
+                     moveMenu(i, category_positions[i]);
+                 }
+                 drawCategory(driver, font, i, dtime);
+             }
+             for (size_t i = 0; i < script->m_cheat_categories.size(); i++) {
+                 drawHints(driver, font, i);
+             }
+             if (isSelecting) {
+                 drawSelectionBox(driver, font, selectingCategoryIndex, selectingCheatIndex, selectingSettingIndex);
+             }
          }
-         for (size_t i = 0; i < script->m_cheat_categories.size(); i++) {
-             drawHints(driver, font, i);
+ 
+         drawEditHudButton(driver, font);
+     } else {
+         isEditing = false;
+         for (auto element : hudElements) {
+             element->draw(driver, font, dtime, m_client->getEnv(), false);
          }
-         if (isSelecting) {
-             drawSelectionBox(driver, font, selectingCategoryIndex, selectingCheatIndex, selectingSettingIndex);
-         }
-         driver->draw2DRectangleOutline(core::rect<s32>(coords_sprite.x, coords_sprite.y, coords_sprite.x + coords_sprite.width, coords_sprite.y + coords_sprite.height), video::SColor(255, 255, 0, 255));
      }
  } 

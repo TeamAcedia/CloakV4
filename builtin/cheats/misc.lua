@@ -69,15 +69,6 @@ end)
 minetest.register_cheat_with_infotext("AppleAura", "Misc", "appleaura", "CTF")
 minetest.register_cheat_setting("Radius", "Misc", "appleaura", "appleaura.range", {type="slider_float", min=1, max=6, steps=6})
 core.register_cheat_description("AppleAura", "Misc", "appleaura", "Automatically digs all apples within a specific radius.")
---[[
-minetest.register_globalstep(function(dtime)
-	if minetest.settings:get_bool("spammer") then
-		minetest.after((minetest.settings:get("spammer.cooldown")), function()
-		minetest.send_chat_message(minetest.settings:get("spammer.message"))
-	end)
-	end
-end)
-]]
 
 local spam_active = false
 
@@ -103,3 +94,44 @@ end)
 minetest.register_cheat("Spammer", "Misc", "spammer")
 core.register_cheat_setting("Cooldown", "Misc", "spammer", "spammer.cooldown", {type="slider_int", min=1, max=50, steps=50})
 core.register_cheat_setting("Text", "Misc", "spammer", "spammer.message", {type="text", size=10})
+
+--could look better but it works
+local message_sent_combat_target_hud = false
+local message_sent_coords
+
+minetest.register_globalstep(function()
+    if minetest.settings:get_bool("enable_combat_target_hud") and minetest.settings:get_bool("hud_elements_advice") then
+        if not message_sent_combat_target_hud then
+            local message = minetest.colorize("#3250af", "[Advice]: To modify this HUD element's (and some others) position and size, open the Click GUI (F8 by default), press 'Edit HUD' button and then you can modify them. You can hide this message with the command .hide_hud_elements_advice")
+            ws.dcm(message)
+            message_sent_combat_target_hud = true
+        end
+    else
+		message_sent_combat_target_hud = false
+	end
+end)
+
+minetest.register_globalstep(function()
+    if minetest.settings:get_bool("coords") and minetest.settings:get_bool("hud_elements_advice") then
+        if not message_sent_coords then
+            local message = minetest.colorize("#3250af", "[Advice]: To modify this HUD element's (and some others) position and size, open the Click GUI (F8 by default), press 'Edit HUD' button and then you can modify them. You can hide this message with the command .hide_hud_elements_advice")
+            ws.dcm(message)
+            message_sent_coords = true
+        end
+    else
+		message_sent_coords = false
+	end
+end)
+
+minetest.register_chatcommand("hide_hud_elements_advice", {
+    func = function()
+        core.settings:set_bool("hud_elements_advice", false)
+    end,
+})
+
+-- I don't know why you'd wanna use this
+minetest.register_chatcommand("show_hud_elements_advice", {
+    func = function()
+        core.settings:set_bool("hud_elements_advice", true)
+    end,
+})

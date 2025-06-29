@@ -1121,6 +1121,11 @@ void Game::run()
 		if (m_does_lost_focus_pause_game && !device->isWindowFocused() && !isMenuActive()) {
 			m_game_formspec.showPauseMenu();
 		}
+		
+		if (!new_menu->m_initialized) {	
+			new_menu->create();		
+			new_menu->close();					
+		}
 	}
 
 	framemarker.end();

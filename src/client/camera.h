@@ -307,4 +307,12 @@ private:
 
 	// Last known light color of the player
 	video::SColor m_player_light_color;
+
+	std::unordered_map<u16, double> m_interpolated_entity_health;
+
+	double getInterpolatedHealth(const GenericCAO *obj, float dtime);
+
+    static float getDeltaTime();
+
+    static std::chrono::high_resolution_clock::time_point lastTime;
 };

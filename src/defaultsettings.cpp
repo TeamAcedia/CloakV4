@@ -272,6 +272,10 @@ void set_default_settings()
 	settings->setDefault("enable_health_esp.players_only", "true");
 	settings->setDefault("enable_health_esp.type", "Health Bar");
 	settings->setDefault("no_drown_cam", "false");
+	settings->setDefault("coords", "false");
+	settings->setDefault("enable_combat_target_hud", "false");
+	settings->setDefault("enable_combat_target_hud.target_highlight", "true");
+	settings->setDefault("hud_elements_advice", "true");
 
 	//WORLD
 	settings->setDefault("scaffold", "false");	
