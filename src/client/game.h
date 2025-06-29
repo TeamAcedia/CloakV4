@@ -774,6 +774,8 @@ public:
     void toggleBlink();
 	void checkVelocity();
 
+	void toggleOrbit();
+
 	void toggleMinimap(bool shift_pressed);
 	void toggleFog();
 	void toggleDebug();

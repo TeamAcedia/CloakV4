@@ -86,6 +86,7 @@ void KeyCache::populate()
 	// cheats
 	key[KeyType::FREECAM] = getKeySetting("keymap_toggle_freecam");
 	key[KeyType::KILLAURA] = getKeySetting("keymap_toggle_killaura");
+	key[KeyType::ORBIT] = getKeySetting("keymap_toggle_orbit");
     key[KeyType::AUTOAIM] = getKeySetting("keymap_toggle_autoaim");
     key[KeyType::SCAFFOLD] = getKeySetting("keymap_toggle_scaffold");
     key[KeyType::BLINK] = getKeySetting("keymap_toggle_blink");

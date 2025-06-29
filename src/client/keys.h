@@ -90,6 +90,7 @@ public:
         AUTOAIM,
         SCAFFOLD,
         BLINK,
+		ORBIT,
 
 		// hotbar
 		SLOT_1,

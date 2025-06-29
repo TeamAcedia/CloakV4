@@ -1378,6 +1378,8 @@ if (g_settings->getBool("use_old_menu")) {
 		toggleAutoaim();
 	} else if (wasKeyDown(KeyType::SCAFFOLD)) {
 		toggleScaffold();
+	} else if (wasKeyDown(KeyType::ORBIT)) {
+		toggleOrbit();
 	} else if (wasKeyDown(KeyType::BLINK)) {
 		toggleBlink();
 #if USE_SOUND
@@ -1707,6 +1709,19 @@ void Game::toggleKillaura()
 	} else {
 		m_game_ui->showTranslatedStatusText("Killaura disabled");
 	}
+}
+
+void Game::toggleOrbit()
+{
+	bool p = ! g_settings->getBool("orbit");
+	g_settings->set("orbit", bool_to_cstr(p));
+
+	if (p) {
+		m_game_ui->showTranslatedStatusText("Orbit enabled");
+	} else {
+		m_game_ui->showTranslatedStatusText("Orbit disabled");
+	}
+
 }
 
 void Game::toggleAutoaim()

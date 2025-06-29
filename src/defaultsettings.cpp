@@ -319,10 +319,11 @@ void set_default_settings()
 	settings->setDefault("keymap_console", "KEY_F10");
 
 	settings->setDefault("keymap_toggle_freecam", "KEY_KEY_G");
-	settings->setDefault("keymap_toggle_killaura", "KEY_KEY_X");
+	settings->setDefault("keymap_toggle_killaura", "KEY_KEY_F");
 	settings->setDefault("keymap_toggle_autoaim", "KEY_KEY_N");
 	settings->setDefault("keymap_toggle_scaffold", "KEY_KEY_Y");
 	settings->setDefault("keymap_toggle_blink", "KEY_KEY_B");
+	settings->setDefault("keymap_toggle_orbit", "KEY_KEY_X");
 
 	settings->setDefault("keymap_select_up", "KEY_UP");
 	settings->setDefault("keymap_select_down", "KEY_DOWN");
