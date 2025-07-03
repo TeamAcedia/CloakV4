@@ -1,0 +1,17 @@
+[theme]
+name = Modern
+
+background-top    = hsl(220, 13%, 2%)
+background        = hsl(220, 13%, 4%)
+background-bottom = hsl(220, 13%, 6%)
+
+border            = hsl(220, 13%, 20%)
+
+text              = hsl(0, 0%, 100%)
+text-muted        = hsl(0, 0%, 70%)
+
+primary           = hsl(220, 13%, 25%)
+primary-muted     = hsl(220, 13%, 15%)
+
+secondary         = hsl(0, 90%, 30%)
+secondary-muted   = hsl(0, 90%, 15%)

@@ -1,0 +1,17 @@
+[theme]
+name = Legacy
+
+background-top    = hsl(220, 13%, 3%)
+background        = hsl(220, 13%, 7%)
+background-bottom = hsl(220, 13%, 10%)
+
+border            = hsl(210, 90%, 40%)
+
+text              = hsl(0, 0%, 100%)
+text-muted        = hsl(0, 0%, 70%)
+
+primary           = hsl(210, 90%, 40%)
+primary-muted     = hsl(210, 90%, 30%)
+
+secondary         = hsl(0, 90%, 60%)
+secondary-muted   = hsl(0, 90%, 35%)

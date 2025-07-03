@@ -34,6 +34,7 @@ with this program; if not, write to the Free Software Foundation, Inc.,
 #include <chrono>
 #include "gui/targetHUD.h"
 #include "gui/coordsHUD.h"
+#include "client/color_theme.h"
 
 using namespace irr;
 using namespace gui;
@@ -77,7 +78,16 @@ private:
     void drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t category_index, float dtime);
     void drawSelectionBox(video::IVideoDriver* driver, gui::IGUIFont* font, const size_t i, const size_t c, const size_t s);
     void drawEditHudButton(video::IVideoDriver* driver, gui::IGUIFont* font);
+
+    void setColorsFromTheme(const ColorTheme theme);
+    void setWidthFromMultiplier(const s32 multiplier);
+
     s32 roundToGrid(s32 num);
+
+    std::string themes_path;
+    ThemeManager theme_manager;
+    std::string current_theme_name;
+    ColorTheme current_theme;
 
     core::rect<s32> editHUDbuttonBounds;
     core::vector2d<s32> offset; 
@@ -94,7 +104,7 @@ private:
     size_t draggingHUDElementIndex = 0;
     core::vector2d<s32> draggingHUDElementOffset;
     const s32 category_height = 34;
-    const s32 category_width = category_height * 5;
+    s32 category_width = category_height * 5;
     const s32 setting_width = category_height * 4.6;
     const s32 setting_bar_width = category_height * 0.1;
     const s32 setting_bar_padding = category_height * 0.1;

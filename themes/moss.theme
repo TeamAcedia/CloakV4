@@ -1,0 +1,17 @@
+[theme]
+name = Moss
+
+background-top    = hsl(120, 10%, 8%)
+background        = hsl(120, 10%, 10%)
+background-bottom = hsl(120, 10%, 12%)
+
+border            = hsl(120, 10%, 25%)
+
+text              = hsl(0, 0%, 90%)
+text-muted        = hsl(0, 0%, 60%)
+
+primary           = hsl(120, 40%, 30%)
+primary-muted     = hsl(120, 30%, 18%)
+
+secondary         = hsl(100, 50%, 35%)
+secondary-muted   = hsl(100, 40%, 20%)

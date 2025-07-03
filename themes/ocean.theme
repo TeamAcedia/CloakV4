@@ -1,0 +1,17 @@
+[theme]
+name = Ocean
+
+background-top    = hsl(200, 60%, 96%)
+background        = hsl(200, 60%, 94%)
+background-bottom = hsl(200, 60%, 91%)
+
+border            = hsl(200, 30%, 70%)
+
+text              = hsl(210, 30%, 15%)
+text-muted        = hsl(210, 20%, 50%)
+
+primary           = hsl(195, 85%, 45%)
+primary-muted     = hsl(195, 70%, 80%)
+
+secondary         = hsl(180, 60%, 40%)
+secondary-muted   = hsl(180, 50%, 75%)

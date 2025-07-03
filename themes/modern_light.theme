@@ -1,0 +1,17 @@
+[theme]
+name = Modern Light
+
+background-top    = hsl(0, 0%, 98%)
+background        = hsl(0, 0%, 96%)
+background-bottom = hsl(0, 0%, 93%)
+
+border            = hsl(0, 0%, 80%)
+
+text              = hsl(220, 15%, 10%)
+text-muted        = hsl(220, 10%, 50%)
+
+primary           = hsl(220, 5%, 40%)
+primary-muted     = hsl(220, 5%, 85%)
+
+secondary         = hsl(0, 85%, 45%)
+secondary-muted   = hsl(0, 85%, 80%)

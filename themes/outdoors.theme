@@ -1,0 +1,17 @@
+[theme]
+name = Outdoors
+
+background-top    = hsl(80, 2%, 92%)
+background        = hsl(80, 2%, 89%)
+background-bottom = hsl(80, 2%, 86%)
+
+border            = hsl(80, 5%, 80%)
+
+text              = hsl(0, 0%, 12%)
+text-muted        = hsl(0, 0%, 50%)
+
+primary           = hsl(100, 60%, 35%)
+primary-muted     = hsl(100, 60%, 75%)
+
+secondary         = hsl(140, 50%, 35%)
+secondary-muted   = hsl(140, 50%, 70%)

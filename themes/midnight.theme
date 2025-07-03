@@ -1,0 +1,17 @@
+[theme]
+name = Midnight
+
+background-top    = hsl(345, 20%, 1%)
+background        = hsl(345, 20%, 2%)
+background-bottom = hsl(345, 20%, 4%)
+
+border            = hsl(345, 20%, 10%)
+
+text              = hsl(0, 0%, 90%)
+text-muted        = hsl(0, 0%, 60%)
+
+primary           = hsl(350, 50%, 14%)
+primary-muted     = hsl(350, 30%, 7%)
+
+secondary         = hsl(10, 80%, 15%)
+secondary-muted   = hsl(10, 50%, 7%)
