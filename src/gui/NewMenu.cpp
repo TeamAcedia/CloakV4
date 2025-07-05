@@ -30,13 +30,14 @@ with this program; if not, write to the Free Software Foundation, Inc.,
  *                                                                                                 *
  *                            This code is cursed as fuck, but it works.                           *
  *                       When you work on this file, increment the counter:                        *
- *                                   Total hours spent here: 182                                   *
+ *                                   Total hours spent here: 187                                   *
  *                                                                                                 *
  ***************************************************************************************************/
 
 #include "NewMenu.h"
 #include "porting.h"
 #include "filesys.h"
+#include <chrono>
 #include "client/color_theme.h"
 
 std::chrono::high_resolution_clock::time_point NewMenu::lastTime = std::chrono::high_resolution_clock::now();
@@ -82,6 +83,47 @@ s32 NewMenu::roundToGrid(s32 num) {
     return std::round(num / (category_height / 2)) * (category_height / 2);
 }
 
+float slowTransitionHue(float h) {
+    if (h >= 2.0f && h < 3.0f) {
+        return 2.0f + (h - 2.0f) / 2.0f;
+    } else if (h >= 3.0f) {
+        return 2.5f + (h - 3.0f);
+    } else {
+        return h;
+    }
+}
+
+video::SColor getNextRainbowColor() {
+    static float m_rainbow_offset = 0.0f;
+    static auto last_update = std::chrono::steady_clock::now();
+
+    auto now = std::chrono::steady_clock::now();
+    std::chrono::duration<float> elapsed = now - last_update;
+
+    if (elapsed.count() >= 0.05f) {
+        m_rainbow_offset += 0.06f;
+        if (m_rainbow_offset >= 6.0f)
+            m_rainbow_offset -= 6.0f;
+        last_update = now;
+    }
+
+    float h = m_rainbow_offset;
+    h = slowTransitionHue(h);
+
+    float x = (1 - fabs(fmod(h, 2.0f) - 1.0f)) * 255.0f;
+
+    switch ((int)h) {
+        case 0: return video::SColor(255, 255, (u8)x, 0);
+        case 1: return video::SColor(255, (u8)x, 255, 0);
+        case 2: return video::SColor(255, 0, 255, (u8)x);
+        case 3: return video::SColor(255, 0, (u8)x, 255);
+        case 4: return video::SColor(255, (u8)x, 0, 255);
+        case 5: return video::SColor(255, 255, 0, (u8)x);
+        default: return video::SColor(255, 255, 0, 0);
+    }
+}
+
+
 void NewMenu::setColorsFromTheme(const ColorTheme theme)
 {
     settingBackgroundColor = theme.background_top;
@@ -119,19 +161,14 @@ void NewMenu::create()
         theme_manager = ThemeManager();
         theme_manager.LoadThemes(themes_path);
 
-        s32 multiplier = 6;
-        if (g_settings->exists("WidthMultiplier")) {
-            s32 multiplier = g_settings->getS32("WidthMultiplier");
-        } else {
-            g_settings->setS32("WidthMultiplier", 6);
-        }
+        s32 multiplier = g_settings->getS32("WidthMultiplier");
 
         setWidthFromMultiplier(multiplier);
 
         if (g_settings->exists("ColorTheme")) {
             current_theme_name = g_settings->get("ColorTheme");
         } else {
-            current_theme_name = "Modern Dark";
+            current_theme_name = "Modern";
             g_settings->set("ColorTheme", current_theme_name);
         }
 
@@ -846,6 +883,11 @@ void NewMenu::drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, con
     GET_SCRIPT_POINTER
     // TODO REMOVE THESE AND STORE THEM AS SETTINGS
     const s32 unit_size = category_height / 9;
+
+    const video::SColor rainbow_category_color = video::SColor(255, 21, 21, 21);
+    const video::SColor rainbow_cheat_color = getNextRainbowColor();
+    const video::SColor rainbow_cheat_color_enabled = video::SColor(255, 21, 21, 21);
+    const video::SColor rainbow_outline_color = getNextRainbowColor();
     
     ///////////////////////// DRAW CATEGORY HEADER /////////////////////////
     video::SColor arrow_color = current_theme.text;
@@ -856,11 +898,15 @@ void NewMenu::drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, con
     if (textHovered[i]) {
         text_color = current_theme.text_muted;
     }
-
-    driver->draw2DRectangle(current_theme.background, categoryRects[i]);
-    
-    driver->draw2DRectangleOutline(core::rect<s32>(categoryRects[i].UpperLeftCorner.X, categoryRects[i].UpperLeftCorner.Y, categoryRects[i].LowerRightCorner.X - 1, categoryRects[i].LowerRightCorner.Y - 1), current_theme.border);
-    driver->draw2DRectangleOutline(core::rect<s32>(categoryRects[i].UpperLeftCorner.X - 1, categoryRects[i].UpperLeftCorner.Y - 1, categoryRects[i].LowerRightCorner.X, categoryRects[i].LowerRightCorner.Y), current_theme.border);
+    if (g_settings->get("ColorTheme") == "Rainbow") {
+        driver->draw2DRectangle(rainbow_category_color, categoryRects[i]);
+        driver->draw2DRectangleOutline(core::rect<s32>(categoryRects[i].UpperLeftCorner.X, categoryRects[i].UpperLeftCorner.Y, categoryRects[i].LowerRightCorner.X - 1, categoryRects[i].LowerRightCorner.Y - 1), rainbow_outline_color);
+        driver->draw2DRectangleOutline(core::rect<s32>(categoryRects[i].UpperLeftCorner.X - 1, categoryRects[i].UpperLeftCorner.Y - 1, categoryRects[i].LowerRightCorner.X, categoryRects[i].LowerRightCorner.Y), rainbow_outline_color);
+    } else {
+        driver->draw2DRectangle(current_theme.background, categoryRects[i]);
+        driver->draw2DRectangleOutline(core::rect<s32>(categoryRects[i].UpperLeftCorner.X, categoryRects[i].UpperLeftCorner.Y, categoryRects[i].LowerRightCorner.X - 1, categoryRects[i].LowerRightCorner.Y - 1), current_theme.border);
+        driver->draw2DRectangleOutline(core::rect<s32>(categoryRects[i].UpperLeftCorner.X - 1, categoryRects[i].UpperLeftCorner.Y - 1, categoryRects[i].LowerRightCorner.X, categoryRects[i].LowerRightCorner.Y), current_theme.border);
+    }
 
     const std::string& categoryName = script->m_cheat_categories[i]->m_name;
     std::wstring wCategoryName = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(categoryName);
@@ -900,8 +946,11 @@ void NewMenu::drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, con
             } else if (script->m_cheat_categories[i]->m_cheats[cheat_index]->is_enabled() && cheatRectAnimationProgress[i][cheat_index] >= 0) {
                 cheatRectAnimationProgress[i][cheat_index] -= dtime * 8;
             }
-
-            drawInterpolatedRectangle(driver, cheatRects[i][cheat_index], current_theme.primary, current_theme.background_bottom, cheatRectAnimationProgress[i][cheat_index]);
+            if (g_settings->get("ColorTheme") == "Rainbow") {
+                drawInterpolatedRectangle(driver, cheatRects[i][cheat_index], rainbow_cheat_color, rainbow_cheat_color_enabled, cheatRectAnimationProgress[i][cheat_index]);
+            } else {
+                drawInterpolatedRectangle(driver, cheatRects[i][cheat_index], current_theme.primary, current_theme.background_bottom, cheatRectAnimationProgress[i][cheat_index]);
+            }
 
             const std::string& cheatName = script->m_cheat_categories[i]->m_cheats[cheat_index]->m_name;
             std::wstring wCheatName = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(cheatName);
@@ -927,11 +976,18 @@ void NewMenu::drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, con
                                                                                     cheatSettingRects[i][cheat_index][0].UpperLeftCorner.Y, 
                                                                                     cheatSettingRects[i][cheat_index][cheatSettingRects[i][cheat_index].size() - 1].LowerRightCorner.X,
                                                                                     cheatSettingRects[i][cheat_index][cheatSettingRects[i][cheat_index].size() - 1].LowerRightCorner.Y));
-                    driver->draw2DRectangle(settingBarColor, core::rect<s32>(cheatSettingRects[i][cheat_index][0].UpperLeftCorner.X + setting_bar_padding,
+                    if (g_settings->get("ColorTheme") == "Rainbow") {
+                        driver->draw2DRectangle(rainbow_cheat_color, core::rect<s32>(cheatSettingRects[i][cheat_index][0].UpperLeftCorner.X + setting_bar_padding,
                                                                             cheatSettingRects[i][cheat_index][0].UpperLeftCorner.Y + setting_bar_padding, 
                                                                             cheatSettingRects[i][cheat_index][cheatSettingRects[i][cheat_index].size() - 1].UpperLeftCorner.X + setting_bar_width + setting_bar_padding,
                                                                             cheatSettingRects[i][cheat_index][cheatSettingRects[i][cheat_index].size() - 1].LowerRightCorner.Y - setting_bar_padding));
-                    
+                    } else {
+                        driver->draw2DRectangle(settingBarColor, core::rect<s32>(cheatSettingRects[i][cheat_index][0].UpperLeftCorner.X + setting_bar_padding,
+                                                                            cheatSettingRects[i][cheat_index][0].UpperLeftCorner.Y + setting_bar_padding, 
+                                                                            cheatSettingRects[i][cheat_index][cheatSettingRects[i][cheat_index].size() - 1].UpperLeftCorner.X + setting_bar_width + setting_bar_padding,
+                                                                            cheatSettingRects[i][cheat_index][cheatSettingRects[i][cheat_index].size() - 1].LowerRightCorner.Y - setting_bar_padding));
+                    }
+
                     for (size_t s = 0; s < script->m_cheat_categories[i]->m_cheats[cheat_index]->m_cheat_settings.size(); ++s) {
                         ScriptApiCheatsCheatSetting* cheatSetting = script->m_cheat_categories[i]->m_cheats[cheat_index]->m_cheat_settings[s];
 
@@ -972,10 +1028,15 @@ void NewMenu::drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, con
                                                                             cheatSettingRects[i][cheat_index][s].UpperLeftCorner.Y + category_height, 
                                                                             (cheatSettingRects[i][cheat_index][s].LowerRightCorner.X - selection_box_padding),
                                                                             cheatSettingRects[i][cheat_index][s].LowerRightCorner.Y - selection_box_padding);
-
-                            driver->draw2DRectangle(current_theme.background_bottom, selectionBoxRects[i][cheat_index][s]);
-                            driver->draw2DRectangleOutline(selectionBoxRects[i][cheat_index][s], settingBarColor);
-                            driver->draw2DRectangleOutline(dropdownBox, settingBarColor);
+                            if (g_settings->get("ColorTheme") == "Rainbow") {
+                                driver->draw2DRectangle(rainbow_cheat_color, selectionBoxRects[i][cheat_index][s]);
+                                driver->draw2DRectangleOutline(selectionBoxRects[i][cheat_index][s], rainbow_cheat_color);
+                                driver->draw2DRectangleOutline(dropdownBox, rainbow_cheat_color);
+                            } else {
+                                driver->draw2DRectangle(current_theme.background_bottom, selectionBoxRects[i][cheat_index][s]);
+                                driver->draw2DRectangleOutline(selectionBoxRects[i][cheat_index][s], settingBarColor);
+                                driver->draw2DRectangleOutline(dropdownBox, settingBarColor);
+                            }
 
                             core::position2d<s32> dropdown_center(dropdownBox.UpperLeftCorner.X + dropdownBox.getWidth() / 2 , dropdownBox.UpperLeftCorner.Y + dropdownBox.getHeight() / 2);
                             if (isSelecting && selectingCategoryIndex == i && selectingCheatIndex == cheat_index && selectingSettingIndex == s) {
@@ -1007,11 +1068,19 @@ void NewMenu::drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, con
                             font->draw(wSelectedOption.c_str(), core::rect<s32>(textX, textY, textX + textSize.Width, textY + textSize.Height), arrow_color);
                         } else if (cheatSetting->m_type == "bool") {
                             if(g_settings->exists(cheatSetting->m_setting) && g_settings->getBool(cheatSetting->m_setting) == true) {
-                                text_color = current_theme.primary;
+                                if (g_settings->get("ColorTheme") == "Rainbow") {
+                                    text_color = rainbow_cheat_color;
+                                } else {
+                                    text_color = current_theme.primary;
+                                }
                             }
                             if(cheatSettingTextHovered[i][cheat_index][s] == true) {
                                 if (g_settings->exists(cheatSetting->m_setting) && g_settings->getBool(cheatSetting->m_setting) == true) {
-                                    text_color = current_theme.primary_muted;
+                                    if (g_settings->get("ColorTheme") == "Rainbow") {
+                                        text_color = rainbow_cheat_color;
+                                    } else {
+                                        text_color = current_theme.primary_muted;
+                                    }
                                 } else {
                                     text_color = current_theme.text_muted;
                                 }
@@ -1071,8 +1140,14 @@ void NewMenu::drawCategory(video::IVideoDriver* driver, gui::IGUIFont* font, con
                             core::rect<s32> filledRect;
                             core::rect<s32> remainingRect;
                             calculateSliderSplit(cheatSliderBarRects[i][cheat_index][s], g_settings->getFloat(cheatSetting->m_setting), cheatSetting->m_min, cheatSetting->m_max, filledRect, remainingRect);
-                            driver->draw2DRectangle(sliderBarColorActive, filledRect);
-                            driver->draw2DRectangle(sliderBarColor, remainingRect);
+                            if (g_settings->get("ColorTheme") == "Rainbow") {
+                                driver->draw2DRectangle(rainbow_cheat_color, filledRect);
+                                driver->draw2DRectangle(sliderBarColor, remainingRect);
+                            } else {
+                                driver->draw2DRectangle(sliderBarColorActive, filledRect);
+                                driver->draw2DRectangle(sliderBarColor, remainingRect);
+                            }
+
 
                             cheatSliderRects[i][cheat_index][s] = core::rect<s32>(filledRect.LowerRightCorner.X - slider_width_padding / 2,
                                                                                 filledRect.UpperLeftCorner.Y - slider_height_padding / 1.5,
@@ -1149,7 +1224,11 @@ void NewMenu::drawSelectionBox(video::IVideoDriver * driver, gui::IGUIFont * fon
                                                 cheatSettingRects[i][c][s].UpperLeftCorner.Y + (category_height - selection_box_padding) + category_height, 
                                                 (cheatSettingRects[i][c][s].LowerRightCorner.X - selection_box_padding),
                                                 cheatSettingRects[i][c][s].LowerRightCorner.Y + (script->m_cheat_categories[i]->m_cheats[c]->m_cheat_settings[s]->m_options.size() * category_height));
-    driver->draw2DRectangleOutline(outlineBox, settingBarColor);
+    if (g_settings->get("ColorTheme") == "Rainbow") {
+        driver->draw2DRectangleOutline(outlineBox, getNextRainbowColor());
+    } else {
+        driver->draw2DRectangleOutline(outlineBox, settingBarColor);
+    }
 }
 
 void NewMenu::drawEditHudButton(video::IVideoDriver *driver, gui::IGUIFont *font)

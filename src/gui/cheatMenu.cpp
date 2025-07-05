@@ -173,7 +173,7 @@ void CheatMenu::draw(video::IVideoDriver *driver, bool show_debug)
     int category_section_x = m_gap+5; // Starting X position
     int category_section_y = m_gap+5+m_head_height; // Starting Y position
     int category_section_width = m_entry_width; // Width of categories
-    int category_section_height = (m_head_height + (m_entry_height * script->m_cheat_categories.size()))-m_head_height; // Total height based on number of categories
+    int category_section_height = ((m_head_height + (m_entry_height * script->m_cheat_categories.size()))-m_head_height)-m_entry_height; // Total height based on number of categories
 
     // Define padding for the outline and thickness
     const int padding = 0; // Space between outline and categories
@@ -192,6 +192,8 @@ void CheatMenu::draw(video::IVideoDriver *driver, bool show_debug)
 
     for (auto category = script->m_cheat_categories.begin();
              category != script->m_cheat_categories.end(); category++) {
+		if ((*category)->m_name == "Client")
+		continue;
         bool is_selected = category_count == m_selected_category;
         drawEntry(driver, (*category)->m_name, category_count, is_selected, false,
                     CHEAT_MENU_ENTRY_TYPE_CATEGORY);
@@ -357,31 +359,33 @@ void CheatMenu::drawHUD(video::IVideoDriver *driver, double dtime)
 
 void CheatMenu::selectUp()
 {
-	CHEAT_MENU_GET_SCRIPTPTR
+    CHEAT_MENU_GET_SCRIPTPTR
 
-	int max = (m_cheat_layer ? script->m_cheat_categories[m_selected_category]
-								  ->m_cheats.size()
-				 : script->m_cheat_categories.size()) -
-		  1;
-	int *selected = m_cheat_layer ? &m_selected_cheat : &m_selected_category;
-	--*selected;
-	if (*selected < 0)
-		*selected = max;
+    int max = (m_cheat_layer ? script->m_cheat_categories[m_selected_category]->m_cheats.size()
+                             : script->m_cheat_categories.size()) - 1;
+    int *selected = m_cheat_layer ? &m_selected_cheat : &m_selected_category;
+    do {
+        --*selected;
+        if (*selected < 0)
+            *selected = max;
+    } while (!m_cheat_layer && script->m_cheat_categories[*selected]->m_name == "Client");
 }
+
 
 void CheatMenu::selectDown()
 {
-	CHEAT_MENU_GET_SCRIPTPTR
+    CHEAT_MENU_GET_SCRIPTPTR
 
-	int max = (m_cheat_layer ? script->m_cheat_categories[m_selected_category]
-								  ->m_cheats.size()
-				 : script->m_cheat_categories.size()) -
-		  1;
-	int *selected = m_cheat_layer ? &m_selected_cheat : &m_selected_category;
-	++*selected;
-	if (*selected > max)
-		*selected = 0;
+    int max = (m_cheat_layer ? script->m_cheat_categories[m_selected_category]->m_cheats.size()
+                             : script->m_cheat_categories.size()) - 1;
+    int *selected = m_cheat_layer ? &m_selected_cheat : &m_selected_category;
+    do {
+        ++*selected;
+        if (*selected > max)
+            *selected = 0;
+    } while (!m_cheat_layer && script->m_cheat_categories[*selected]->m_name == "Client");
 }
+
 
 void CheatMenu::selectRight()
 {

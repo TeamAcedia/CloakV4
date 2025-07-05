@@ -13,5 +13,5 @@ text-muted        = hsl(210, 20%, 50%)
 primary           = hsl(195, 85%, 45%)
 primary-muted     = hsl(195, 70%, 80%)
 
-secondary         = hsl(180, 60%, 40%)
-secondary-muted   = hsl(180, 50%, 75%)
+secondary         = hsl(200, 60%, 40%)
+secondary-muted   = hsl(210, 80%, 85%)
