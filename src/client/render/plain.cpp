@@ -58,9 +58,6 @@ void DrawHUD::run(PipelineContext &context)
 
 		context.hud->drawLuaElements(context.client->getCamera()->getOffset());
 		context.client->getCamera()->drawNametags();
-		if (g_settings->getBool("enable_health_esp")) {	
-			context.client->getCamera()->drawHealthESP();
-		}
 	}
 	context.device->getGUIEnvironment()->drawAll();
 }

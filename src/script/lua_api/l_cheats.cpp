@@ -3,7 +3,6 @@
 
 int l_cheats::l_setPlayerColorESP(lua_State *L)
 {
-    GET_ENV_PTR;
 
     size_t name_;
     const char* name = luaL_checklstring(L, 1, &name_);
@@ -30,7 +29,6 @@ int l_cheats::l_setPlayerColorESP(lua_State *L)
 
 int l_cheats::l_set_target_esp_color(lua_State *L)
 {
-    GET_ENV_PTR;
 
     luaL_checktype(L, 1, LUA_TTABLE);
 
@@ -53,7 +51,6 @@ int l_cheats::l_set_target_esp_color(lua_State *L)
 
 int l_cheats::l_set_combat_target(lua_State *L)
 {
-    GET_ENV_PTR;
 
     uint16_t player_id = static_cast<uint16_t>(luaL_checkinteger(L, 1));
 
@@ -64,8 +61,6 @@ int l_cheats::l_set_combat_target(lua_State *L)
 
 int l_cheats::l_clear_combat_target(lua_State *L)
 {
-    GET_ENV_PTR;
-
     RenderingCore::combat_target = 0;
 
     return 0;

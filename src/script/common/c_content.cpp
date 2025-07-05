@@ -2279,7 +2279,7 @@ void push_objectRef(lua_State *L, const u16 id)
 	luaL_checktype(L, -1, LUA_TTABLE);
 	lua_pushinteger(L, id);
 	lua_gettable(L, -2);
-	assert(!lua_isnoneornil(L, -1));
+	//assert(!lua_isnoneornil(L, -1));
 	lua_remove(L, -2); // object_refs
 	lua_remove(L, -2); // core
 }

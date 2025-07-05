@@ -224,7 +224,7 @@ public:
 
 	void drawNametags();
 
-	void drawHealthESP();
+	void drawHealthESP(float dtime);
 
 	inline void addArmInertia(f32 player_yaw);
 
@@ -311,8 +311,4 @@ private:
 	std::unordered_map<u16, double> m_interpolated_entity_health;
 
 	double getInterpolatedHealth(const GenericCAO *obj, float dtime);
-
-    static float getDeltaTime();
-
-    static std::chrono::high_resolution_clock::time_point lastTime;
 };

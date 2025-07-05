@@ -134,7 +134,7 @@ public:
 	ColorTheme current_theme;
 
 	void draw_scene(video::SColor skycolor, bool show_hud,
-			bool draw_wield_tool, bool draw_crosshair);
+			bool draw_wield_tool, bool draw_crosshair, float dtime);
 
 	void initialize(Client *client, Hud *hud);
 	void finalize();

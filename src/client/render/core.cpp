@@ -39,7 +39,7 @@ v2u32 RenderingCore::getVirtualSize() const
 }
 
 void RenderingCore::draw(video::SColor _skycolor, bool _show_hud,
-		bool _draw_wield_tool, bool _draw_crosshair)
+		bool _draw_wield_tool, bool _draw_crosshair, float dtime)
 {
 	v2u32 screensize = device->getVideoDriver()->getScreenSize();
 	virtual_size = v2u32(screensize.X * virtual_size_scale.X, screensize.Y * virtual_size_scale.Y);
@@ -48,7 +48,9 @@ void RenderingCore::draw(video::SColor _skycolor, bool _show_hud,
 	context.draw_crosshair = _draw_crosshair;
 	context.draw_wield_tool = _draw_wield_tool;
 	context.show_hud = _show_hud;
-
+	if (g_settings->getBool("enable_health_esp")) {	
+		context.client->getCamera()->drawHealthESP(dtime);
+	}
 	pipeline->reset(context);
 	pipeline->run(context);
 }

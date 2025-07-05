@@ -39,16 +39,6 @@ static const char *setting_names[] = {
 	"show_nametag_backgrounds",
 };
 
-std::chrono::high_resolution_clock::time_point Camera::lastTime = std::chrono::high_resolution_clock::now();
-
-float Camera::getDeltaTime() {
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> deltaTime = currentTime - lastTime;
-    lastTime = currentTime;
-
-    return deltaTime.count();
-}
-
 Camera::Camera(MapDrawControl &draw_control, Client *client, RenderingEngine *rendering_engine):
 	m_draw_control(draw_control),
 	m_client(client),
@@ -719,10 +709,8 @@ double Camera::getInterpolatedHealth(const GenericCAO *obj, float dtime) {
 	}
 }
 
-void Camera::drawHealthESP()
+void Camera::drawHealthESP(float dtime)
 {
-	float dtime = getDeltaTime();
-
     ClientEnvironment &env = m_client->getEnv();
     gui::IGUIFont *font = g_fontengine->getFont();
 

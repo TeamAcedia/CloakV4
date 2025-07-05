@@ -43,7 +43,7 @@ public:
 	RenderingCore &operator=(RenderingCore &&) = delete;
 
 	void draw(video::SColor _skycolor, bool _show_hud,
-			bool _draw_wield_tool, bool _draw_crosshair);
+			bool _draw_wield_tool, bool _draw_crosshair, float dtime);
 	void drawCombatTargetHUD();
 
 	ShadowRenderer *get_shadow_renderer() { return shadow_renderer; };
