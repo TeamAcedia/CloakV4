@@ -98,9 +98,11 @@ function migrate_keybindings(parent)
 		return parent
 	end
 
+	local mainmenu = ui.find_by_name("mainmenu")
+
 	local dlg = create_rebind_keys_dlg()
-	dlg:set_parent(parent)
-	parent:hide()
+	dlg:set_parent(mainmenu)
+	mainmenu:hide()
 	dlg:show()
 	ui.update()
 

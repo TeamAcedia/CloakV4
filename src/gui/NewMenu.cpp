@@ -1291,6 +1291,9 @@ void NewMenu::drawHints(video::IVideoDriver* driver, gui::IGUIFont* font, const 
 
 void NewMenu::draw() 
 {
+	if (!m_client)
+		return;
+
     if (m_client == nullptr || m_client->stop_running_menu || m_client->isShutdown()) {
         return;
     }
