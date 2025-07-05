@@ -37,9 +37,11 @@ local function buttonhandler(this, fields)
 
 		close_dialog(this)
 
+		local mainmenu = ui.find_by_name("mainmenu")
+
 		local dlg = create_settings_dlg("controls_keyboard_and_mouse")
-		dlg:set_parent(parent)
-		parent:hide()
+		dlg:set_parent(mainmenu)
+		mainmenu:hide()
 		dlg:show()
 
 		return true

@@ -95,8 +95,8 @@ local function fetch()
 		cache_settings:set("cdb_updates_last_checked", tostring(os.time()))
 
 		if update_detector.get_count() > 0 then
-			local maintab = ui.find_by_name("maintab")
-			if not maintab.hidden then
+			local mainmenu = ui.find_by_name("mainmenu")
+			if not mainmenu.hidden then
 				ui.update()
 			end
 		end

@@ -111,8 +111,8 @@ local function get_current_version_code()
 end
 
 local function on_version_info_received(json)
-	local maintab = ui.find_by_name("maintab")
-	if maintab.hidden then
+	local mainmenu = ui.find_by_name("mainmenu")
+	if mainmenu.hidden then
 		-- Another dialog is open, abort.
 		return
 	end
@@ -139,10 +139,10 @@ local function on_version_info_received(json)
 	cache_settings:set("update_last_known", tostring(new_number))
 
 	-- Show version info dialog (once)
-	maintab:hide()
+	mainmenu:hide()
 
 	local version_info_dlg = create_version_info_dlg(json.latest.version, json.latest.url)
-	version_info_dlg:set_parent(maintab)
+	version_info_dlg:set_parent(mainmenu)
 	version_info_dlg:show()
 
 	ui.update()

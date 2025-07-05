@@ -43,9 +43,11 @@ function check_reinstall_mtg(parent)
 		return parent
 	end
 
+	local mainmenu = ui.find_by_name("mainmenu")
+
 	local dlg = create_reinstall_mtg_dlg()
-	dlg:set_parent(parent)
-	parent:hide()
+	dlg:set_parent(mainmenu)
+	mainmenu:hide()
 	dlg:show()
 	ui.update()
 
@@ -80,9 +82,17 @@ local function buttonhandler(this, fields)
 		-- again if downloading MTG fails for whatever reason.
 		this:delete()
 
+<<<<<<< HEAD
 		local dlg = create_contentdb_dlg(nil, "minetest/minetest")
 		dlg:set_parent(parent)
 		parent:hide()
+=======
+		local mainmenu = ui.find_by_name("mainmenu")
+
+		local dlg = create_contentdb_dlg(nil, "minetest/minetest")
+		dlg:set_parent(mainmenu)
+		mainmenu:hide()
+>>>>>>> 2bdc10701 (fix some bugs)
 		dlg:show()
 
 		return true
