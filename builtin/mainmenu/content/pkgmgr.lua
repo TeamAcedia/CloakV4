@@ -1,6 +1,19 @@
--- Luanti
--- Copyright (C) 2013 sapier
--- SPDX-License-Identifier: LGPL-2.1-or-later
+--Minetest
+--Copyright (C) 2013 sapier
+--
+--This program is free software; you can redistribute it and/or modify
+--it under the terms of the GNU Lesser General Public License as published by
+--the Free Software Foundation; either version 2.1 of the License, or
+--(at your option) any later version.
+--
+--This program is distributed in the hope that it will be useful,
+--but WITHOUT ANY WARRANTY; without even the implied warranty of
+--MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+--GNU Lesser General Public License for more details.
+--
+--You should have received a copy of the GNU Lesser General Public License along
+--with this program; if not, write to the Free Software Foundation, Inc.,
+--51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 --------------------------------------------------------------------------------
 local function get_last_folder(text,count)
@@ -83,6 +96,68 @@ local function load_texture_packs(txtpath, retval)
 				path = path,
 				enabled = enabled,
 			}
+		end
+	end
+end
+
+function get_mods(path, virtual_path, retval, modpack)
+	local mods = core.get_dir_list(path, true)
+
+	for _, name in ipairs(mods) do
+		if name:sub(1, 1) ~= "." then
+			local mod_path = path .. DIR_DELIM .. name
+			local mod_virtual_path = virtual_path .. "/" .. name
+			local toadd = {
+				dir_name = name,
+				parent_dir = path,
+			}
+			retval[#retval + 1] = toadd
+
+			-- Get config file
+			local mod_conf
+			local modpack_conf = io.open(mod_path .. DIR_DELIM .. "modpack.conf")
+			if modpack_conf then
+				toadd.is_modpack = true
+				modpack_conf:close()
+
+				mod_conf = Settings(mod_path .. DIR_DELIM .. "modpack.conf"):to_table()
+				if mod_conf.name then
+					name = mod_conf.name
+					toadd.is_name_explicit = true
+				end
+			else
+				mod_conf = Settings(mod_path .. DIR_DELIM .. "mod.conf"):to_table()
+				if mod_conf.name then
+					name = mod_conf.name
+					toadd.is_name_explicit = true
+				end
+			end
+
+			-- Read from config
+			toadd.name = name
+			toadd.title = mod_conf.title
+			toadd.author = mod_conf.author
+			toadd.release = tonumber(mod_conf.release) or 0
+			toadd.path = mod_path
+			toadd.virtual_path = mod_virtual_path
+			toadd.type = "mod"
+
+			-- Check modpack.txt
+			-- Note: modpack.conf is already checked above
+			local modpackfile = io.open(mod_path .. DIR_DELIM .. "modpack.txt")
+			if modpackfile then
+				modpackfile:close()
+				toadd.is_modpack = true
+			end
+
+			-- Deal with modpack contents
+			if modpack and modpack ~= "" then
+				toadd.modpack = modpack
+			elseif toadd.is_modpack then
+				toadd.type = "modpack"
+				toadd.is_modpack = true
+				get_mods(mod_path, mod_virtual_path, retval, name)
+			end
 		end
 	end
 end
@@ -611,6 +686,53 @@ function pkgmgr.install_dir(expected_type, path, basename, targetpath)
 end
 
 --------------------------------------------------------------------------------
+function pkgmgr.prepareclientmodlist(data)
+	local retval = {}
+
+	local clientmods = {}
+
+	--read clientmods
+	local modpath = core.get_clientmodpath()
+
+	if modpath ~= nil and modpath ~= "" then
+		get_mods(modpath, "clientmods", clientmods)
+	end
+
+	for i=1,#clientmods,1 do
+		clientmods[i].type = "mod"
+		clientmods[i].loc = "global"
+		clientmods[i].is_clientside = true
+		retval[#retval + 1] = clientmods[i]
+	end
+
+	--read mods configuration
+	local filename = modpath ..
+				DIR_DELIM .. "mods.conf"
+
+	local conffile = Settings(filename)
+
+	for key,value in pairs(conffile:to_table()) do
+		if key:sub(1, 9) == "load_mod_" then
+			key = key:sub(10)
+			local element = nil
+			for i=1,#retval,1 do
+				if retval[i].name == key and
+					not retval[i].is_modpack then
+					element = retval[i]
+					break
+				end
+			end
+			if element ~= nil then
+				element.enabled = value ~= "false" and value ~= "nil" and value
+			else
+				core.log("info", "Clientmod: " .. key .. " " .. dump(value) .. " but not found")
+			end
+		end
+	end
+
+	return retval
+end
+
 function pkgmgr.preparemodlist(data)
 	local retval = {}
 
@@ -741,6 +863,23 @@ function pkgmgr.reload_global_mods()
 end
 
 --------------------------------------------------------------------------------
+function pkgmgr.refresh_globals()
+	local function is_equal(element,uid) --uid match
+		if element.name == uid then
+			return true
+		end
+	end
+	pkgmgr.global_mods = filterlist.create(pkgmgr.preparemodlist,
+			pkgmgr.comparemod, is_equal, nil, {})
+	pkgmgr.global_mods:add_sort_mechanism("alphabetic", sort_mod_list)
+	pkgmgr.global_mods:set_sortmode("alphabetic")
+	pkgmgr.clientmods = filterlist.create(pkgmgr.prepareclientmodlist,
+			pkgmgr.comparemod, is_equal, nil, {})
+	pkgmgr.clientmods:add_sort_mechanism("alphabetic", sort_mod_list)
+	pkgmgr.clientmods:set_sortmode("alphabetic")
+end
+
+--------------------------------------------------------------------------------
 function pkgmgr.find_by_gameid(gameid)
 	for i, game in ipairs(pkgmgr.games) do
 		if game.id == gameid then
@@ -827,7 +966,7 @@ function pkgmgr.get_contentdb_id(content)
 		return content.author:lower() .. "/" .. content.name
 	end
 
-	-- Until version 5.8.0, Minetest Game was bundled with the engine.
+	-- Until Minetest 5.8.0, Minetest Game was bundled with Minetest.
 	-- Unfortunately, the bundled MTG was not versioned (missing "release"
 	-- field in game.conf).
 	-- Therefore, we consider any installation of MTG that is not versioned,

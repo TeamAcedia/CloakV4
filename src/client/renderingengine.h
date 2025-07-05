@@ -16,6 +16,7 @@
 // include the shadow mapper classes too
 #include "client/shadows/dynamicshadowsrender.h"
 #include <IVideoDriver.h>
+#include "client/color_theme.h"
 
 #if !IS_CLIENT_BUILD
 #error Do not include in server builds
@@ -125,6 +126,12 @@ public:
 	void draw_load_screen(const std::wstring &text,
 			gui::IGUIEnvironment *guienv, ITextureSource *tsrc,
 			float dtime = 0, int percent = 0, float *indef_pos = nullptr);
+
+	float m_wave_offset = 0.0f;
+	std::string themes_path;
+	ThemeManager theme_manager;
+	std::string current_theme_name;
+	ColorTheme current_theme;
 
 	void draw_scene(video::SColor skycolor, bool show_hud,
 			bool draw_wield_tool, bool draw_crosshair);

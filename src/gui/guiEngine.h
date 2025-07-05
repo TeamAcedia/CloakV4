@@ -13,6 +13,7 @@
 #include "client/sound.h"
 #include "util/enriched_string.h"
 #include "translation.h"
+#include "client/color_theme.h"
 
 #include <csignal>
 
@@ -211,7 +212,14 @@ private:
 	 * draw background layer
 	 * @param driver to use for drawing
 	 */
-	void drawBackground(video::IVideoDriver *driver);
+	void drawBackground(video::IVideoDriver *driver, irr::f32 dtime);
+
+	float m_wave_offset = 0.0f;
+	std::string themes_path;
+	ThemeManager theme_manager;
+	std::string current_theme_name;
+	ColorTheme current_theme;
+
 	/**
 	 * draw overlay layer
 	 * @param driver to use for drawing

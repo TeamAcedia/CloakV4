@@ -1257,7 +1257,7 @@ void NewMenu::drawHints(video::IVideoDriver* driver, gui::IGUIFont* font, const 
 
     if (selectedCategory[i]) {
         for (size_t cheat_index = 0; cheat_index < script->m_cheat_categories[i]->m_cheats.size(); ++cheat_index) {
-            if (cheatTextHovered[i][cheat_index] && g_settings->getBool("use_hints")) {
+            if (cheatTextHovered[i][cheat_index] && g_settings->getBool("use_hints") && !isSelecting) {
                 std::wstring wCheatDes = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(script->m_cheat_categories[i]->m_cheats[cheat_index]->m_description);
                 core::dimension2d<u32> textSizeU32_des = font->getDimension(wCheatDes.c_str());
                 core::dimension2d<s32> textSize_des(textSizeU32_des.Width, textSizeU32_des.Height);
@@ -1291,7 +1291,7 @@ void NewMenu::drawHints(video::IVideoDriver* driver, gui::IGUIFont* font, const 
 
 void NewMenu::draw() 
 {
-    if (m_client == nullptr || m_client->isShutdown()) {
+    if (m_client == nullptr || m_client->stop_running_menu || m_client->isShutdown()) {
         return;
     }
 

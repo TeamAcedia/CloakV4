@@ -461,6 +461,7 @@ public:
 	}
 
 	bool inhibit_inventory_revert = false;
+	bool stop_running_menu = false;
 
 private:
 	void loadMods();

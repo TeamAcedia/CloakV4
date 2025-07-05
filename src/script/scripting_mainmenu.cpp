@@ -85,6 +85,8 @@ bool MainMenuScripting::mayModifyPath(const std::string &path)
 	std::string path_user = fs::AbsolutePathPartial(porting::path_user);
 	if (fs::PathStartsWith(path, path_user))
 		return true;
+	if (fs::PathStartsWith(path, path_user + DIR_DELIM "clientmods"))
+		return true;
 
 	if (fs::PathStartsWith(path, fs::AbsolutePathPartial(porting::path_cache)))
 		return true;

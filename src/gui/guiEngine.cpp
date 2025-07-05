@@ -28,6 +28,14 @@
 #include "client/imagefilters.h"
 #include "util/tracy_wrapper.h"
 #include "script/common/c_types.h" // LuaError
+#include <cmath>
+#include <vector>
+#include <irrlicht.h>
+#include "porting.h"
+#include "filesys.h"
+#include "client/color_theme.h"
+
+using namespace irr;
 
 #if USE_SOUND
 	#include "client/sound/sound_openal.h"
@@ -296,6 +304,19 @@ bool GUIEngine::loadMainMenuScript()
 /******************************************************************************/
 void GUIEngine::run()
 {
+	themes_path = porting::path_user + DIR_DELIM + "themes";
+	theme_manager = ThemeManager();
+	theme_manager.LoadThemes(themes_path);
+
+	if (g_settings->exists("ColorTheme")) {
+		current_theme_name = g_settings->get("ColorTheme");
+	} else {
+		current_theme_name = "Modern Dark";
+		g_settings->set("ColorTheme", current_theme_name);
+	}
+
+	current_theme = theme_manager.GetThemeByName(current_theme_name);
+
 	IrrlichtDevice *device = m_rendering_engine->get_raw_device();
 	video::IVideoDriver *driver = device->getVideoDriver();
 
@@ -353,12 +374,7 @@ void GUIEngine::run()
 
 			driver->beginScene(true, true, RenderingEngine::MENU_SKY_COLOR);
 
-			if (m_clouds_enabled) {
-				drawClouds(dtime);
-				drawOverlay(driver);
-			} else {
-				drawBackground(driver);
-			}
+			drawBackground(driver, dtime);
 
 			drawFooter(driver);
 
@@ -420,58 +436,115 @@ void GUIEngine::setFormspecPrepend(const std::string &fs)
 
 
 /******************************************************************************/
-void GUIEngine::drawBackground(video::IVideoDriver *driver)
+
+// Hash-based value noise (smoothed by interpolation)
+float valueNoise1D(float x, int seed = 0) {
+	int xi = (int)std::floor(x);
+	float xf = x - xi;
+
+	// Simple hash
+	auto hash = [seed](int n) {
+		n += seed * 57;
+		n = (n<<13) ^ n;
+		return 1.0f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0f;
+	};
+
+	float v1 = hash(xi);
+	float v2 = hash(xi + 1);
+
+	// Smoothstep interpolation
+	float smooth = xf * xf * (3.0f - 2.0f * xf);
+	return v1 * (1 - smooth) + v2 * smooth;
+}
+
+void GUIEngine::drawBackground(video::IVideoDriver *driver, irr::f32 dtime)
 {
-	v2u32 screensize = driver->getScreenSize();
+    v2u32 screensize = driver->getScreenSize();
+    core::rect<s32> screen_rect(0, 0, screensize.X, screensize.Y);
 
-	video::ITexture* texture = m_textures[TEX_LAYER_BACKGROUND].texture;
+    // Update base scroll offset for animation
+    m_wave_offset += dtime * 2.0f;
 
-	/* If no texture, draw background of solid color */
-	if(!texture){
-		video::SColor color(255,80,58,37);
-		core::rect<s32> rect(0, 0, screensize.X, screensize.Y);
-		driver->draw2DRectangle(color, rect, NULL);
-		return;
+    const int layer_count = 4;
+    const int wave_step = 2;
+
+    // Base Y position for the back layer (furthest away)
+    const int base_y_back = (screensize.Y * 2) / 2.5;
+
+    // Vertical spacing between layers (push each layer further down)
+    const int vertical_spacing = 50;
+
+    // Wave amplitude
+    const float base_amplitude = 30.0f;
+
+	video::SColor start_color = current_theme.primary;
+	video::SColor end_color = current_theme.primary_muted;
+	video::SColor background_color = current_theme.background_bottom;
+
+    video::SColor colors[layer_count];
+
+	// fade colors
+	for (int i = 0; i < layer_count; ++i) {
+		float t = i / float(layer_count - 1); // goes from 0.0 (back) to 1.0 (front)
+
+		u32 r = (u32)((1 - t) * start_color.getRed()   + t * end_color.getRed());
+		u32 g = (u32)((1 - t) * start_color.getGreen() + t * end_color.getGreen());
+		u32 b = (u32)((1 - t) * start_color.getBlue()  + t * end_color.getBlue());
+		u32 a = (u32)((1 - t) * start_color.getAlpha() + t * end_color.getAlpha());
+
+		colors[i] = video::SColor(a, r, g, b);
 	}
 
-	v2u32 sourcesize = texture->getOriginalSize();
 
-	if (m_textures[TEX_LAYER_BACKGROUND].tile)
-	{
-		v2u32 tilesize(
-				MYMAX(sourcesize.X,m_textures[TEX_LAYER_BACKGROUND].minsize),
-				MYMAX(sourcesize.Y,m_textures[TEX_LAYER_BACKGROUND].minsize));
-		for (unsigned int x = 0; x < screensize.X; x += tilesize.X )
-		{
-			for (unsigned int y = 0; y < screensize.Y; y += tilesize.Y )
-			{
-				draw2DImageFilterScaled(driver, texture,
-					core::rect<s32>(x, y, x+tilesize.X, y+tilesize.Y),
-					core::rect<s32>(0, 0, sourcesize.X, sourcesize.Y),
-					NULL, NULL, true);
-			}
-		}
-		return;
-	}
+    driver->draw2DRectangle(background_color, screen_rect);
 
-	// Chop background image to the smaller screen dimension
-	v2u32 bg_size = screensize;
-	v2f32 scale(
-			(f32) bg_size.X / sourcesize.X,
-			(f32) bg_size.Y / sourcesize.Y);
-	if (scale.X < scale.Y)
-		bg_size.X = (int) (scale.Y * sourcesize.X);
-	else
-		bg_size.Y = (int) (scale.X * sourcesize.Y);
-	v2s32 offset = v2s32(
-		(s32) screensize.X - (s32) bg_size.X,
-		(s32) screensize.Y - (s32) bg_size.Y
-	) / 2;
-	/* Draw background texture */
-	draw2DImageFilterScaled(driver, texture,
-		core::rect<s32>(offset.X, offset.Y, bg_size.X + offset.X, bg_size.Y + offset.Y),
-		core::rect<s32>(0, 0, sourcesize.X, sourcesize.Y),
-		NULL, NULL, true);
+    for (int layer = 0; layer < layer_count; ++layer) {
+        std::vector<video::S3DVertex> vertices;
+        std::vector<u16> indices;
+
+        // Scroll slower for back layers, faster for front
+        float parallax_factor = 0.3f + (layer / (float)(layer_count - 1)) * 0.7f; // Ranges from 0.3 to 1.0
+        float layer_offset = m_wave_offset * parallax_factor;
+
+        int base_y = base_y_back + vertical_spacing * layer;
+        float amplitude = base_amplitude * (1.0f - 0.15f * layer);
+        video::SColor wave_color = colors[layer];
+
+        for (int x = 0; x <= (int)screensize.X; x += wave_step) {
+            float noise_x = layer_offset + (float)x * 0.01f + layer * 100.0f;
+            int y = base_y + (int)(valueNoise1D(noise_x, layer) * amplitude);
+
+            vertices.emplace_back(core::vector3df((f32)x, (f32)y, 0.0f),
+                                  core::vector3df(0, 0, 1),
+                                  wave_color,
+                                  core::vector2df(0.0f, 0.0f));
+
+            vertices.emplace_back(core::vector3df((f32)x, (f32)screensize.Y, 0.0f),
+                                  core::vector3df(0, 0, 1),
+                                  wave_color,
+                                  core::vector2df(0.0f, 0.0f));
+        }
+
+        for (u16 i = 0; i < vertices.size() - 2; i += 2) {
+            indices.push_back(i);
+            indices.push_back(i + 2);
+            indices.push_back(i + 1);
+
+            indices.push_back(i + 1);
+            indices.push_back(i + 2);
+            indices.push_back(i + 3);
+        }
+
+        driver->draw2DVertexPrimitiveList(
+            &vertices[0],
+            vertices.size(),
+            &indices[0],
+            indices.size() / 3,
+            video::EVT_STANDARD,
+            scene::EPT_TRIANGLES,
+            video::EIT_16BIT
+        );
+    }
 }
 
 /******************************************************************************/

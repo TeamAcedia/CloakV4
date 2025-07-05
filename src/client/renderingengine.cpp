@@ -23,6 +23,12 @@
 #include "filesys.h"
 #include "irrlicht_changes/static_text.h"
 #include "irr_ptr.h"
+#include <cmath>
+#include <vector>
+#include "porting.h"
+#include "client/color_theme.h"
+
+using namespace irr;
 
 RenderingEngine *RenderingEngine::s_singleton = nullptr;
 const video::SColor RenderingEngine::MENU_SKY_COLOR = video::SColor(255, 140, 186, 250);
@@ -158,6 +164,13 @@ static IrrlichtDevice *createDevice(SIrrlichtCreationParameters params, std::opt
 
 RenderingEngine::RenderingEngine(MyEventReceiver *receiver)
 {
+
+	themes_path = porting::path_user + DIR_DELIM + "themes";
+	theme_manager = ThemeManager();
+	theme_manager.LoadThemes(themes_path);
+	current_theme_name = g_settings->get("ColorTheme");
+	current_theme = theme_manager.GetThemeByName(current_theme_name);
+
 	sanity_check(!s_singleton);
 
 	// Resolution selection
@@ -288,15 +301,38 @@ bool RenderingEngine::setWindowIcon()
 	return m_device->setWindowIcon(img.get());
 }
 
+// Hash-based value noise (smoothed by interpolation)
+float valueNoise1D_renderingengine(float x, int seed = 0) { // MSVC doesnt wanna compile with it using the correct name
+	int xi = (int)std::floor(x);
+	float xf = x - xi;
+
+	// Simple hash
+	auto hash = [seed](int n) {
+		n += seed * 57;
+		n = (n<<13) ^ n;
+		return 1.0f - ((n * (n * n * 15731 + 789221) + 1376312589) & 0x7fffffff) / 1073741824.0f;
+	};
+
+	float v1 = hash(xi);
+	float v2 = hash(xi + 1);
+
+	// Smoothstep interpolation
+	float smooth = xf * xf * (3.0f - 2.0f * xf);
+	return v1 * (1 - smooth) + v2 * smooth;
+}
+
 /*
 	Draws a screen with a single text on it.
 	Text will be removed when the screen is drawn the next time.
 	Additionally, a progressbar can be drawn when percent is set between 0 and 100.
 */
 void RenderingEngine::draw_load_screen(const std::wstring &text,
-		gui::IGUIEnvironment *guienv, ITextureSource *tsrc, float dtime,
-		int percent, float *indef_pos)
+	gui::IGUIEnvironment *guienv, ITextureSource *tsrc, float dtime,
+	int percent, float *indef_pos)
 {
+	theme_manager.LoadThemes(themes_path);
+	current_theme_name = g_settings->get("ColorTheme");
+	current_theme = theme_manager.GetThemeByName(current_theme_name);
 	v2u32 screensize = getWindowSize();
 
 	v2s32 textsize(g_fontengine->getTextWidth(text), g_fontengine->getLineHeight());
@@ -304,16 +340,81 @@ void RenderingEngine::draw_load_screen(const std::wstring &text,
 	core::rect<s32> textrect(center - textsize / 2, center + textsize / 2);
 
 	gui::IGUIStaticText *guitext =
-			gui::StaticText::add(guienv, text, textrect, false, false);
+		gui::StaticText::add(guienv, text, textrect, false, false);
 	guitext->setTextAlignment(gui::EGUIA_CENTER, gui::EGUIA_UPPERLEFT);
 
 	auto *driver = get_video_driver();
-
 	driver->setFog(RenderingEngine::MENU_SKY_COLOR);
 	driver->beginScene(true, true, RenderingEngine::MENU_SKY_COLOR);
-	if (g_settings->getBool("menu_clouds")) {
-		g_menuclouds->step(dtime * 3);
-		g_menucloudsmgr->drawAll();
+
+	static float wave_offset = 0.0f;
+	wave_offset += dtime * 2.0f;
+
+	const int layer_count = 4;
+	const int wave_step = 2;
+	const int base_y_back = (screensize.Y * 2) / 2.5;
+	const int vertical_spacing = 50;
+	const float base_amplitude = 30.0f;
+
+	video::SColor start_color = current_theme.primary;
+	video::SColor end_color = current_theme.primary_muted;
+	video::SColor background_color = current_theme.background_bottom;
+
+	video::SColor colors[layer_count];
+	for (int i = 0; i < layer_count; ++i) {
+		float t = i / float(layer_count - 1);
+		u32 r = (u32)((1 - t) * start_color.getRed() + t * end_color.getRed());
+		u32 g = (u32)((1 - t) * start_color.getGreen() + t * end_color.getGreen());
+		u32 b = (u32)((1 - t) * start_color.getBlue() + t * end_color.getBlue());
+		u32 a = (u32)((1 - t) * start_color.getAlpha() + t * end_color.getAlpha());
+		colors[i] = video::SColor(a, r, g, b);
+	}
+
+	driver->draw2DRectangle(background_color, core::rect<s32>(0, 0, screensize.X, screensize.Y));
+
+	for (int layer = 0; layer < layer_count; ++layer) {
+		std::vector<video::S3DVertex> vertices;
+		std::vector<u16> indices;
+
+		float parallax_factor = 0.3f + (layer / (float)(layer_count - 1)) * 0.7f;
+		float layer_offset = wave_offset * parallax_factor;
+
+		int base_y = base_y_back + vertical_spacing * layer;
+		float amplitude = base_amplitude * (1.0f - 0.15f * layer);
+		video::SColor wave_color = colors[layer];
+
+		for (int x = 0; x <= (int)screensize.X; x += wave_step) {
+			float noise_x = layer_offset + (float)x * 0.01f + layer * 100.0f;
+			int y = base_y + (int)(valueNoise1D_renderingengine(noise_x, layer) * amplitude);
+
+			vertices.emplace_back(core::vector3df((f32)x, (f32)y, 0.0f),
+								  core::vector3df(0, 0, 1),
+								  wave_color,
+								  core::vector2df(0.0f, 0.0f));
+
+			vertices.emplace_back(core::vector3df((f32)x, (f32)screensize.Y, 0.0f),
+								  core::vector3df(0, 0, 1),
+								  wave_color,
+								  core::vector2df(0.0f, 0.0f));
+		}
+
+		for (u16 i = 0; i < vertices.size() - 2; i += 2) {
+			indices.push_back(i);
+			indices.push_back(i + 2);
+			indices.push_back(i + 1);
+
+			indices.push_back(i + 1);
+			indices.push_back(i + 2);
+			indices.push_back(i + 3);
+		}
+
+		driver->draw2DVertexPrimitiveList(
+			&vertices[0], vertices.size(),
+			&indices[0], indices.size() / 3,
+			video::EVT_STANDARD,
+			scene::EPT_TRIANGLES,
+			video::EIT_16BIT
+		);
 	}
 
 	int percent_min = 0;
@@ -323,18 +424,15 @@ void RenderingEngine::draw_load_screen(const std::wstring &text,
 		percent_max = std::min((int) *indef_pos, 100);
 		percent_min = std::max((int) *indef_pos - 40, 0);
 	}
-	// draw progress bar
+
 	if ((percent_min >= 0) && (percent_max <= 100)) {
 		video::ITexture *progress_img = tsrc->getTexture("progress_bar.png");
-		video::ITexture *progress_img_bg =
-				tsrc->getTexture("progress_bar_bg.png");
+		video::ITexture *progress_img_bg = tsrc->getTexture("progress_bar_bg.png");
 
 		if (progress_img && progress_img_bg) {
 #ifndef __ANDROID__
-			const core::dimension2d<u32> &img_size =
-					progress_img_bg->getSize();
-			float density = g_settings->getFloat("gui_scaling", 0.5f, 20.0f) *
-					getDisplayDensity();
+			const core::dimension2d<u32> &img_size = progress_img_bg->getSize();
+			float density = g_settings->getFloat("gui_scaling", 0.5f, 20.0f) * getDisplayDensity();
 			u32 imgW = rangelim(img_size.Width, 200, 600) * density;
 			u32 imgH = rangelim(img_size.Height, 24, 72) * density;
 #else
@@ -344,24 +442,21 @@ void RenderingEngine::draw_load_screen(const std::wstring &text,
 			u32 imgH = floor(imgW * imgRatio);
 #endif
 			v2s32 img_pos((screensize.X - imgW) / 2,
-					(screensize.Y - imgH) / 2);
+			              (screensize.Y - imgH) / 2);
 
-			draw2DImageFilterScaled(get_video_driver(), progress_img_bg,
-					core::rect<s32>(img_pos.X, img_pos.Y,
-							img_pos.X + imgW,
-							img_pos.Y + imgH),
-					core::rect<s32>(0, 0, img_size.Width,
-							img_size.Height),
-					0, 0, true);
+			draw2DImageFilterScaled(driver, progress_img_bg,
+			                        core::rect<s32>(img_pos.X, img_pos.Y, img_pos.X + imgW, img_pos.Y + imgH),
+			                        core::rect<s32>(0, 0, img_size.Width, img_size.Height),
+			                        0, 0, true);
 
-			draw2DImageFilterScaled(get_video_driver(), progress_img,
-					core::rect<s32>(img_pos.X + (percent_min * imgW) / 100, img_pos.Y,
-							img_pos.X + (percent_max * imgW) / 100,
-							img_pos.Y + imgH),
-					core::rect<s32>(percent_min * img_size.Width / 100, 0,
-							percent_max * img_size.Width / 100,
-							img_size.Height),
-					0, 0, true);
+			draw2DImageFilterScaled(driver, progress_img,
+			                        core::rect<s32>(
+			                            img_pos.X + (percent_min * imgW) / 100, img_pos.Y,
+			                            img_pos.X + (percent_max * imgW) / 100, img_pos.Y + imgH),
+			                        core::rect<s32>(
+			                            percent_min * img_size.Width / 100, 0,
+			                            percent_max * img_size.Width / 100, img_size.Height),
+			                        0, 0, true);
 		}
 	}
 
@@ -369,6 +464,7 @@ void RenderingEngine::draw_load_screen(const std::wstring &text,
 	driver->endScene();
 	guitext->remove();
 }
+
 
 std::vector<video::E_DRIVER_TYPE> RenderingEngine::getSupportedVideoDrivers()
 {
