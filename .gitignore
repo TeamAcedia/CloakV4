@@ -64,6 +64,7 @@ AppDir
 /cache
 /textures/*
 !/textures/base/
+!/textures/custom_assets/
 /screenshots
 /sounds
 /mods/*

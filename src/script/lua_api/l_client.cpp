@@ -1039,6 +1039,78 @@ int ModApiClient::l_get_description(lua_State* L) {
 	return 1;
 }
 
+// find_path(start_pos, end_pos)
+int ModApiClient::l_find_path(lua_State *L)
+{
+    // Read start and end positions from Lua
+    v3f start = check_v3f(L, 1);
+    v3f end = check_v3f(L, 2);
+	Client *client = getClient(L);
+	const NodeDefManager *ndef = getGameDef(L)->ndef();
+    // Run pathfinding
+    Pathfind pathfinder;
+    std::vector<PathNode> path = pathfinder.get_path(start, end, client, ndef);
+
+    // If no path found, return false
+    if (path.empty()) {
+        lua_pushboolean(L, false);
+        return 1;
+    }
+
+    // Create Lua table for path
+    lua_newtable(L);
+
+    int i = 1;
+    for (const PathNode &node : path) {
+        lua_newtable(L);
+
+        lua_pushnumber(L, node.position.X);
+        lua_setfield(L, -2, "x");
+
+        lua_pushnumber(L, node.position.Y);
+        lua_setfield(L, -2, "y");
+
+        lua_pushnumber(L, node.position.Z);
+        lua_setfield(L, -2, "z");
+
+        lua_rawseti(L, -2, i++);
+    }
+
+    return 1;
+}
+
+// load_media(filename)   Load a media file (model/image/sound/font) from a path
+int ModApiClient::l_load_media(lua_State *L)
+{
+	const char *filename = luaL_checkstring(L, 1);
+
+	std::string fullpath = porting::path_user + DIR_DELIM + "textures" + DIR_DELIM + "custom_assets" +  DIR_DELIM + filename;
+	
+	std::ifstream f(fullpath, std::ios::binary);
+
+	if (!f.good()) {
+		lua_pushboolean(L, false);
+		lua_pushstring(L, "File not found");
+		return 2;
+	}
+
+	std::ostringstream buffer;
+	buffer << f.rdbuf();
+	std::string data = buffer.str();
+
+	Client *client = getClient(L);
+	bool success = client->loadMedia(data, filename, false);
+
+	lua_pushboolean(L, success);
+	if (!success)
+		lua_pushstring(L, "Failed to load file");
+	else
+		lua_pushnil(L);
+
+	return 2;
+}
+
+
 void ModApiClient::Initialize(lua_State *L, int top)
 {
 	API_FCT(get_current_modname);
@@ -1094,4 +1166,6 @@ void ModApiClient::Initialize(lua_State *L, int top)
 	API_FCT(send_nodemeta_fields);
 	API_FCT(update_infotexts);
 	API_FCT(get_description);
+	API_FCT(find_path);
+	API_FCT(load_media);
 }
