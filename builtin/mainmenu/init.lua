@@ -87,10 +87,10 @@ local function init_globals()
 	mainmenu:show()
 	ui.update()
 
-	show_sign_in_screen()
 	check_reinstall_mtg()
 	migrate_keybindings()
 	check_new_version()
+	show_sign_in_screen()
 end
 
 assert(os.execute == nil)
