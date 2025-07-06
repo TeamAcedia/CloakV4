@@ -4309,7 +4309,7 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats, float dtime)
 	*/
 
 	if (!gui_chat_console->isOpen()) {
-		if (m_game_ui->m_flags.show_cheat_menu && g_settings->getBool("use_old_menu"))
+		if (m_game_ui->m_flags.show_cheat_menu && g_settings->getBool("use_old_menu") && !new_menu->isOpen())
 			m_cheat_menu->draw(driver, m_game_ui->m_flags.show_minimal_debug);
 		if (g_settings->getBool("cheat_hud")) {
 			m_cheat_menu->drawHUD(driver, dtime);
