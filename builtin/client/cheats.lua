@@ -20,6 +20,7 @@ core.cheats = {
 		["DetachedCamera"] = "detached_camera",
 		["TargetHUD"] = "enable_combat_target_hud",
 		["Coords"] = "coords",
+		["Left hand"] = "left_hand",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
@@ -206,6 +207,7 @@ core.register_cheat_description("Coords", "Render", "coords", "Render coordinate
 core.register_cheat_description("EntityESP", "Render", "enable_entity_esp", "See entities through walls")
 core.register_cheat_description("EntityTracers", "Render", "enable_entity_tracers", "Draw tracers to entities")
 core.register_cheat_description("FullBright", "Render", "fullbright", "No darkness")
+core.register_cheat_description("Left hand", "Render", "left_hand", "Switch to left hand")
 --core.register_cheat_description("HUDBypass", "Render", "hudbypass", "Allows player to toggle hud elements disabled by the game")
 core.register_cheat_description("HealthESP", "Render", "show_players_hp", "Shows player and entity HP")
 core.register_cheat_description("NoDrownCam", "Render", "no_drown_cam", "Disables drowning camera effect")

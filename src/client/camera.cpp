@@ -29,7 +29,9 @@
 
 static constexpr f32 CAMERA_OFFSET_STEP = 200;
 
-#define WIELDMESH_OFFSET_X 55.0f
+
+// TODO: fix the left arm
+float WIELDMESH_OFFSET_X = 55.0f;
 #define WIELDMESH_OFFSET_Y -35.0f
 #define WIELDMESH_AMPLITUDE_X 7.0f
 #define WIELDMESH_AMPLITUDE_Y 10.0f
@@ -307,6 +309,8 @@ void Camera::updateOffset()
 
 void Camera::update(LocalPlayer* player, f32 frametime, f32 tool_reload_ratio)
 {
+	WIELDMESH_OFFSET_X = g_settings->getBool("left_hand") ? -55.0f : 55.0f;
+
 	// Get player position
 	// Smooth the movement when walking up stairs
 	v3f old_player_position = m_playernode->getPosition();

@@ -278,6 +278,7 @@ void set_default_settings()
 	settings->setDefault("enable_combat_target_hud", "false");
 	settings->setDefault("enable_combat_target_hud.target_highlight", "true");
 	settings->setDefault("hud_elements_advice", "true");
+	settings->setDefault("left_hand", "false");
 
 	//WORLD
 	settings->setDefault("scaffold", "false");	

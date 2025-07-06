@@ -230,6 +230,7 @@ void NewMenu::create()
 
         // Ensure "Appearance" cheat exists in Client category
         ScriptApiCheatsCheat *appearance_cheat = nullptr;
+        ScriptApiCheatsCheat *grid = nullptr;
 
         for (auto *cheat : client_category->m_cheats) {
             if (cheat && cheat->m_name == "Appearance") {
@@ -238,9 +239,21 @@ void NewMenu::create()
             }
         }
 
+        for (auto *cheat : client_category->m_cheats) {
+            if (cheat && cheat->m_name == "MenuGrid") {
+                grid = cheat;
+                break;
+            }
+        }
+
         if (!appearance_cheat) {
             appearance_cheat = new ScriptApiCheatsCheat("Appearance", "appearance", "");
             client_category->m_cheats.push_back(appearance_cheat);
+        }
+
+        if (!grid) {
+            grid = new ScriptApiCheatsCheat("MenuGrid", "use_menu_grid", "");
+            client_category->m_cheats.push_back(grid);
         }
 
         // --- Ensure "Theme" setting exists or update it ---
