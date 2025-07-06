@@ -589,19 +589,20 @@ void GUIEngine::drawHeader(video::IVideoDriver *driver)
 		return;
 
 	/*
-	 * Calculate the preferred rectangle
-	 */
-	f32 mult = (((f32)screensize.Width / 2.0)) /
-			((f32)texture->getOriginalSize().Width);
+	* Calculate the preferred rectangle
+	*/
+	// ↓ Scale down to 0.65x
+	f32 mult = 0.65f * (((f32)screensize.Width / 2.0)) /
+		((f32)texture->getOriginalSize().Width);
 
 	v2s32 splashsize(((f32)texture->getOriginalSize().Width) * mult,
 			((f32)texture->getOriginalSize().Height) * mult);
 
-	s32 free_space = (((s32)screensize.Height)-320)/2;
+	s32 free_space = (((s32)screensize.Height) - 320) / 2;
 
 	core::rect<s32> desired_rect(0, 0, splashsize.X, splashsize.Y);
-	desired_rect += v2s32((screensize.Width/2)-(splashsize.X/2),
-			((free_space/2)-splashsize.Y/2)+10);
+	desired_rect += v2s32((screensize.Width / 2) - (splashsize.X / 2),
+			((free_space / 2) - splashsize.Y / 2) + 10);
 
 	/*
 	 * Make the preferred rectangle fit into the maximum rectangle
