@@ -13,10 +13,10 @@ local function get_formspec(dialogdata)
 		"bgimg=" .. core.formspec_escape(defaulttexturedir .. "menu_button.png") .. ";" ..
 		"bgimg_hovered=" .. core.formspec_escape(defaulttexturedir .. "menu_button_hovered.png") .. "]",
 
-		"image_button[0.5,1.6;4,0.8;;login;" .. fgettext("Log In") .. "]",
-		"image_button[0.5,2.5;4,0.8;;create;" .. fgettext("Create Account") .. "]",
-		"image_button[0.5,3.4;4,0.8;;guest;" .. fgettext("Continue as Guest") .. "]",
-		"image_button[0.5,4.3;4,0.8;;exit;" .. fgettext("Exit") .. "]"
+		"image_button[0,1.6;5,0.8;;login;" .. fgettext("Log In") .. "]",
+		"image_button[0,2.5;5,0.8;;create;" .. fgettext("Create Account") .. "]",
+		"image_button[0,3.4;5,0.8;;guest;" .. fgettext("Continue as Guest") .. "]",
+		"image_button[0,4.3;5,0.8;;exit;" .. fgettext("Exit") .. "]"
 	}, "\n")
 end
 

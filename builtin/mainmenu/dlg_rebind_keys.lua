@@ -15,15 +15,15 @@ local function get_formspec(dialogdata)
 		("<action name='doc_url'><style color='cyan' hovercolor='orangered'>%s</style></action>"):format(doc_url),
 	}, "\n")
 
-	return table.concat({
-		"formspec_version[6]",
-		"size[12,7]",
-		"hypertext[0.5,0.5;11,4.7;text;", core.formspec_escape(markup), "]",
-		"container[0.5,5.7]",
-		"button[0,0;4,0.8;dismiss;", fgettext("Close"), "]",
-		"button[4.5,0;6.5,0.8;reconfigure;", fgettext("Open settings"), "]",
-		"container_end[]",
-	})
+	--return table.concat({
+	--	"formspec_version[6]",
+	--	"size[12,7]",
+	--	"hypertext[0.5,0.5;11,4.7;text;", core.formspec_escape(markup), "]",
+	--	"container[0.5,5.7]",
+	--	"button[0,0;4,0.8;dismiss;", fgettext("Close"), "]",
+	--	"button[4.5,0;6.5,0.8;reconfigure;", fgettext("Open settings"), "]",
+	--	"container_end[]",
+	--})
 end
 
 local function close_dialog(this)

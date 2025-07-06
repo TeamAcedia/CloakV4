@@ -8,13 +8,17 @@
 -- local dump = minetest.debug.dump -- Or your custom dump function
 
 local function main_menu_formspec(this)
-	
+
+	if cache_settings:get(LOGIN_USERNAME_SETTING_NAME)  == nil then
+		cache_settings:set(LOGIN_USERNAME_SETTING_NAME, "")	
+	end
+
 	if this.hidden or (this.parent ~= nil and this.parent.hidden) then
 		return ""
 	end
     -- The main menu formspec defines the overall size and includes all buttons.
     -- Assuming a fixed size for the main menu dialog for simplicity.
-    local width = 4 -- Example width
+    local width = 5 -- Example width
     local height = 15 -- Example height
     local fixed_size = false -- Or true, depending on desired behavior
 
@@ -46,26 +50,26 @@ local function main_menu_formspec(this)
 
 		-- Logged in as button
         "style_type[image_button;border=false;textcolor=white;font_size=*0.9;padding=0;font=bold;bgimg=" .. core.formspec_escape(defaulttexturedir .. "menu_account.png") .. ";bgimg_hovered=" .. core.formspec_escape(defaulttexturedir .. "menu_account_hovered.png") .. "]",
-        "image_button[0,14.3;2.62,0.425;;logged_in;        " .. cache_settings:get(LOGIN_USERNAME_SETTING_NAME) .. "]",
+        "image_button[0,14.3;2.84,0.425;;logged_in;        " .. cache_settings:get(LOGIN_USERNAME_SETTING_NAME) .. "]",
 
 		-- Exit button
 		"style_type[image_button;border=false;textcolor=white;font_size=*0.9;padding=0;font=bold;bgimg=" .. core.formspec_escape(defaulttexturedir .. "menu_exit.png") .. ";bgimg_hovered=" .. core.formspec_escape(defaulttexturedir .. "menu_exit_hovered.png") .. "]",
-        "image_button[2.7,14.3;1.3,0.425;;exit;        " .. fgettext("Exit") .. "]",
+        "image_button[2.9,14.3;1.4,0.425;;exit;        " .. fgettext("Exit") .. "]",
 
 		-- github button
 
 		"style_type[image_button;border=false;textcolor=white;font_size=*0.9;padding=0;font=bold;bgimg=" .. core.formspec_escape(defaulttexturedir .. "menu_github.png") .. ";bgimg_hovered=" .. core.formspec_escape(defaulttexturedir .. "menu_github_hovered.png") .. "]",
-        "image_button[0,13.8;1.3,0.425;;github;         " .. fgettext("Github") .. "]",
+        "image_button[0,13.8;1.4,0.425;;github;         " .. fgettext("Github") .. "]",
 
 		-- discord button
 
 		"style_type[image_button;border=false;textcolor=white;font_size=*0.9;padding=0;font=bold;bgimg=" .. core.formspec_escape(defaulttexturedir .. "menu_discord.png") .. ";bgimg_hovered=" .. core.formspec_escape(defaulttexturedir .. "menu_discord_hovered.png") .. "]",
-        "image_button[1.35,13.8;1.3,0.425;;discord;         " .. fgettext("Discord") .. "]",
+        "image_button[1.45,13.8;1.4,0.425;;discord;         " .. fgettext("Discord") .. "]",
 
 		-- website button
 
 		"style_type[image_button;border=false;textcolor=white;font_size=*0.9;padding=0;font=bold;bgimg=" .. core.formspec_escape(defaulttexturedir .. "menu_web.png") .. ";bgimg_hovered=" .. core.formspec_escape(defaulttexturedir .. "menu_web_hovered.png") .. "]",
-        "image_button[2.7,13.8;1.3,0.425;;website;         " .. fgettext("Website") .. "]",
+        "image_button[2.9,13.8;1.4,0.425;;website;         " .. fgettext("Website") .. "]",
     }
 	return table.concat(formspec_elements, "")
 end

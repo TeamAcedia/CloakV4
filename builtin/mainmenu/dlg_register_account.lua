@@ -79,7 +79,7 @@ local function get_register_formspec(dialogdata)
 	return table.concat({
 		"formspec_version[8]",
 		"size[5,8]",
-		"bgcolor[;neither;]",
+		"bgcolor[;neither;]",	
 
 		-- Header image
 		"image[0,0;5,1;" .. core.formspec_escape(defaulttexturedir .. "menu_header.png") .. "]",
@@ -103,8 +103,8 @@ local function get_register_formspec(dialogdata)
 		"field[0.5,4.05;4,0.8;confirm;;" .. core.formspec_escape(dialogdata.confirm or "") .. "]",
 
 		-- Terms checkbox and view button
-		"checkbox[0.75,5.2;agree_tos;" .. fgettext("I agree to the ToS and Privacy Policy") .. ";false]",
-		"image_button[0.5,5.5;4,0.4;;view_terms;" .. fgettext("View ToS & Privacy Policy") .. "]",
+		"checkbox[0.5,5.3;agree_tos;" .. fgettext("I agree to the ToS &\nPrivacy Policy") .. ";false]",
+		"image_button[-1,5.7;7,0.4;;view_terms;" .. fgettext("View ToS & Privacy Policy") .. "]",
 
 		-- Styled buttons
 		"style_type[image_button;border=false;textcolor=white;font_size=*2;padding=0;font=bold;" ..
@@ -112,7 +112,7 @@ local function get_register_formspec(dialogdata)
 		"bgimg_hovered=" .. core.formspec_escape(defaulttexturedir .. "menu_button_hovered.png") .. "]",
 
 		"image_button[0.5,6.2;4,0.8;;register;" .. fgettext("Register") .. "]",
-		"image_button[0.5,7.1;4,0.8;;back;" .. fgettext("Back") .. "]"
+		"image_button[0.5,7.2;4,0.8;;back;" .. fgettext("Back") .. "]"
 	}, "\n")
 end
 
