@@ -774,8 +774,11 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 			m_autojump = false;
 	}
 
-	if (g_settings->getBool("BHOP") && control.isMoving() && !g_settings->getBool("freecam") && !g_settings->getBool("free_move")) {
+	if (g_settings->getBool("BHOP") && control.isMoving() && !g_settings->getBool("freecam") && !g_settings->getBool("free_move") && g_settings->getBool("BHOP.jump")) {
 		control.jump = true;
+	}
+
+	if (g_settings->getBool("BHOP") && control.isMoving() && !g_settings->getBool("freecam") && !g_settings->getBool("free_move") && g_settings->getBool("BHOP.sprint")) {
 		control.aux1 = true;
 	}
 
@@ -870,7 +873,7 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 	}
 
 	// Accelerate to target speed with maximum increment
-	if (g_settings->getBool("BHOP") && control.jump) {
+	if (g_settings->getBool("BHOP") && control.jump && g_settings->getBool("BHOP.speed")) {
 		accelerate((speedH*1.2 + speedV*1.2) * physics_override.speed, incH * physics_override.speed * slip_factor, incV * physics_override.speed, pitch_move);
 	} else {
  	accelerate((speedH + speedV) * physics_override.speed, incH * physics_override.speed * slip_factor, incV * physics_override.speed, pitch_move);

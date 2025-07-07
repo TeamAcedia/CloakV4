@@ -202,6 +202,10 @@ void set_default_settings()
 	settings->setDefault("freecam", "false");
 	settings->setDefault("step", "false");
 	settings->setDefault("step.mult", "2.0");
+	settings->setDefault("BHOP", "false");
+	settings->setDefault("BHOP.speed", "true");
+	settings->setDefault("BHOP.sprint", "true");
+	settings->setDefault("BHOP.jump", "true");
 
 	//MISC
 	settings->setDefault("auto_heal", "true");
