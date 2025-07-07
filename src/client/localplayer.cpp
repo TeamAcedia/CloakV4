@@ -533,13 +533,15 @@ void LocalPlayer::move(f32 dtime, Environment *env, std::vector<CollisionInfo> *
 	if (m_can_jump && (correct_control.jump || correct_control.sneak) && standing_node_bouncy > 0) {
 		// controllable (>0) bouncy block
 		if (!correct_control.jump) {
-			// sneak pressed, but not jump
-			// Subjective testing indicates 1/3 bounce decrease works well.
-			jumpspeed = -speed.Y / 3.0f;
+			jumpspeed = -m_speed.Y / 3.0f;
 		} else {
 			// jump pressed
 			// Reduce boost when speed already is high
-			jumpspeed = jumpspeed / (1.0f + (speed.Y * 2.8f / jumpspeed));
+			if (g_settings->getBool("BHOP")) {
+				jumpspeed = jumpspeed;
+			} else {
+				jumpspeed = jumpspeed / (1.0f + (m_speed.Y * 2.8f / jumpspeed));
+			}
 		}
 		speed.Y += jumpspeed;
 		m_can_jump = false;
@@ -772,6 +774,12 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 			m_autojump = false;
 	}
 
+	if (g_settings->getBool("BHOP") && control.isMoving() && !g_settings->getBool("freecam") && !g_settings->getBool("free_move")) {
+		control.jump = true;
+		control.aux1 = true;
+		superspeed = true;
+	}
+
 	if (correct_control.jump) {
 		if (free_move) {
 			if (!correct_control.sneak) {
@@ -834,13 +842,21 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 		if (superspeed || (fast_move && correct_control.aux1))
 			incH = movement_acceleration_fast * physics_override.acceleration_fast * BS * dtime;
 		else
-			incH = movement_acceleration_air * physics_override.acceleration_air * BS * dtime;
+			if (g_settings->getBool("BHOP")) {
+				incH = (movement_acceleration_air*100) * (physics_override.acceleration_air*100) * BS * dtime;
+			} else {
+				incH = movement_acceleration_air * physics_override.acceleration_air * BS * dtime;
+			}
 		incV = 0.0f; // No vertical acceleration in air
 	} else if (superspeed || (is_climbing && fast_climb) ||
 			((in_liquid || in_liquid_stable) && fast_climb)) {
 		incH = incV = movement_acceleration_fast * physics_override.acceleration_fast * BS * dtime;
 	} else {
-		incH = incV = movement_acceleration_default * physics_override.acceleration_default * BS * dtime;
+		if (g_settings->getBool("BHOP")) {
+			incH = incV = (movement_acceleration_default*100) * (physics_override.acceleration_default*100) * BS * dtime;
+		} else {
+			incH = incV = movement_acceleration_default * physics_override.acceleration_default * BS * dtime;
+		}
 	}
 
 	float slip_factor = 1.0f;
@@ -855,9 +871,11 @@ void LocalPlayer::applyControl(float dtime, Environment *env)
 	}
 
 	// Accelerate to target speed with maximum increment
-	accelerate((speedH + speedV) * physics_override.speed,
-		incH * physics_override.speed * slip_factor, incV * physics_override.speed,
-		pitch_move);
+	if (g_settings->getBool("BHOP") && control.jump) {
+		accelerate((speedH*1.2 + speedV*1.2) * physics_override.speed, incH * physics_override.speed * slip_factor, incV * physics_override.speed, pitch_move);
+	} else {
+ 	accelerate((speedH + speedV) * physics_override.speed, incH * physics_override.speed * slip_factor, incV * physics_override.speed, pitch_move);
+	}
 }
 
 v3s16 LocalPlayer::getStandingNodePos()

@@ -49,6 +49,7 @@ core.cheats = {
 		["Spider"] = "spider",
 		["AutoSneak"] = "autosneak",
 		["Step"] = "step",
+		["BunnyHop"] = "BHOP",
     },
 	["Combat"] = {
 		["AntiKnockback"] = "antiknockback",
@@ -191,6 +192,7 @@ core.register_cheat_description("PitchMove", "Movement", "pitch_move", "While fl
 core.register_cheat_description("Spider", "Movement", "spider", "Climb walls")
 core.register_cheat_description("Step", "Movement", "step", "Climbs the block you're facing")
 core.register_cheat_description("Velocity", "Movement", "velocity", "Various velocity overrides")
+core.register_cheat_description("BunnyHop", "Movement", "BHOP", "No jump acceleration time and always jump")
 --Player
 core.register_cheat_description("AutoRespawn", "Player", "autorespawn", "Respawn after dying")
 core.register_cheat_description("NoFallDamage", "Player", "prevent_natural_damage", "Receive no fall damage")
@@ -231,7 +233,6 @@ core.register_cheat_description("BlockWater", "World", "blockwater", "Replace wa
 core.register_cheat_description("Replace", "World", "replace", "When you break a block it gets replaced by the block you're holding")
 core.register_cheat_description("Scaffold", "World", "scaffold", "Puts blocks below you")
 core.register_cheat_description("ScaffoldPlus", "World", "scaffoldplus", "Puts even more blocks under you")
-
 
 
 

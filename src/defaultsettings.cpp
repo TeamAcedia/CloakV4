@@ -282,6 +282,7 @@ void set_default_settings()
 	settings->setDefault("nametags", "false");
 	settings->setDefault("nametags.hp", "true");
 	settings->setDefault("nametags.status", "true");
+	settings->setDefault("BHOP", "false");
 
 	//WORLD
 	settings->setDefault("scaffold", "false");	
