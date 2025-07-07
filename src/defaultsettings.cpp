@@ -300,6 +300,12 @@ void set_default_settings()
 	settings->setDefault("hud_flags_bypass", "false"); // yet to be implemented
 
 
+	//SKY
+	settings->setDefault("custom_skybox", "false");
+	settings->setDefault("display_sunrise", "true");
+	settings->setDefault("force_custom_skybox", "false");
+	settings->setDefault("force_render_skybox", "true");
+
 	// Keymap
 #if USE_SDL2
 #define USEKEY2(name, value, _) settings->setDefault(name, value)

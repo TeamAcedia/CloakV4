@@ -121,6 +121,8 @@ public:
 		return getBgColor();
 	}
 
+	const char* SkyTextures[6] = {"top.jpg", "bottom.jpg", "east.jpg", "west.jpg", "south.jpg", "north.jpg"};
+	
 private:
 	aabb3f m_box{{0.0f, 0.0f, 0.0f}};
 	video::SMaterial m_materials[SKY_MATERIAL_COUNT];

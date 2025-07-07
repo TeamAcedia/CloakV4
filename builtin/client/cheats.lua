@@ -68,6 +68,13 @@ core.cheats = {
 	["Misc"] = {
 		["Hints"] = "use_hints",
     },
+
+	["Sky"] = {
+		["Custom sky"] = "custom_skybox",
+		["Display sunrise"] = "display_sunrise",
+		["Force custom sky"] = "force_custom_skybox",
+		["Force render sky"] = "force_render_skybox",
+	}
 }
 -----------------------------------------------------------REGISTER CHEATS-----------------------------------------------------------
 function core.register_cheat(cheatname, category, func)
@@ -234,6 +241,11 @@ core.register_cheat_description("Replace", "World", "replace", "When you break a
 core.register_cheat_description("Scaffold", "World", "scaffold", "Puts blocks below you")
 core.register_cheat_description("ScaffoldPlus", "World", "scaffoldplus", "Puts even more blocks under you")
 
+
+core.register_cheat_description("Custom sky", "Sky", "custom_skybox", "enable custom skybox")
+core.register_cheat_description("Display sunrise", "Sky", "display_sunrise", "display sunrise")
+core.register_cheat_description("Force custom sky", "Sky", "force_custom_skybox", "Force custom sky")
+core.register_cheat_description("Force render sky", "Sky", "force_render_skybox", "Force render sky")
 
 
 --SOME SETTINGS

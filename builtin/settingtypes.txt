@@ -362,6 +362,18 @@ keymap_slot31 (Hotbar slot 31) key
 
 keymap_slot32 (Hotbar slot 32) key
 
+[*Atmosphere]
+
+[**Sky settings]
+# Enable custom sky?
+custom_skybox (Custom skybox) bool false
+# Enable display sunrise?
+display_sunrise (Display sunrise) bool true
+# Enable force custom skybox?
+force_custom_skybox (Force custom skybox) bool false
+# Enable force render skybox?
+force_render_skybox (Force render skybox) bool true
+
 [*Touchscreen]
 
 #    Enables the touchscreen controls, allowing you to play the game with a touchscreen.

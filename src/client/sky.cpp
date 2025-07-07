@@ -73,9 +73,25 @@ Sky::Sky(s32 id, RenderingEngine *rendering_engine, ITextureSource *tsrc, IShade
 
 	setMoonTexture(m_moon_params.texture, m_moon_params.tonemap, tsrc);
 
-	for (int i = 5; i < 11; i++) {
-		m_materials[i] = baseMaterial();
-		m_materials[i].MaterialType = video::EMT_SOLID;
+	if (g_settings->getBool("custom_skybox"))
+	{
+		for (int i = 5; i < 11; i++) {
+			m_visible = false;
+			m_materials[i] = baseMaterial();
+			
+				m_sky_params.textures.emplace_back(SkyTextures[i - 5]);
+				video::ITexture *result = tsrc->getTextureForMesh(SkyTextures[i - 5]);
+				m_materials[i] = baseMaterial();
+				m_materials[i].setTexture(0, result);
+				m_materials[i].MaterialType = video::EMT_SOLID;
+		}
+	}
+	else
+	{
+		for (int i = 5; i < 11; i++) {
+			m_materials[i] = baseMaterial();
+			m_materials[i].MaterialType = video::EMT_SOLID;
+		}
 	}
 
 	m_directional_colored_fog = g_settings->getBool("directional_colored_fog");
@@ -327,6 +343,11 @@ void Sky::update(float time_of_day, float time_brightness,
 
 	m_time_of_day = time_of_day;
 	m_time_brightness = time_brightness;
+		if (g_settings->getBool("force_render_skybox")) {
+		sunlight_seen = true;
+	} else {
+		sunlight_seen = false;
+	}
 	m_sunlight_seen = sunlight_seen;
 	m_in_clouds = false;
 
@@ -875,14 +896,31 @@ void Sky::addTextureToSkybox(const std::string &texture, int material_id,
 		ITextureSource *tsrc)
 {
 	// Sanity check for more than six textures.
-	if (material_id + 5 >= SKY_MATERIAL_COUNT)
-		return;
-	// Keep a list of texture names handy.
-	m_sky_params.textures.emplace_back(texture);
-	video::ITexture *result = tsrc->getTextureForMesh(texture);
-	m_materials[material_id+5] = baseMaterial();
-	m_materials[material_id+5].setTexture(0, result);
-	m_materials[material_id+5].MaterialType = video::EMT_SOLID;
+	if (g_settings->getBool("force_custom_skybox")) {
+		try {
+			m_sky_params.textures.emplace_back(SkyTextures[material_id]);
+			video::ITexture* result = tsrc->getTextureForMesh(SkyTextures[material_id]);
+			m_materials[material_id + 5] = baseMaterial();
+			m_materials[material_id + 5].setTexture(0, result);
+			m_materials[material_id + 5].MaterialType = video::EMT_SOLID;
+		} catch (...) {
+			errorstream << "[SKYBOX]: Failed to load texture for material ID: " 
+						<< material_id 
+						<< " with texture: " 
+						<< SkyTextures[material_id] 
+						<< std::endl;
+		}
+	} else {
+		if (material_id + 5 >= SKY_MATERIAL_COUNT)
+			return;
+
+		// Keep a list of texture names handy.
+		m_sky_params.textures.emplace_back(texture);
+		video::ITexture* result = tsrc->getTextureForMesh(texture);
+		m_materials[material_id + 5] = baseMaterial();
+		m_materials[material_id + 5].setTexture(0, result);
+		m_materials[material_id + 5].MaterialType = video::EMT_SOLID;
+	}
 }
 
 float getWickedTimeOfDay(float time_of_day)
