@@ -63,7 +63,7 @@ function is_valid_target(obj, target_type, max_distance, ppos)
 
     if is_player then
         local relationship = core.localplayer:get_entity_relationship(obj:get_id())
-        if relationship ~= core.EntityRelationship.ENEMY and core.settings:get_bool("targeting.enemies_only")then
+        if relationship ~= core.EntityRelationship.ENEMY and core.settings:get_bool("targeting.enemies_only") then
             return false
         end
     end

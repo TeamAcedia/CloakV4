@@ -185,9 +185,9 @@ int ClientObjectRef::l_get_properties(lua_State *L)
 {
 	ClientObjectRef *ref = checkobject(L, 1);
 	GenericCAO *gcao = get_generic_cao(ref, L);
-	ObjectProperties prop = gcao->getProperties();
-	push_object_properties(L, &gcao->getProperties());
-	return 1;
+	const ObjectProperties* prop = &gcao->getProperties();
+	push_object_properties(L, prop);
+	return 1;	
 }
 
 

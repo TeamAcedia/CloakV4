@@ -20,7 +20,8 @@ core.cheats = {
 		["DetachedCamera"] = "detached_camera",
 		["TargetHUD"] = "enable_combat_target_hud",
 		["Coords"] = "coords",
-		["Left hand"] = "left_hand",
+		["LeftHand"] = "left_hand",
+		["Nametags"] = "nametags",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
@@ -168,7 +169,6 @@ core.register_cheat_description("Hand", "Misc", minetest.open_handslot, "Open ha
 --core.register_cheat_description("AutoStaff", "Misc", "autostaff", "Automatically check player privs and assign them as a staff.")
 --core.register_cheat_setting("Warn Staff", "Misc", "autostaff", "autostaff.warn_staff", {type="bool"})
 core.register_cheat_description("AutoTeam", "Misc", "autoteam", "Sets allied players to your team in ctf")
---core.register_cheat_description("Nametags", "Misc", "use_colored_nametags", "Sets player nametag colors based on their friend/enemy status")
 core.register_cheat_description("Panic", "Misc", "panic", "Disables all cheats")
 core.register_cheat_description("Hints", "Misc", "use_hints", "Enable cheat hints")
 core.register_cheat_description("Spammer", "Misc", "spammer", "Sends many chat messages")
@@ -222,6 +222,8 @@ core.register_cheat_description("PlayerTracers", "Render", "enable_player_tracer
 core.register_cheat_description("Xray", "Render", "xray", "Don't render specific nodes")
 core.register_cheat_description("TargetHUD", "Render", "enable_combat_target_hud", "Shows best target on a HUD (depends on your combat settings)")
 core.register_cheat_description("DetachedCamera", "Render", "detached_camera", "Move forward regardless of where you're looking at")
+core.register_cheat_description("Nametags", "Render", "nametags", "Customize players nametags")
+core.register_cheat_description("LeftHand", "Render", "left_hand", "Switch to left hand")
 --World
 core.register_cheat_description("AutoTNT", "World", "autotnt", "Puts TNT on the ground")
 core.register_cheat_description("BlockLava", "World", "blocklava", "Replace lava with the block you're holding")
@@ -243,7 +245,8 @@ core.register_cheat_setting("Position", "Render", "cheat_hud", "cheat_hud.positi
 core.register_cheat_setting("Type", "Render", "enable_health_esp", "enable_health_esp.type", {type="selectionbox", options={"Health Bar", "Above Head"}})
 core.register_cheat_setting("Players Only", "Render", "enable_health_esp", "enable_health_esp.players_only", {type="bool"})
 core.register_cheat_setting("Target highlight", "Render", "enable_combat_target_hud", "enable_combat_target_hud.target_highlight", {type="bool"})
-
+core.register_cheat_setting("HP", "Render", "nametags", "nametags.hp", {type="bool"})
+core.register_cheat_setting("Status Marker", "Render", "nametags", "nametags.status", {type="bool"})
 
 local update_interval = 0.25
 local timer = 0
@@ -252,16 +255,26 @@ minetest.register_globalstep(function(dtime)
     timer = timer + dtime
     if timer >= update_interval then
         timer = 0
-        --Starts here
 
-		--Step infotext
-		local step_mult = minetest.settings:get("step.mult")
-		core.update_infotext("Step", "Movement", "step", "Mult: " .. core.settings:get("step.mult"))
+        -- Step infotext
+        core.update_infotext("Step", "Movement", "step", "Mult: " .. core.settings:get("step.mult"))
 
-		--CombatLog infotext
-		local combatlog_hp = minetest.settings:get("be_a_bitch.hp")
-		minetest.update_infotext("CombatLog", "Combat", "be_a_bitch", "Min HP:" .. core.settings:get("combatlog.hp"))
+        -- CombatLog infotext
+        core.update_infotext("CombatLog", "Combat", "combatlog", "Min HP: " .. core.settings:get("combatlog.hp"))
 
-		--Ends here
+        -- Nametags infotext
+        local nametags_enabled = core.settings:get_bool("nametags")
+        local nametags_hp = core.settings:get_bool("nametags.hp")
+        local nametags_status = core.settings:get_bool("nametags.status")
+
+        if nametags_enabled and nametags_hp and nametags_status then
+            core.update_infotext("Nametags", "Render", "nametags", "HP, Status")
+        elseif nametags_enabled and nametags_hp then
+            core.update_infotext("Nametags", "Render", "nametags", "HP")
+        elseif nametags_enabled and nametags_status then
+            core.update_infotext("Nametags", "Render", "nametags", "Status")
+        elseif nametags_enabled then
+            core.update_infotext("Nametags", "Render", "nametags", "")
+        end
     end
 end)
