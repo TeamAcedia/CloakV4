@@ -486,7 +486,11 @@ void Camera::update(LocalPlayer* player, f32 frametime, f32 tool_reload_ratio)
 		// Set to client's selected FOV
 		m_curr_fov_degrees = m_cache_fov;
 	}
-	m_curr_fov_degrees = rangelim(m_curr_fov_degrees, 1.0f, 160.0f);
+	if (g_settings->getBool("fov_setting")) {
+		m_curr_fov_degrees = rangelim(g_settings->getFloat("fov.step"), 1.0f, 160.0f);
+	} else {
+		m_curr_fov_degrees = rangelim(m_curr_fov_degrees, 1.0f, 160.0f);
+	}
 
 	// FOV and aspect ratio
 	const v2u32 &window_size = RenderingEngine::getWindowSize();

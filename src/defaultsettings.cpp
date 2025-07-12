@@ -286,7 +286,8 @@ void set_default_settings()
 	settings->setDefault("nametags", "false");
 	settings->setDefault("nametags.hp", "true");
 	settings->setDefault("nametags.status", "true");
-	settings->setDefault("BHOP", "false");
+	settings->setDefault("fov_setting", "true");
+	settings->setDefault("fov.step", "72.0f");
 
 	//WORLD
 	settings->setDefault("scaffold", "false");	
@@ -302,6 +303,7 @@ void set_default_settings()
 	//UNUSED
 	settings->setDefault("entity_speed", "false"); // not actually used
 	settings->setDefault("hud_flags_bypass", "false"); // yet to be implemented
+	settings->setDefault("can_delete_nametags", "true"); // not used yet, can be useful
 
 
 	//SKY

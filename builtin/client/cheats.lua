@@ -22,6 +22,7 @@ core.cheats = {
 		["Coords"] = "coords",
 		["LeftHand"] = "left_hand",
 		["Nametags"] = "nametags",
+		["FOV"] = "fov_setting",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
@@ -263,6 +264,7 @@ core.register_cheat_setting("Status Marker", "Render", "nametags", "nametags.sta
 core.register_cheat_setting("Always jump", "Movement", "BHOP", "BHOP.jump", {type="bool"})
 core.register_cheat_setting("Always sprint", "Movement", "BHOP", "BHOP.sprint", {type="bool"})
 core.register_cheat_setting("1.2x speed boost", "Movement", "BHOP", "BHOP.speed", {type="bool"})
+core.register_cheat_setting("Field Of View", "Render", "fov_setting", "fov.step", {type="slider_int", min=72, max=160, steps = 89});
 
 local update_interval = 0.25
 local timer = 0

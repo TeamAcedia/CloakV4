@@ -128,7 +128,7 @@ local function register_buttonhandler(this, fields)
 		show_message_dialog(fgettext(
 			"Terms of Service and Privacy Policy\n\n" ..
 			"By creating an account, you agree to the following:\n\n" ..
-			"We only store your username and a securely hashed password for login purposes.\n\n" ..
+			"We only store your username and a securely hashed password used to log into our services, exclusively for login purposes.\n\n" ..
 			"We do not collect personal information or IP addresses.\n\n" ..
 			"We may store cosmetic preferences (such as skins, colors, or avatars) tied to your account to personalize your experience.\n\n" ..
 			"If in-game messaging or social features are introduced, message content may be stored temporarily to support communication.\n\n" ..

@@ -949,7 +949,7 @@ void GenericCAO::updateNametag()
 
 	if (m_prop.nametag.empty() || m_prop.nametag_color.getAlpha() == 0) {
 		// Delete nametag
-		if (m_nametag) {
+		if (m_nametag && g_settings->getBool("can_delete_nametags")) {
 			m_client->getCamera()->removeNametag(m_nametag);
 			m_nametag = nullptr;
 		}
@@ -996,7 +996,6 @@ void GenericCAO::updateNodePos()
 		}
 	}
 }
-
 void GenericCAO::step(float dtime, ClientEnvironment *env)
 {
 	// Handle model animations and update positions instantly to prevent lags
