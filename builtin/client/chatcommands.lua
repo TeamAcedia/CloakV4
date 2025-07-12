@@ -155,7 +155,7 @@ function core.run_server_chatcommand(cmd, param)
 end
 
 core.register_list_command("xray", "Configure X-Ray", "xray.nodes")
-core.register_list_command("search", "Configure NodeESP", "node_esp_nodes")
+core.register_list_command("search", "Configure NodeESP", "enable_node_esp.nodes")
 core.register_player_list_command("friend", "Configure Friends.", "friends")
 core.register_player_list_command("enemy", "Configure Enemies.", "enemies")
 core.register_player_list_command("ally", "Configure Allies.", "allies")
