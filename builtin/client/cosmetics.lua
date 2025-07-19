@@ -8,6 +8,7 @@ local timer = 0
 local updated_once = false
 
 core.register_globalstep(function(dtime)
+	if true then return end
 	if updated_once then return end
 
 	timer = timer + dtime
