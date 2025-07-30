@@ -28,6 +28,5 @@ dofile(cheatspath .. "autototem.lua")
 dofile(cheatspath .. "inventory.lua")
 dofile(cheatspath .. "strata.lua")
 dofile(cheatspath .. "nametags.lua")
-dofile(cheatspath .. "nsfw.lua")
 
 assert(loadfile(commonpath .. "item_s.lua"))({}) -- Just for push/read node functions
