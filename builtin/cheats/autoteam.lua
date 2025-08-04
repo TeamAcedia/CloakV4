@@ -69,6 +69,9 @@ core.register_on_receiving_chat_message(function(message)
                     -- Fallback for new format if no color codes but still " has " (unlikely given example)
                     -- Find "Team " and " has "
                     local start_team_name = string.find(team_info_part, "Team ")
+                    if not start_team_name then
+                        return
+                    end
                     local end_team_name = string.find(team_info_part, " has ", start_team_name + 5)
                     if start_team_name and end_team_name then
                         team_name = string.sub(team_info_part, start_team_name + 5, end_team_name - 1)
