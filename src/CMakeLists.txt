@@ -1,4 +1,4 @@
-project(luanti)
+project(cloakv4)
 
 INCLUDE(CheckTypeSize)
 INCLUDE(CheckIncludeFiles)
