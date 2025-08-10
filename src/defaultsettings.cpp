@@ -234,6 +234,7 @@ void set_default_settings()
 	settings->setDefault("priv_bypass", "false");
 	settings->setDefault("no_force_rotate", "false");
 	settings->setDefault("nobob", "false");
+	settings->setDefault("strata", "false");
 
 	//INTERACT
 	settings->setDefault("spamclick", "false");

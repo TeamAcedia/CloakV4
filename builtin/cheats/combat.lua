@@ -267,25 +267,20 @@ core.register_globalstep(function(dtime)
 		core.set_combat_target(target_enemy:get_id()) 	
 	end
 
-	if target_enemy and core.settings:get_bool("killaura") then
+	if target_enemy and (core.settings:get_bool("killaura") or core.settings:get_bool("orbit")) then
 		
 		local interval = get_punch_interval(player)
 
-		if player:get_time_from_last_punch() > interval then
+		if player:get_time_from_last_punch() > interval or core.settings:get_bool("killaura.manypunches") then
 		
 			if (core.settings:get_bool("killaura.lineofsight") and target_enemy ) then
 			
 				local pos = truncate_pos(player:get_pos())
 				local enemy_pos = truncate_pos(target_enemy:get_pos())
 			
-				--local has_los = minetest.line_of_sight(pos, enemy_pos, 1.0) or false
-			
 				local has_los = not is_block_between(pos, enemy_pos, 1.0)
 			
-				--minetest.display_chat_message( "My position: " .. minetest.pos_to_string(pos) .. ", enemy position: " .. minetest.pos_to_string(enemy_pos).. "Value of los: " .. tostring(has_los))
-			
 				if (not has_los) then
-					--player:punch()
 					return
 				end
 			end
@@ -309,17 +304,6 @@ core.register_globalstep(function(dtime)
 					player:set_wield_index(wield_index)
 					return true
 				end
-			end
-			
-			if (core.settings:get_bool("killaura.manypunches")) then
-				player:punch(target_enemy:get_id())
-				player:punch(target_enemy:get_id())
-				player:punch(target_enemy:get_id())
-				player:punch(target_enemy:get_id())
-				player:punch(target_enemy:get_id())
-				player:punch(target_enemy:get_id())
-				player:punch(target_enemy:get_id())
-				player:punch(target_enemy:get_id())
 			end
 
 			player:punch(target_enemy:get_id())
@@ -363,16 +347,13 @@ core.register_globalstep(function(dtime)
 		local y = vec.y
 		vec.y = 0
 		local x = vector.length(vec)+90
-		qtime = qtime + dtime
-		if qtime > 0.1 then
-			core.set_keypress("jump", true)
-			core.set_keypress("left", true)
-			core.after(0.099, function()
-				core.set_keypress("jump", false)
-				core.set_keypress("left", false)
-			end)
-			qtime = 0
-		end
+		local enemyPos = target_enemy:get_pos();
+		enemyPos.y = enemyPos.y - 1
+		enemyPos.y = enemyPos.y + minetest.settings:get("autoaim.y_offset")/10
+		ws.aim(enemyPos)
+		Strata.set_controls({left = true, jump = true})
+	else
+		Strata.clear_controls()
 	end
 end)
 

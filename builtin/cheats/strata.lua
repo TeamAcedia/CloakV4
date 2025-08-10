@@ -276,6 +276,7 @@ core.register_chatcommand("goto", {
 		Strata.set_target(end_pos)
 
 		print(Strata.formatted_string .. "Now pathfinding to " .. end_pos.x .. ", " .. end_pos.y .. ", " .. end_pos.z)
+		core.settings:set_bool("strata", true)
 		return true
 	end
 })
@@ -391,6 +392,9 @@ Strata.place_node = function(pos)
 end
 
 core.register_globalstep(function(dtime)
+	if not core.settings:get_bool("strata") then
+		return
+	end
 	timer = timer + dtime
 	if timer > update_interval then
 		timer = 0
@@ -523,3 +527,8 @@ core.register_globalstep(function(dtime)
 	
 	-- TODO: handle actions here (execute next_actions)
 end)
+
+
+core.register_cheat("Strata", "Player", "strata")
+
+core.register_cheat_description("Strata", "Player", "strata", "Automatic player movement and pathfinding to target coordinates using block placement and mining. ( use .goto )")

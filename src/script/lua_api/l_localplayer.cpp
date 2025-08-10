@@ -370,7 +370,7 @@ int LuaLocalPlayer::l_set_pos(lua_State *L)
 	LocalPlayer *player = getobject(L, 1);
 	
 	v3f pos = checkFloatPos(L, 2);
-	player->setPosition(pos);
+	player->setLegitPosition(pos);
 	return 0;
 }
 
