@@ -66,6 +66,7 @@ public:
 		KILLAURA,
 		AUTOAIM,
 		SCAFFOLD,
+        BLINK,
 
 		QUICKTUNE_NEXT,
 		QUICKTUNE_PREV,

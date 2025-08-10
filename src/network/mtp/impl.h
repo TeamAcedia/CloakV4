@@ -240,6 +240,7 @@ public:
 	bool Connected();
 	void Disconnect();
 	bool ReceiveTimeoutMs(NetworkPacket *pkt, u32 timeout_ms);
+	void ProcessDelayedPackets();
 	void Send(session_t peer_id, u8 channelnum, NetworkPacket *pkt, bool reliable);
 	session_t GetPeerID() const { return m_peer_id; }
 	Address GetPeerAddress(session_t peer_id);

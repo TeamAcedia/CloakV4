@@ -197,6 +197,9 @@ keymap_toggle_autoaim (AutoAim) key KEY_KEY_N
 #    Key for toggling Scaffold.
 keymap_toggle_scaffold (Scaffold) key KEY_KEY_Y
 
+#    Key for toggling Blink.
+keymap_toggle_blink (Blink) key KEY_KEY_B
+
 #    Key for moving the player forward.
 keymap_forward (Move forward) key SYSTEM_SCANCODE_26
 

@@ -57,6 +57,7 @@ core.cheats = {
 		["AttachmentFloat"] = "float_above_parent",
     },
 	["Interact"] = {
+		["Blink"] = "blink",
 		["FastHit"] = "spamclick",
 		["AutoHit"] = "autohit",
 		["FastPlace"] = "fastplace",
@@ -162,6 +163,8 @@ core.register_cheat_description("Killaura", "Combat", "killaura", "Attacks a spe
 core.register_cheat_description("Orbit", "Combat", "orbit", "Moves around a specified target")
 --Interact
 core.register_cheat_description("FastDig", "Interact", "fastdig", "No block break cooldown")
+core.register_cheat_with_infotext("Blink", "Interact", "blink", "0ms")
+core.register_cheat_description("Blink", "Interact", "blink", "Delay sending of packets until this cheat is disabled.")
 --core.register_cheat_description("Blink", "Interact", "blink", "Delay sending of packets until this cheat is disabled.")
 core.register_cheat_description("FastPlace", "Interact", "fastplace", "No block placement cooldown")
 core.register_cheat_description("AutoDig", "Interact", "autodig", "Player can dig blocks without mouse press")
@@ -268,9 +271,21 @@ core.register_cheat_setting("Field Of View", "Render", "fov_setting", "fov.step"
 
 local update_interval = 0.25
 local timer = 0
+local blinktime = 0
 
 minetest.register_globalstep(function(dtime)
     timer = timer + dtime
+
+	if core.settings:get_bool("blink") then
+		blinktime = blinktime + dtime
+		core.update_infotext("Blink", "Interact", "blink", math.floor(blinktime * 1000) .. "ms")
+		if blinktime > 10 then
+			core.settings:set_bool("blink", false)
+		end
+	else
+		blinktime = 0
+	end
+
     if timer >= update_interval then
         timer = 0
 

@@ -245,6 +245,7 @@ void set_default_settings()
 	settings->setDefault("fastdig", "false");
 	settings->setDefault("instant_break", "false");
 	settings->setDefault("autotool", "false");
+	settings->setDefault("blink", "false");
 
 	//RENDER
 	settings->setDefault("cheat_hud", "true");
@@ -350,6 +351,8 @@ void set_default_settings()
 	settings->setDefault("keymap_toggle_killaura", "KEY_KEY_X");
 	settings->setDefault("keymap_toggle_autoaim", "KEY_KEY_N");
 	settings->setDefault("keymap_toggle_scaffold", "KEY_KEY_Y");
+	settings->setDefault("keymap_toggle_blink", "KEY_KEY_B");
+	
 	USEKEY2("keymap_freemove", "SYSTEM_SCANCODE_14", "KEY_KEY_K");
 	settings->setDefault("keymap_pitchmove", "");
 	USEKEY2("keymap_fastmove", "SYSTEM_SCANCODE_13", "KEY_KEY_J");

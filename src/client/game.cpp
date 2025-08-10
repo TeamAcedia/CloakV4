@@ -2030,6 +2030,8 @@ if (g_settings->getBool("use_old_menu")) {
 		toggleAutoaim();
 	} else if (wasKeyDown(KeyType::SCAFFOLD)) {
 		toggleScaffold();
+	} else if (wasKeyDown(KeyType::BLINK)) {
+		toggleBlink();
 #if USE_SOUND
 	} else if (wasKeyDown(KeyType::MUTE)) {
 		bool new_mute_sound = !g_settings->getBool("mute_sound");
@@ -2332,6 +2334,22 @@ void Game::toggleScaffold()
 		m_game_ui->showTranslatedStatusText("Scaffold enabled");
 	} else {
 		m_game_ui->showTranslatedStatusText("Scaffold disabled");
+	}
+}
+
+void Game::toggleBlink()
+{
+	bool blink = ! g_settings->getBool("blink");
+	g_settings->set("blink", bool_to_cstr(blink));
+
+	if (!blink) {
+		g_settings->set("blink", bool_to_cstr(false));
+	}
+
+	if (blink) {
+		m_game_ui->showTranslatedStatusText("Blink enabled");
+	} else {
+		m_game_ui->showTranslatedStatusText("Blink disabled");
 	}
 }
 

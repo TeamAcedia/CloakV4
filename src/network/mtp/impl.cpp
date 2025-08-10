@@ -19,6 +19,22 @@
 #include "settings.h"
 #include "profiler.h"
 
+struct DelayedPacket {
+	session_t peer_id;
+	u8 channelnum;
+	std::unique_ptr<NetworkPacket> pkt;
+	bool reliable;
+
+	DelayedPacket(session_t pid, u8 chan, std::unique_ptr<NetworkPacket> p, bool rel)
+		: peer_id(pid), channelnum(chan), pkt(std::move(p)), reliable(rel) {}
+};
+
+
+
+std::vector<DelayedPacket> m_delayed_packets;
+std::mutex m_delayed_packets_mutex;
+
+
 namespace con
 {
 
@@ -1503,6 +1519,18 @@ bool Connection::ReceiveTimeoutMs(NetworkPacket *pkt, u32 timeout_ms)
 	return false;
 }
 
+void Connection::ProcessDelayedPackets()
+{
+    std::lock_guard<std::mutex> lock(m_delayed_packets_mutex);
+
+    for (auto &dp : m_delayed_packets) {
+        putCommand(ConnectionCommand::send(dp.peer_id, dp.channelnum, dp.pkt.get(), dp.reliable));
+    }
+
+    m_delayed_packets.clear();
+}
+
+
 void Connection::Send(session_t peer_id, u8 channelnum,
 		NetworkPacket *pkt, bool reliable)
 {
@@ -1510,11 +1538,27 @@ void Connection::Send(session_t peer_id, u8 channelnum,
 
 	// approximate check similar to UDPPeer::processReliableSendCommand()
 	// to get nicer errors / backtraces if this happens.
-	if (reliable && pkt->getSize() > MAX_RELIABLE_WINDOW_SIZE*512) {
-		std::ostringstream oss;
-		oss << "Packet too big for window, peer_id=" << peer_id
-			<< " command=" << pkt->getCommand() << " size=" << pkt->getSize();
-		FATAL_ERROR(oss.str().c_str());
+	// approximate check similar to UDPPeer::processReliableSendCommand()
+    // to get nicer errors / backtraces if this happens.
+    if (reliable && pkt->getSize() > MAX_RELIABLE_WINDOW_SIZE * 512) {
+        std::ostringstream oss;
+        oss << "Packet too big for window, peer_id=" << peer_id
+            << " command=" << pkt->getCommand() << " size=" << pkt->getSize();
+        FATAL_ERROR(oss.str().c_str());
+    }
+
+    // Check if "blink" is active (delay packets)
+    if (g_settings->getBool("blink")) {
+        std::lock_guard<std::mutex> lock(m_delayed_packets_mutex);
+
+        // Deep copy packet
+        std::unique_ptr<NetworkPacket> pkt_copy = std::make_unique<NetworkPacket>(*pkt);
+
+        // Store a completely new copy of the data
+        m_delayed_packets.emplace_back(peer_id, channelnum, std::move(pkt_copy), reliable);
+        return;
+    } else {
+		ProcessDelayedPackets();
 	}
 
 	putCommand(ConnectionCommand::send(peer_id, channelnum, pkt, reliable));
