@@ -159,5 +159,5 @@ core.register_list_command("search", "Configure NodeESP", "enable_node_esp.nodes
 core.register_player_list_command("friend", "Configure Friends.", "friends")
 core.register_player_list_command("enemy", "Configure Enemies.", "enemies")
 core.register_player_list_command("ally", "Configure Allies.", "allies")
-
+core.register_player_list_command("staff", "Configure Staff.", "staff")
 

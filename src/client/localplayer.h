@@ -23,7 +23,8 @@ enum EntityRelationship {
     FRIEND = 0,
     ENEMY = 1,
 	ALLY = 2,
-	NEUTRAL = 3
+	NEUTRAL = 3,
+	STAFF = 4
 };
 
 enum class LocalPlayerAnimation

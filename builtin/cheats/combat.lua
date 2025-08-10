@@ -267,7 +267,7 @@ core.register_globalstep(function(dtime)
 		core.set_combat_target(target_enemy:get_id()) 	
 	end
 
-	if target_enemy and (core.settings:get_bool("killaura") or core.settings:get_bool("orbit")) then
+	if target_enemy and (core.settings:get_bool("killaura")) then
 		
 		local interval = get_punch_interval(player)
 

@@ -69,6 +69,7 @@ core.cheats = {
     },
 	["Misc"] = {
 		["Hints"] = "use_hints",
+		["AutoStaff"] = "autostaff",
     },
 
 	["Sky"] = {
@@ -178,8 +179,8 @@ core.register_cheat_description("Enderchest", "Misc", minetest.open_enderchest, 
 core.register_cheat_description("Hand", "Misc", minetest.open_handslot, "Open hand formspec in mcl/mcla")
 --Misc
 --core.register_cheat_description("Anti AFK", "Misc", "anti_afk", "Prevent afk by moving")
---core.register_cheat_description("AutoStaff", "Misc", "autostaff", "Automatically check player privs and assign them as a staff.")
---core.register_cheat_setting("Warn Staff", "Misc", "autostaff", "autostaff.warn_staff", {type="bool"})
+core.register_cheat_description("AutoStaff", "Misc", "autostaff", "Automatically check player privs and assign them as a staff.")
+core.register_cheat_setting("Warn Staff", "Misc", "autostaff", "autostaff.warn_staff", {type="bool"})
 core.register_cheat_description("AutoTeam", "Misc", "autoteam", "Sets allied players to your team in ctf")
 core.register_cheat_description("Panic", "Misc", "panic", "Disables all cheats")
 core.register_cheat_description("Hints", "Misc", "use_hints", "Enable cheat hints")
@@ -234,8 +235,8 @@ core.register_cheat_description("PlayerTracers", "Render", "enable_player_tracer
 --core.register_cheat_description("TunnelTracers", "Render", "enable_tunnel_tracers", "Draw tracers to tunnels")
 core.register_cheat_description("Xray", "Render", "xray", "Don't render specific nodes")
 core.register_cheat_description("TargetHUD", "Render", "enable_combat_target_hud", "Shows best target on a HUD (depends on your combat settings)")
-core.register_cheat_description("DetachedCamera", "Render", "detached_camera", "Move forward regardless of where you're looking at")
-core.register_cheat_description("Nametags", "Render", "nametags", "Customize players nametags")
+core.register_cheat_description("DetachedCamera", "Render", "detached_camera", "Detaches what you're seeing from your actual camera")
+core.register_cheat_description("Nametags", "Render", "nametags", "Customize players nametags. Not recommended for CTF")
 core.register_cheat_description("LeftHand", "Render", "left_hand", "Switch to left hand")
 --World
 core.register_cheat_description("AutoTNT", "World", "autotnt", "Puts TNT on the ground")

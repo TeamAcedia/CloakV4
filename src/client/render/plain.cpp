@@ -92,11 +92,13 @@ void DrawTracersAndESP::run(PipelineContext &context)
 	v3f friend_color = g_settings->getV3F("friend_esp_color").value();
 	v3f enemy_color = g_settings->getV3F("enemy_esp_color").value();
 	v3f allied_color = g_settings->getV3F("allied_esp_color").value();
+	v3f staff_color = g_settings->getV3F("staff_esp_color").value();
 
 	entity_esp_color = video::SColor(255, entity_color.X, entity_color.Y, entity_color.Z);
 	friend_esp_color = video::SColor(255, friend_color.X, friend_color.Y, friend_color.Z);
 	enemy_esp_color = video::SColor(255, enemy_color.X, enemy_color.Y, enemy_color.Z);
 	allied_esp_color = video::SColor(255, allied_color.X, allied_color.Y, allied_color.Z);
+	staff_esp_color = video::SColor(255, staff_color.X, staff_color.Y, staff_color.Z);
 
 	int targetDT = 2;
 	int targetEO = 255;
@@ -154,27 +156,30 @@ void DrawTracersAndESP::run(PipelineContext &context)
 			bool draw_esp = is_player ? draw_player_esp : draw_entity_esp;
 			bool draw_tracers = is_player ? draw_player_tracers : draw_entity_tracers;
 			video::SColor color;
-			switch (relationship) {
-				case EntityRelationship::FRIEND:		
-					color = friend_esp_color;		
-					break;	
-				case EntityRelationship::ENEMY:		
-					color = enemy_esp_color;		
-					break;		
-				case EntityRelationship::ALLY:					
-					color = allied_esp_color;						
-					break;						
-				default:						
-					color = entity_esp_color;						
-					break;	
-			}
-			if (!RenderingCore::ESPplayersNames.empty()) {		
-				for (auto &it : RenderingCore::ESPplayersNames) {				
-					if (it.first == obj->getName()) {			
-						color = video::SColor(255, it.second[0], it.second[1], it.second[2]);		
-					}
-				}
-			}
+						switch (relationship) {
+								case EntityRelationship::FRIEND:		
+								color = friend_esp_color;		
+								break;	
+							case EntityRelationship::ENEMY:		
+								color = enemy_esp_color;		
+								break;		
+							case EntityRelationship::ALLY:					
+								color = allied_esp_color;						
+								break;					
+							case EntityRelationship::STAFF:
+								color = staff_esp_color;
+								break;	
+							default:						
+								color = entity_esp_color;						
+								break;	
+						}
+						if (!RenderingCore::ESPplayersNames.empty()) {		
+							for (auto &it : RenderingCore::ESPplayersNames) {				
+								if (it.first == obj->getName()) {			
+									color = video::SColor(255, it.second[0], it.second[1], it.second[2]);		
+								}
+							}
+						}
 			if (! (draw_esp || draw_tracers)) {
 				continue;
 			}

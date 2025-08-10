@@ -157,6 +157,7 @@ void set_default_settings()
 	settings->setDefault("friend_esp_color", "(255, 0, 255)");
 	settings->setDefault("allied_esp_color", "(0, 255, 0)");
 	settings->setDefault("enemy_esp_color", "(255, 0, 0)");
+	settings->setDefault("staff_esp_color", "(0, 0, 255)");
 
 	settings->setDefault("antiknockback", "false");
 	settings->setDefault("float_above_parent", "false");
@@ -220,6 +221,9 @@ void set_default_settings()
 	settings->setDefault("autoteam", "false");
 	settings->setDefault("flagaura", "false");
 	settings->setDefault("flagaura.range", "5");
+	settings->setDefault("staff", "{}");
+	settings->setDefault("autostaff", "true");
+	settings->setDefault("autostaff.warn_staff", "true");
 	//old inventory cheats (moved to misc to prevent having too many categories)
 	settings->setDefault("autoeject", "false");
 	settings->setDefault("autorefill", "false");

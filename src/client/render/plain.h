@@ -89,6 +89,7 @@ private:
 	video::SColor friend_esp_color;
 	video::SColor enemy_esp_color;
 	video::SColor allied_esp_color;
+	video::SColor staff_esp_color;
 	
 	int playerDT;
 	int playerEO;

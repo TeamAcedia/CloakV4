@@ -989,6 +989,25 @@ EntityRelationship LocalPlayer::getEntityRelationship(GenericCAO *playerObj) {
 			}
 		}
 
+		Json::Value staff = {};
+		try {
+			staff = g_settings->getJson("staff");
+		} catch (std::exception& e) {
+			g_settings->set("staff", "{}");
+		}
+
+		if (!staff.isNull() && staff.isMember(server_url) && staff[server_url].isString()) {
+			std::vector<std::string> server_staff = str_split(staff[server_url].asString(), ',');
+			const std::string& playerName = playerObj->getName();
+			if (!playerName.empty()) {
+				for (std::vector<std::string>::iterator it = server_staff.begin(); it != server_staff.end(); ++it) {
+					if (playerName == *it) {
+						return EntityRelationship::STAFF;
+					}
+				}
+			}
+		}
+
 		Json::Value enemies = {};
 		try {
 			enemies = g_settings->getJson("enemies");
