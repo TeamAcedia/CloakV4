@@ -4331,10 +4331,7 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats, float dtime)
 			m_cheat_menu->drawHUD(driver, dtime);
 		}
 	}
-
-	if (g_settings->getBool("enable_health_esp")) {	
-		client->getCamera()->drawHealthESP(dtime);
-	}
+	
 	/*
 		Damage flash
 	*/

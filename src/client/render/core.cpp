@@ -44,13 +44,11 @@ void RenderingCore::draw(video::SColor _skycolor, bool _show_hud,
 	v2u32 screensize = device->getVideoDriver()->getScreenSize();
 	virtual_size = v2u32(screensize.X * virtual_size_scale.X, screensize.Y * virtual_size_scale.Y);
 
-	PipelineContext context(device, client, hud, shadow_renderer.get(), _skycolor, screensize);
+	PipelineContext context(device, client, hud, shadow_renderer, _skycolor, screensize);
+	context.dtime = dtime;
 	context.draw_crosshair = _draw_crosshair;
 	context.draw_wield_tool = _draw_wield_tool;
 	context.show_hud = _show_hud;
-	if (g_settings->getBool("enable_health_esp")) {	
-		context.client->getCamera()->drawHealthESP(dtime);
-	}
 	pipeline->reset(context);
 	pipeline->run(context);
 }
