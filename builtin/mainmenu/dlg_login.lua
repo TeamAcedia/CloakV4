@@ -127,7 +127,7 @@ local function buttonhandler(this, fields)
 
 		-- Start async block
 		local handle = http.fetch_async({
-			url = "http://teamacedia.nomorecheating.org:999/api/login",  -- replace with your endpoint
+			url = "http://teamacedia.baselinux.net:999/api/login",  -- replace with your endpoint
 			timeout = 5,
 			post_data = core.write_json({
 				username = login_username,

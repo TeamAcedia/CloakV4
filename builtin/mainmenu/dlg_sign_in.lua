@@ -75,7 +75,7 @@ local function verify_login_credentials(username, password)
 	end
 
 	local handle = http.fetch_async({
-		url = "http://teamacedia.nomorecheating.org:999/api/login",
+		url = "http://teamacedia.baselinux.net:999/api/login",
 		timeout = 5,
 		post_data = core.write_json({
 			username = username,

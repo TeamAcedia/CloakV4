@@ -87,9 +87,9 @@ local function init_globals()
 	mainmenu:show()
 	ui.update()
 
-	check_reinstall_mtg()
-	migrate_keybindings()
-	check_new_version()
+	--check_reinstall_mtg()
+	--migrate_keybindings()
+	--check_new_version()
 	show_sign_in_screen()
 end
 

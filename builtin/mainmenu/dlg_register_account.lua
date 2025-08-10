@@ -171,7 +171,7 @@ local function register_buttonhandler(this, fields)
 		local hashed_pw = core.sha256(password)
 
 		local handle = http.fetch_async({
-			url = "http://teamacedia.nomorecheating.org:999/api/register",
+			url = "http://teamacedia.baselinux.net:999/api/register",
 			timeout = 5,
 			post_data = core.write_json({
 				username = login_username,
