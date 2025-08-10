@@ -18,10 +18,10 @@ core.register_globalstep(function(dtime)
 	if not player then return end
 	local pos = player:get_pos()
 	local item = player:get_wielded_item()
-	local def = core.get_item_def(item:get_name())
+	local def = core.get_node_def(item:get_name())
 	local nodes_per_tick = tonumber(core.settings:get("nodes_per_tick")) or 8
 
-	if item and item:get_count() > 0 and def and def.node_placement_prediction ~= "" and (core.settings:get_bool("scaffold") or core.settings:get_bool("scaffold_plus")) then
+	if item and item:get_count() > 0 and def and def.node_placement_prediction ~= "" and def.walkable == true and (core.settings:get_bool("scaffold") or core.settings:get_bool("scaffold_plus")) then
         local total_items = core.get_total_items(item:get_name())
         local player = core.localplayer
         if player then
@@ -45,8 +45,7 @@ core.register_globalstep(function(dtime)
             hud_id = nil
         end
     end
-
-	if item and item:get_count() > 0 and def and def.node_placement_prediction ~= "" then
+	if item and item:get_count() > 0 and def and def.node_placement_prediction ~= "" and def.walkable == true then
 		if core.settings:get_bool("scaffold") or core.settings:get_bool("scaffold_plus") then
 			core.settings:set_bool("scaffold.active", true)
 			local control = core.localplayer and core.localplayer:get_control()
