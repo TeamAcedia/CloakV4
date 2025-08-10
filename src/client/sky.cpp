@@ -343,7 +343,7 @@ void Sky::update(float time_of_day, float time_brightness,
 
 	m_time_of_day = time_of_day;
 	m_time_brightness = time_brightness;
-		if (g_settings->getBool("force_render_skybox")) {
+	if (g_settings->getBool("force_render_skybox")) {
 		sunlight_seen = true;
 	} else {
 		sunlight_seen = false;

@@ -3000,6 +3000,16 @@ void Game::handleClientEvent_SetSky(ClientEvent *event, CameraOrientation *cam)
 				event->set_sky->fog_moon_tint,
 				event->set_sky->fog_tint_type
 			);
+
+			sky->setCloudsEnabled(false);
+
+			
+			for (int i = 0; i < 6; i++)
+				sky->addTextureToSkybox(event->set_sky->textures[i], i, texture_src);
+
+			
+			delete event->set_sky;
+			return;
 		}
 	else
 	{
@@ -4331,7 +4341,7 @@ void Game::drawScene(ProfilerGraph *graph, RunStats *stats, float dtime)
 			m_cheat_menu->drawHUD(driver, dtime);
 		}
 	}
-	
+
 	/*
 		Damage flash
 	*/
