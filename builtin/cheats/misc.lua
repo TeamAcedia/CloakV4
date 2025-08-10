@@ -135,3 +135,9 @@ minetest.register_chatcommand("show_hud_elements_advice", {
         core.settings:set_bool("hud_elements_advice", true)
     end,
 })
+
+minetest.register_chatcommand("lenny", {
+    func = function()
+        core.send_chat_message("( ͡° ͜ʖ ͡°)")
+    end,
+})
