@@ -58,7 +58,7 @@ void DrawHUD::run(PipelineContext &context)
 
 		context.hud->drawLuaElements(context.client->getCamera()->getOffset());
 		context.client->getCamera()->drawNametags();
-		
+
 		if (g_settings->getBool("enable_health_esp")) {	
 			context.client->getCamera()->drawHealthESP(context.dtime);
 		}
@@ -154,27 +154,27 @@ void DrawTracersAndESP::run(PipelineContext &context)
 			bool draw_esp = is_player ? draw_player_esp : draw_entity_esp;
 			bool draw_tracers = is_player ? draw_player_tracers : draw_entity_tracers;
 			video::SColor color;
-						switch (relationship) {
-								case EntityRelationship::FRIEND:		
-								color = friend_esp_color;		
-								break;	
-							case EntityRelationship::ENEMY:		
-								color = enemy_esp_color;		
-								break;		
-							case EntityRelationship::ALLY:					
-								color = allied_esp_color;						
-								break;						
-							default:						
-								color = entity_esp_color;						
-								break;	
-						}
-						if (!RenderingCore::ESPplayersNames.empty()) {		
-							for (auto &it : RenderingCore::ESPplayersNames) {				
-								if (it.first == obj->getName()) {			
-									color = video::SColor(255, it.second[0], it.second[1], it.second[2]);		
-								}
-							}
-						}
+			switch (relationship) {
+				case EntityRelationship::FRIEND:		
+					color = friend_esp_color;		
+					break;	
+				case EntityRelationship::ENEMY:		
+					color = enemy_esp_color;		
+					break;		
+				case EntityRelationship::ALLY:					
+					color = allied_esp_color;						
+					break;						
+				default:						
+					color = entity_esp_color;						
+					break;	
+			}
+			if (!RenderingCore::ESPplayersNames.empty()) {		
+				for (auto &it : RenderingCore::ESPplayersNames) {				
+					if (it.first == obj->getName()) {			
+						color = video::SColor(255, it.second[0], it.second[1], it.second[2]);		
+					}
+				}
+			}
 			if (! (draw_esp || draw_tracers)) {
 				continue;
 			}
