@@ -150,6 +150,11 @@ void NewMenu::create()
 {
     GET_SCRIPT_POINTER
 
+    for (auto element : hudElements) {
+        delete element;
+    }
+    hudElements.clear();
+
     if (script->m_cheat_categories.empty()) {
         std::cout << "No categories available." << std::endl;
         return;
