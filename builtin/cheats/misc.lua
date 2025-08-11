@@ -136,8 +136,34 @@ minetest.register_chatcommand("show_hud_elements_advice", {
     end,
 })
 
+-- Literally the greatest thing ever, props to whoever added it -plus22
 minetest.register_chatcommand("lenny", {
     func = function()
         core.send_chat_message("( ͡° ͜ʖ ͡°)")
     end,
 })
+
+local timer = 0
+
+core.register_globalstep(function(dtime)
+    timer = timer + dtime
+
+    if core.settings:get_bool("anti_afk") then
+        if timer >= 0 and timer < 0.25 then
+            Strata.clear_controls()
+            Strata.set_controls({left = true})
+        elseif timer >= 0.25 and timer < 0.5 then
+            Strata.clear_controls()
+            Strata.set_controls({up = true})
+        elseif timer >= 0.5 and timer < 0.75 then
+            Strata.clear_controls()
+            Strata.set_controls({right = true})
+        elseif timer >= 0.75 and timer < 1 then
+            Strata.clear_controls()
+            Strata.set_controls({down = true})
+        elseif timer >= 1 then
+            Strata.clear_controls()
+            timer = 0
+        end
+    end
+end)

@@ -70,6 +70,7 @@ core.cheats = {
 	["Misc"] = {
 		["Hints"] = "use_hints",
 		["AutoStaff"] = "autostaff",
+		["AntiAFK"] = "anti_afk",
     },
 
 	["Sky"] = {
@@ -166,7 +167,7 @@ core.register_cheat_description("Orbit", "Combat", "orbit", "Moves around a spec
 core.register_cheat_description("FastDig", "Interact", "fastdig", "No block break cooldown")
 core.register_cheat_with_infotext("Blink", "Interact", "blink", "0ms")
 core.register_cheat_description("Blink", "Interact", "blink", "Delay sending of packets until this cheat is disabled.")
---core.register_cheat_description("Blink", "Interact", "blink", "Delay sending of packets until this cheat is disabled.")
+core.register_cheat_description("Blink", "Interact", "blink", "Delay sending of packets until this cheat is disabled.")
 core.register_cheat_description("FastPlace", "Interact", "fastplace", "No block placement cooldown")
 core.register_cheat_description("AutoDig", "Interact", "autodig", "Player can dig blocks without mouse press")
 core.register_cheat_description("AutoPlace", "Interact", "autoplace", "Auto place blocks")
@@ -178,7 +179,7 @@ core.register_cheat_description("AutoTool", "Interact", "autotool", "Selects the
 core.register_cheat_description("Enderchest", "Misc", minetest.open_enderchest, "Preview enderchest content in mcl/mcla")
 core.register_cheat_description("Hand", "Misc", minetest.open_handslot, "Open hand formspec in mcl/mcla")
 --Misc
---core.register_cheat_description("Anti AFK", "Misc", "anti_afk", "Prevent afk by moving")
+core.register_cheat_description("AntiAFK", "Misc", "anti_afk", "Prevent afk by moving")
 core.register_cheat_description("AutoStaff", "Misc", "autostaff", "Automatically check player privs and assign them as a staff.")
 core.register_cheat_setting("Warn Staff", "Misc", "autostaff", "autostaff.warn_staff", {type="bool"})
 core.register_cheat_description("AutoTeam", "Misc", "autoteam", "Sets allied players to your team in ctf")

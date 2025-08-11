@@ -224,6 +224,7 @@ void set_default_settings()
 	settings->setDefault("staff", "{}");
 	settings->setDefault("autostaff", "true");
 	settings->setDefault("autostaff.warn_staff", "true");
+	settings->setDefault("antiafk", "false");
 	//old inventory cheats (moved to misc to prevent having too many categories)
 	settings->setDefault("autoeject", "false");
 	settings->setDefault("autorefill", "false");
