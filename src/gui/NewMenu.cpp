@@ -153,7 +153,6 @@ void NewMenu::create()
     for (auto element : hudElements) {
         delete element;
     }
-    hudElements.clear();
 
     if (script->m_cheat_categories.empty()) {
         std::cout << "No categories available." << std::endl;
@@ -161,6 +160,7 @@ void NewMenu::create()
     }
 
     if (!m_initialized) {
+        hudElements.clear();
 
         themes_path = porting::path_user + DIR_DELIM + "themes";
         theme_manager = ThemeManager();

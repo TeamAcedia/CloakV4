@@ -21,7 +21,13 @@ core.register_on_receiving_chat_message(function(message)
 	local p = core.localplayer
 	if not p then return end
     if p:get_name() == "singleplayer" then return end
-    local cleaned_message = string.gsub(string.gsub(string.gsub(message, "␛%(T@__builtin%)", ""), "␛F", ""), "␛E", "")
+    
+    local cleaned_message = message
+    :gsub("\27%(T@__builtin%)", "")
+    :gsub("\27.", "")         -- remove simple escape+char codes
+    :gsub("\27%b()", "")      -- remove escape + (...) codes
+
+
     if string.find(cleaned_message, "Privileges") then
         local player_name = string.match(cleaned_message, "of%s+(%S+)")
         if player_name then
@@ -94,7 +100,7 @@ core.register_on_formspec_input(function(formname, fields)
             core.disconnect()
         elseif fields.panic then
             core.settings:set_bool("panic", true)
-            core.show_formspec("", "") -- Who the hell thought it was a good idea to remove close_formspec in favor of this dumb workaround
+            core.show_formspec("", "") -- Who the hell thought it was a good idea to remove close_formspec in favor of this dumb workaround -- we could literally just make a wrapper function for this lmaoooo but who tf cares, prouncedev
         elseif fields.continue then
             core.show_formspec("", "") -- Who the hell thought it was a good idea to remove close_formspec in favor of this dumb workaround
         end
