@@ -1,149 +1,203 @@
-<div align="center">
-    <img src="textures/base/pack/logo.png" width="32%">
-    <h1>Luanti (formerly Minetest)</h1>
-    <img src="https://github.com/luanti-org/luanti/workflows/build/badge.svg" alt="Build Status">
-    <a href="https://hosted.weblate.org/engage/minetest/?utm_source=widget"><img src="https://hosted.weblate.org/widgets/minetest/-/svg-badge.svg" alt="Translation status"></a>
-    <a href="https://www.gnu.org/licenses/old-licenses/lgpl-2.1.en.html"><img src="https://img.shields.io/badge/license-LGPLv2.1%2B-blue.svg" alt="License"></a>
-</div>
-<br>
+Cloak V4
+==============
+<img src="doc/showcase1.png" alt="showcase" width="80%" />
 
-Luanti is a free open-source voxel game engine with easy modding and game creation.
+A minetest cheat client based off of Luanti 5.12.0.
 
-Copyright (C) 2010-2025 Perttu Ahola <celeron55@gmail.com>
-and contributors (see source file comments and the version control log)
+It was recently updated to 5.12.0 and many new features were added, if you want to use the old 5.9.1 version, go to the legacy branch.
 
-Table of Contents
-------------------
+This client's name is based off of TeamAcedia's previous clients, CloakV3, CloakV2, and Cloak
 
-1. [Further Documentation](#further-documentation)
-2. [Default Controls](#default-controls)
-3. [Paths](#paths)
-4. [Configuration File](#configuration-file)
-5. [Command-line Options](#command-line-options)
-6. [Compiling](#compiling)
-7. [Docker](#docker)
-8. [Version Scheme](#version-scheme)
+### Important info:
+This client includes almost all CSM api additions from dragonfire, although it hasn't been documented (yet). It also includes many built-in client side mods and a new minimalistic design for the cheat menu. If any bug or error is found, please open an issue about it. We'd like to hear your opinion.
+
+### Discord servers
+
+- [TeamAcedia](https://discord.com/invite/SKGuNxF4)
+- [Minetest cheat clients (former dragonfire server)](https://discord.gg/kab99uu)
 
 
-Further documentation
-----------------------
-- Website: https://www.luanti.org/
-- Luanti Documentation: https://docs.luanti.org/
-- Forum: https://forum.luanti.org/
-- GitHub: https://github.com/luanti-org/luanti/
-- [Developer documentation](doc/developing/)
-- [doc/](doc/) directory of source distribution
+### Development team:
+  - [ProunceDev](https://github.com/ProunceDev) [Core dev]
+  - [Maintainer_ / FoxLoveFire](https://github.com/FoxLoveFire) [Core dev]
+  - [plus22 / Plus-22](https://github.com/plus-22) [Core dev]
+  - [Astra0081X](https://github.com/astra0081X) [Core dev]
+  - Burrowing_Owl [Contributor]
 
-Default controls
-----------------
-All controls are re-bindable using settings.
-Some can be changed in the key config dialog in the settings tab.
+# Features
+### Menus
+  - Quick Menu: Dragonfire cheat menu. Use arrow keys to navigate through it and enter key to toggle cheats. In order to activate it, toggle QuickMenu cheat.
+  - Click Menu: Use F8 key to open it. It displays different windows for each category. Each window can be moved. It also lets you configure certain cheats. This menu was first implemented in [MineBoost Client](https://www.github.com/FoxLoveFire/MineBoost) by [Maintainer_ / FoxLoveFire](https://github.com/FoxLoveFire/), all credit goes to him.
 
-| Button                        | Action                                                         |
-|-------------------------------|----------------------------------------------------------------|
-| Move mouse                    | Look around                                                    |
-| W, A, S, D                    | Move                                                           |
-| Space                         | Jump/move up                                                   |
-| Shift                         | Sneak/move down                                                |
-| Q                             | Drop itemstack                                                 |
-| Shift + Q                     | Drop single item                                               |
-| Left mouse button             | Dig/punch/use                                                  |
-| Right mouse button            | Place/use                                                      |
-| Shift + right mouse button    | Build (without using)                                          |
-| I                             | Inventory menu                                                 |
-| Mouse wheel                   | Select item                                                    |
-| 0-9                           | Select item                                                    |
-| Z                             | Zoom (needs zoom privilege)                                    |
-| T                             | Chat                                                           |
-| /                             | Command                                                        |
-| Esc                           | Pause menu/abort/exit (pauses only singleplayer game)          |
-| Shift + Esc                   | Exit directly to main menu from anywhere, bypassing pause menu |
-| +                             | Increase view range                                            |
-| -                             | Decrease view range                                            |
-| K                             | Enable/disable fly mode (needs fly privilege)                  |
-| J                             | Enable/disable fast mode (needs fast privilege)                |
-| H                             | Enable/disable noclip mode (needs noclip privilege)            |
-| E                             | Aux1 (Move fast in fast mode. Games may add special features)  |
-| C                             | Cycle through camera modes                                     |
-| V                             | Cycle through minimap modes                                    |
-| Shift + V                     | Change minimap orientation                                     |
-| F1                            | Hide/show HUD                                                  |
-| F2                            | Hide/show chat                                                 |
-| F3                            | Disable/enable fog                                             |
-| F4                            | Disable/enable camera update (Mapblocks are not updated anymore when disabled, disabled in release builds)  |
-| F5                            | Cycle through debug information screens                        |
-| F6                            | Cycle through profiler info screens                            |
-| F10                           | Show/hide console                                              |
-| F12                           | Take screenshot                                                |
 
-Paths
------
-Locations:
+### Cheats
+<details>
+  <summary>Combat</summary>
 
-* `bin`   - Compiled binaries
-* `share` - Distributed read-only data
-* `user`  - User-created modifiable data
+  - AntiKnockback: No knockback.
+  - AttachmentFloat: float above parent.
+  - AutoTotem: automatically puts a totem in your offhand.
+  - AutoAim: aims at the nearest player.
+  - CombatLog: Log off when certain HP is reached.
+  - Criticals: Always do critical hits in mcl2/mcla servers.
+  - CrystalSpam: automatically puts end crystals at another player's position and detonates it.
+  - Killaura: auto-hit designated targets. Could be players, mobs or both.
+</details>
 
-Where each location is on each platform:
+<details>
+  <summary>Interact</summary>
 
-* Windows .zip / RUN_IN_PLACE source:
-    * `bin`   = `bin`
-    * `share` = `.`
-    * `user`  = `.`
-* Windows installed:
-    * `bin`   = `C:\Program Files\Minetest\bin (Depends on the install location)`
-    * `share` = `C:\Program Files\Minetest (Depends on the install location)`
-    * `user`  = `%APPDATA%\Minetest` or `%MINETEST_USER_PATH%`
-* Linux installed:
-    * `bin`   = `/usr/bin`
-    * `share` = `/usr/share/minetest`
-    * `user`  = `~/.minetest` or `$MINETEST_USER_PATH`
-* macOS:
-    * `bin`   = `Contents/MacOS`
-    * `share` = `Contents/Resources`
-    * `user`  = `Contents/User` or `~/Library/Application Support/minetest` or `$MINETEST_USER_PATH`
+  - AutoDig: automatically dig pointed block
+  - AutoHit: automatically hit pointed entity
+  - AutoPlace: automatically place wielded item at pointed block
+  - AutoTool: automatically select best tool for digging/hitting
+  - Blink: Delay packet sending until this cheat is desabled.
+  - FastDig: dig at 10x speed
+  - FastHit: hit at 6x speed. Can be modified using the `.fasthit <multiplier>` chat command
+  - FastPlace: instant block placing
+  - InstantBreak: instant block breaking
+</details>
 
-Worlds can be found as separate folders in: `user/worlds/`
+<details>
+  <summary>Inventory</summary>
 
-Configuration file
-------------------
-- Default location:
-    `user/minetest.conf`
-- This file is created by closing Luanti for the first time.
-- A specific file can be specified on the command line:
-    `--config <path-to-file>`
-- A run-in-place build will look for the configuration file in
-    `location_of_exe/../minetest.conf` and also `location_of_exe/../../minetest.conf`
+  - AutoEject
+  - AutoPlanks
+  - AutoRefill: Automatically refill the item you're holding.
+  - EnderChest: Lets you preview your ender chest.
+  - Hand: Open hand formspec.
+</details>
 
-Command-line options
---------------------
-- Use `--help`
 
-Compiling
----------
+<details>
+  <summary>Misc</summary>
 
-- [Compiling - common information](doc/compiling/README.md)
+  - AntiAFK: Always move to avoid getting kicked for being AFK.
+  - AntiAdmin: Checks if there's any person with ban or kick privs.
+  - AppleAura: dig any nearby apples.
+  - AutoHeal: Eats food to regain health in ctf and similar servers.
+  - AutoTeam: Set allied players to your team in CTF.
+  - FlagAura: Pick up nearby flags in CTF.
+  - Hints: Enable cheat descriptions.
+  - Nametags: Set a player's nametag to a certain color based on their friend/enemy status.
+  - Panic: Disable detectable cheats.
+  - Spammer: Spams a preset message.
+</details>
+
+
+<details>
+  <summary>Movement</summary>
+
+  - AirJump: jump while in the air
+  - AntiSlip: Walk on slippery blocks without slipping
+  - AutoForward: Automatically move forward.
+  - AutoJump: Jump automatically.
+  - AutoSneak: Always sneak. This hides your nametag on some servers.
+  - FastMove: Toggles fast.
+  - Flight: Toggles fly.
+  - Freecam: Spectator mode.
+  - Jesus: Walk on liquids.
+  - JetPack: AirJump but you fall after jumping.
+  - Noclip: Toggles noclip.
+  - NoSlow: Sneaking doesn't slow you down.
+  - Overrides: Movement overrides.
+  - PitchMove: While flying, move where you're pointing.
+  - Spider: Climb walls.
+  - Step: Climb the block you're facing.
+  - Velocity: Various velocity overrides.
+</details>
+
+<details>
+  <summary>Player</summary>
+
+  - AutoRespawn: Respawn automatically after dying.
+  - NoFallDamage: You suffer from no fall damage.
+  - NoForceRotate: Prevent server from changing the player's view direction.
+  - NoViewBob: Disable view bobbing.
+  - PrivBypass: Lets the player toggle fly, fast, noclip and wireframe rendering without needing any privs.
+  - QuickMenu: Enables the dragonfire cheat menu.
+  - Reach: extend interact distance.
+</details>
+
+<details>
+  <summary>Render</summary>
+
+  - BrightNight: Always daytime.
+  - CheatHUD: show currently toggled cheats.
+  - Coords: Turns on a coords GUI.
+  - EntityESP: show bounding boxes around entities.
+  - EntityTracers: show lines to entities.
+  - FOV: Lets you change your FOV.
+  - Fullbright: No darkness.
+  - HUDBypass: Allow player to toggle HUD elements disabled by the game.
+  - HealthESP: Show player and entities' HP.
+  - NoDrownCam: Disables drowning camera effect.
+  - NoHurtCam: Disables hurt camera effect.
+  - NodeESP: can be configured using the `.search add <(optional) node_name>` chat command.
+  - NodeTracers: can be configured using the `.search add <(optional) node_name>` chat command.
+  - NoRender: skip rendering particles to reduce client lag.
+  - PlayerESP: show bounding boxes around players. Green = friendly, Red = enemy. Friends can be configured using the `.friend add <(optional) player_name>` chat command.
+  - PlayerTracers: show lines to players. Green = friendly, Red = enemy. Friends can be configured using the `.friend add <(optional) player_name>` chat command.
+  - TunnelESP: shows tunnels.
+  - TunnelTracers: show lines to tunnels.
+  - Xray: see blocks thru walls. Can be configured using the `.xray add <(optional) node_name>` chat command.
+</details>
+
+<details>
+  <summary>World</summary>
+
+  - AutoTNT: Puts TNT on the ground.
+  - BlockLava: Replace lava with the block you're holding.
+  - BlockWater: Replace water with the block you're holding.
+  - Nuke
+  - Replace: When you break a block, it gets replaced with the block you're holding.
+  - Scaffold: Puts blocks below you.
+  - ScaffoldPlus: Puts even more blocks below you.
+  - Silence: Disables sound.
+</details>
+
+NOTE: The default menu bars, when expanded, will overlap. To fix this, move each option (check [#5](https://github.com/TeamAcedia/CloakV4/issues/5#issuecomment-2655191958) for visuals) or you can enable the "QuickMenu" feature (emulating dragonfireclient's menu. Keep in mind you can't configure cheats from there)
+
+### Chat commands
+- `.fasthit <multiplier>` set fasthit multiplier. FastHit needs to be turned on for this to be used.
+- `.say <text>` send raw text
+- `.tp <X> <Y> <Z>` teleport
+- `.wielded` show itemstring of wielded item
+- `.players` list online players
+- `.kill` kill your own player
+- `.sneak` toggle autosneak
+- `.speed <speed>` set speed
+- `.place <X> <Y> <Z>` place wielded item
+- `.dig <X> <Y> <Z>` dig node
+- `.break` toggle instant break
+- `.setyaw <yaw>`
+- `.setpitch <pitch>`
+- `.respawn` respawn while in ghost mode
+- `.xray`
+    - `add <(optional) node_name>`: add a node to xray configuration (to see thru it). Can either add by node_name or by pointing at a node.
+    - `del <(optional) node_name>`: remove a node from xray configuration
+    - `list`: list xray nodes
+    - `clear`: clear xray nodes
+- `.search`
+    - `add <(optional) node_name>`: add a node to nodeESP search. Can either add by node_name or by pointing at a node.
+    - `del <(optional) node_name>`: remove a node from nodeESP search
+    - `list`: list nodeESP nodes
+    - `clear`: clear nodeESP nodes
+- `.friend`
+    - `add <(optional) player_name>`: add a friend. Can either add by player_name or by pointing at a player. Friends are server-specific.
+    - `del <(optional) player_name>`: remove a friend
+    - `list`: list all friends for the current server
+    - `clear`: remove all friends for the current server
+- `.ctf`
+    - `add`: add current server to ctf servers list
+    - `del`: delete current server from ctf servers list
+    - `list`: view ctf servers list
+    - `clear`: clear ctf servers list
+ 
+
+
+# Compiling
 - [Compiling on GNU/Linux](doc/compiling/linux.md)
 - [Compiling on Windows](doc/compiling/windows.md)
 - [Compiling on MacOS](doc/compiling/macos.md)
-
-Docker
-------
-
-- [Developing minetestserver with Docker](doc/developing/docker.md)
-- [Running a server with Docker](doc/docker_server.md)
-
-Version scheme
---------------
-We use `major.minor.patch` since 5.0.0-dev. Prior to that we used `0.major.minor`.
-
-- Major is incremented when the release contains breaking changes, all other
-numbers are set to 0.
-- Minor is incremented when the release contains new non-breaking features,
-patch is set to 0.
-- Patch is incremented when the release only contains bugfixes and very
-minor/trivial features considered necessary.
-
-Since 5.0.0-dev and 0.4.17-dev, the dev notation refers to the next release,
-i.e.: 5.0.0-dev is the development version leading to 5.0.0.
-Prior to that we used `previous_version-dev`.
+- [Compiling on Android](doc/android.md)
