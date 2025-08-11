@@ -23,6 +23,7 @@ core.cheats = {
 		["LeftHand"] = "left_hand",
 		["Nametags"] = "nametags",
 		["FOV"] = "fov_setting",
+		["Skybox"] = "custom_skybox",
     },
 	["Player"] = {
 		["PrivBypass"] = "priv_bypass",
@@ -71,14 +72,7 @@ core.cheats = {
 		["Hints"] = "use_hints",
 		["AutoStaff"] = "autostaff",
 		["AntiAFK"] = "anti_afk",
-    },
-
-	["Sky"] = {
-		["Custom sky"] = "custom_skybox",
-		["Display sunrise"] = "display_sunrise",
-		["Force custom sky"] = "force_custom_skybox",
-		["Force render sky"] = "force_render_skybox",
-	}
+    }
 }
 -----------------------------------------------------------REGISTER CHEATS-----------------------------------------------------------
 function core.register_cheat(cheatname, category, func)
@@ -223,6 +217,8 @@ core.register_cheat_description("EntityESP", "Render", "enable_entity_esp", "See
 core.register_cheat_description("EntityTracers", "Render", "enable_entity_tracers", "Draw tracers to entities")
 core.register_cheat_description("FullBright", "Render", "fullbright", "No darkness")
 core.register_cheat_description("Left hand", "Render", "left_hand", "Switch to left hand")
+core.register_cheat_description("Skybox", "Render", "custom_skybox", "Render custom skybox")
+
 --core.register_cheat_description("HUDBypass", "Render", "hudbypass", "Allows player to toggle hud elements disabled by the game")
 core.register_cheat_description("HealthESP", "Render", "show_players_hp", "Shows player and entity HP")
 core.register_cheat_description("NoDrownCam", "Render", "no_drown_cam", "Disables drowning camera effect")
@@ -248,11 +244,6 @@ core.register_cheat_description("Scaffold", "World", "scaffold", "Puts blocks be
 core.register_cheat_description("ScaffoldPlus", "World", "scaffoldplus", "Puts even more blocks under you")
 
 
-core.register_cheat_description("Custom sky", "Sky", "custom_skybox", "enable custom skybox")
-core.register_cheat_description("Display sunrise", "Sky", "display_sunrise", "display sunrise")
-core.register_cheat_description("Force custom sky", "Sky", "force_custom_skybox", "Force custom sky")
-core.register_cheat_description("Force render sky", "Sky", "force_render_skybox", "Force render sky")
-
 
 --SOME SETTINGS
 
@@ -270,6 +261,10 @@ core.register_cheat_setting("Always jump", "Movement", "BHOP", "BHOP.jump", {typ
 core.register_cheat_setting("Always sprint", "Movement", "BHOP", "BHOP.sprint", {type="bool"})
 core.register_cheat_setting("1.2x speed boost", "Movement", "BHOP", "BHOP.speed", {type="bool"})
 core.register_cheat_setting("Field Of View", "Render", "fov_setting", "fov.step", {type="slider_int", min=72, max=160, steps = 89});
+
+core.register_cheat_setting("Display sunrise", "Render", "custom_skybox", "display_sunrise", {type="bool"})
+core.register_cheat_setting("Force custom sky", "Render", "custom_skybox", "force_custom_skybox", {type="bool"})
+core.register_cheat_setting("Force render sky", "Render", "custom_skybox", "force_render_skybox", {type="bool"})
 
 local update_interval = 0.25
 local timer = 0
