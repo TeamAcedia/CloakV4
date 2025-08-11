@@ -150,16 +150,15 @@ void NewMenu::create()
 {
     GET_SCRIPT_POINTER
 
-    for (auto element : hudElements) {
-        delete element;
-    }
-
     if (script->m_cheat_categories.empty()) {
         std::cout << "No categories available." << std::endl;
         return;
     }
 
     if (!m_initialized) {
+        for (auto element : hudElements) {
+            delete element;
+        }
         hudElements.clear();
 
         themes_path = porting::path_user + DIR_DELIM + "themes";

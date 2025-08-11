@@ -309,7 +309,7 @@ void Camera::updateOffset()
 
 void Camera::update(LocalPlayer* player, f32 frametime, f32 tool_reload_ratio)
 {
-	WIELDMESH_OFFSET_X = g_settings->getBool("left_hand") ? -55.0f : 55.0f;
+	WIELDMESH_OFFSET_X = 55.0f;
 
 	// Get player position
 	// Smooth the movement when walking up stairs
@@ -542,6 +542,26 @@ void Camera::update(LocalPlayer* player, f32 frametime, f32 tool_reload_ratio)
 		f32 bobfrac = my_modf(m_view_bobbing_anim);
 		wield_position.X -= std::sin(bobfrac*M_PI*2.0) * 3.0;
 		wield_position.Y += std::sin(my_modf(bobfrac*2.0)*M_PI) * 3.0;
+	}
+	// Apply left-hand mirroring using quaternions
+	if (g_settings->getBool("left_hand")) {
+		// Mirror position across X-axis
+		wield_position.X = -wield_position.X;
+
+		// Convert to quaternion
+		core::quaternion quat(wield_rotation * core::DEGTORAD);
+
+		// Mirror across X-axis (flip X and W)
+		quat.X = -quat.X;
+		quat.W = -quat.W;
+
+		// Apply +90 degrees pitch correction
+		core::quaternion pitchFix(v3f(0, 0, 90) * core::DEGTORAD);
+		quat = pitchFix * quat;
+
+		// Convert back to Euler
+		quat.toEuler(wield_rotation);
+		wield_rotation *= core::RADTODEG;
 	}
 	m_wieldnode->setPosition(wield_position);
 	m_wieldnode->setRotation(wield_rotation);
