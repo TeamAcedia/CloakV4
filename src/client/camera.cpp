@@ -748,7 +748,6 @@ void Camera::drawHealthESP(float dtime)
     env.getAllActiveObjects(origin, sortedObjects);
 
     f32 fovScale = 72 / m_curr_fov_degrees;
-    warningstream << std::to_string(m_curr_fov_degrees) << ", " << std::to_string(fovScale) << std::endl;
 
     video::IVideoDriver *driver = RenderingEngine::get_video_driver();
     core::matrix4 trans = m_cameranode->getProjectionMatrix() * m_cameranode->getViewMatrix();
