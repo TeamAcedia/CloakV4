@@ -225,10 +225,14 @@ void set_default_settings()
 	settings->setDefault("autostaff", "true");
 	settings->setDefault("autostaff.warn_staff", "true");
 	settings->setDefault("antiafk", "false");
-	//old inventory cheats (moved to misc to prevent having too many categories)
 	settings->setDefault("autoeject", "false");
 	settings->setDefault("autorefill", "false");
 	settings->setDefault("autoplanks", "false");
+	settings->setDefault("use_chat_effects", "false");
+	settings->setDefault("use_chat_color", "true");
+	settings->setDefault("chat_color", "rainbow");
+	settings->setDefault("chat_reverse", "false");
+	settings->setDefault("bypass_filter", "false");
 
 	//PLAYER
 	settings->setDefault("autorespawn", "false");
