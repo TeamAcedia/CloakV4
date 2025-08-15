@@ -37,6 +37,8 @@ core.register_cheat_setting("Target Type", "Combat", "tpaura", "targeting.target
 core.register_cheat_setting("Distance", "Combat", "tpaura", "tpaura.distance", {type="slider_int", min=1, max=20, steps=20})
 core.register_cheat_setting("TP Delay", "Combat", "tpaura", "tpaura.delay", {type="slider_float", min=0, max=1, steps=11})
 core.register_cheat_setting("Enemies Only", "Combat", "tpaura", "targeting.enemies_only", {type="bool"})
+--------------- TriggerBot -------------------
+core.register_cheat("TriggerBot", "Combat", "tbot")
 
 --------------- Functions -------------------
 function is_valid_target(obj, target_type, max_distance, ppos)

@@ -3875,7 +3875,7 @@ void Game::handlePointingAtObject(const PointedThing &pointed, const ItemStack &
 
 	m_game_ui->setInfoText(infotext);
 
-	if (isKeyDown(KeyType::DIG) || g_settings->getBool("autohit")) {
+	if (isKeyDown(KeyType::DIG) || g_settings->getBool("autohit") || (hud->pointing_at_object = true && g_settings->getBool("tbot"))) {
 		bool do_punch = false;
 		bool do_punch_damage = false;
 

@@ -157,10 +157,10 @@ core.register_cheat_description("Criticals", "Combat", "critical_hits", "Does cr
 core.register_cheat_description("CrystalSpam", "Combat", "crystalspam", "Puts end crystals under the nearest player")
 core.register_cheat_description("Killaura", "Combat", "killaura", "Attacks a specified target")
 core.register_cheat_description("Orbit", "Combat", "orbit", "Moves around a specified target")
+core.register_cheat_description("TriggerBot", "Combat", "tbot", "Automatically punch when aiming at an entity")
 --Interact
 core.register_cheat_description("FastDig", "Interact", "fastdig", "No block break cooldown")
 core.register_cheat_with_infotext("Blink", "Interact", "blink", "0ms")
-core.register_cheat_description("Blink", "Interact", "blink", "Delay sending of packets until this cheat is disabled.")
 core.register_cheat_description("Blink", "Interact", "blink", "Delay sending of packets until this cheat is disabled.")
 core.register_cheat_description("FastPlace", "Interact", "fastplace", "No block placement cooldown")
 core.register_cheat_description("AutoDig", "Interact", "autodig", "Player can dig blocks without mouse press")

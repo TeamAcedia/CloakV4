@@ -183,6 +183,7 @@ void set_default_settings()
 	settings->setDefault("combatlog", "false");
 	settings->setDefault("combatlog.hp", "5");
 	settings->setDefault("autototem", "false");
+	settings->setDefault("tbot", "false");
 
 	//MOVEMENT
 	settings->setDefault("velocity", "false");
