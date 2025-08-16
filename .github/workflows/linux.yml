@@ -46,7 +46,7 @@ jobs:
 
       - name: Build
         run: |
-          ./util/ci/build.sh
+          CMAKE_BUILD_SERVER=FALSE ./util/ci/build.sh
         env:
           CC: gcc-14
           CXX: g++-14
@@ -70,7 +70,7 @@ jobs:
 
       - name: Build
         run: |
-          ./util/ci/build.sh
+          CMAKE_BUILD_SERVER=FALSE ./util/ci/build.sh
         env:
           CC: clang-18
           CXX: clang++-18
