@@ -4,10 +4,10 @@ AppDir:
   path: AppDir
   app_info:
     id: org.luanti.luanti
-    name: Luanti
+    name: CloakV4
     icon: luanti
-    version: !ENV ${VERSION}
-    exec: usr/bin/luanti
+    version: 5.12.0
+    exec: usr/bin/cloakv4
     exec_args: $@
   files:
     include: []
@@ -18,21 +18,20 @@ AppDir:
   apt:
     arch: amd64
     sources:
-      - sourceline: deb http://archive.ubuntu.com/ubuntu/ focal main universe
-        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x3b4fe6acc0b21f32'
-      - sourceline: deb http://archive.ubuntu.com/ubuntu/ focal-updates main universe
-      - sourceline: deb http://archive.ubuntu.com/ubuntu/ focal-backports main universe
-      - sourceline: deb http://archive.ubuntu.com/ubuntu/ focal-security main universe
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy main universe
+        key_url: 'http://keyserver.ubuntu.com/pks/lookup?op=get&search=0x871920D1991BC93C'
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-updates main universe
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-backports main universe
+      - sourceline: deb http://archive.ubuntu.com/ubuntu/ jammy-security main universe
 
     include:
       - libc6
       - libcrypt1
-      - libcurl3-gnutls
       - libcurl4
       - libfreetype6
       - libgl1
       - libjpeg-turbo8
-      - libjsoncpp1
+      - libjsoncpp25
       - libleveldb1d
       - libluajit-5.1-2
       - libopenal1
@@ -47,6 +46,7 @@ AppImage:
   update-information: guess
   sign-key: None
   arch: x86_64
+  comp: gzip
 script: |
     # Compile and install binaries into AppDir
     cmake -B appimage-build -DENABLE_REDIS=FALSE -DENABLE_POSTGRESQL=OFF -DCMAKE_INSTALL_PREFIX=AppDir/usr/ -DBUILD_SERVER=FALSE -DENABLE_GETTEXT=TRUE -DCMAKE_BUILD_TYPE=Release -DRUN_IN_PLACE=FALSE
