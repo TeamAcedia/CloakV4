@@ -2,11 +2,18 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
-#include <filesystem>
 #include <iostream>
 #include <map>
 
-namespace fs = std::filesystem;
+#if defined(_WIN32) && __has_include(<filesystem>)
+    #include <filesystem>
+    namespace fs = std::filesystem;
+    #define USE_STD_FILESYSTEM
+#else
+    #include <dirent.h>
+    #include <sys/stat.h>
+    #include <unistd.h>
+#endif
 
 static std::string trim(const std::string &s) {
 	size_t start = s.find_first_not_of(" \t\r\n");
@@ -103,24 +110,57 @@ ColorTheme::ColorTheme(const std::string &data) {
 }
 
 void ThemeManager::LoadThemes(const std::string &folderpath) {
-	themes.clear();
+    themes.clear();
 
-	for (const auto &entry : fs::directory_iterator(folderpath)) {
-		if (entry.is_regular_file() && entry.path().extension() == ".theme") {
-			std::ifstream file(entry.path());
-			if (!file)
-				continue;
+#ifdef USE_STD_FILESYSTEM
+    for (const auto &entry : fs::directory_iterator(folderpath)) {
+        if (!entry.is_regular_file() || entry.path().extension() != ".theme")
+            continue;
 
-			std::ostringstream ss;
-			ss << file.rdbuf();
-			std::string content = ss.str();
+        std::ifstream file(entry.path());
+        if (!file) continue;
 
-			ColorTheme theme(content);
-			if (!theme.name.empty())
-				themes.push_back(theme);
-		}
-	}
+        std::ostringstream ss;
+        ss << file.rdbuf();
+        std::string content = ss.str();
+
+        ColorTheme theme(content);
+        if (!theme.name.empty())
+            themes.push_back(theme);
+    }
+#else
+    // POSIX fallback for Linux/macOS (works on old macOS versions)
+    DIR *dir = opendir(folderpath.c_str());
+    if (!dir) return;
+
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != nullptr) {
+        std::string filename = entry->d_name;
+        if (filename == "." || filename == "..") continue;
+        if (filename.size() < 6 || filename.substr(filename.size() - 6) != ".theme") continue;
+
+        std::string fullpath = folderpath + "/" + filename;
+
+        struct stat st;
+        if (stat(fullpath.c_str(), &st) != 0 || !S_ISREG(st.st_mode))
+            continue;
+
+        std::ifstream file(fullpath);
+        if (!file) continue;
+
+        std::ostringstream ss;
+        ss << file.rdbuf();
+        std::string content = ss.str();
+
+        ColorTheme theme(content);
+        if (!theme.name.empty())
+            themes.push_back(theme);
+    }
+
+    closedir(dir);
+#endif
 }
+
 
 std::vector<std::string> ThemeManager::GetThemes() const {
 	std::vector<std::string> names;
