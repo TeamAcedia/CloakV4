@@ -63,6 +63,6 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: "mingw${{ matrix.bits }}"
+          name: "CloakV4-Windows-${{ matrix.bits }}bit"
           path: B/build/*.zip
           if-no-files-found: error
