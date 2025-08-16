@@ -22,5 +22,5 @@ cmake .. \
 	-DPNG_LIBRARY=/opt/homebrew/lib/libpng.a \
 	-DCMAKE_EXE_LINKER_FLAGS=-lbz2\
 	-GXcode
-xcodebuild -project luanti.xcodeproj -scheme luanti -configuration Release build
-xcodebuild -project luanti.xcodeproj -scheme luanti -archivePath ./luanti.xcarchive archive
+xcodebuild -project cloakv4.xcodeproj -scheme cloakv4 -configuration Release build
+xcodebuild -project cloakv4.xcodeproj -scheme cloakv4 -archivePath ./cloakv4.xcarchive archive
