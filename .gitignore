@@ -65,6 +65,7 @@ AppDir
 /textures/*
 !/textures/base/
 !/textures/custom_assets/
+!/textures/texture_packs_here.txt
 /screenshots
 /sounds
 /mods/*
