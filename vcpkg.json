@@ -6,7 +6,7 @@
     {
       "name": "curl",
       "features": [
-        "ssl"
+        "winssl"
       ]
     },
     "openal-soft",
