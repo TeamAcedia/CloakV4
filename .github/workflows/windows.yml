@@ -32,7 +32,7 @@ on:
       - '.github/workflows/windows.yml'
 
 jobs:
-  mingw:
+  mingw:  # this is the main one for windows
     name: "MinGW cross-compiler (${{ matrix.bits }}-bit)"
     runs-on: ubuntu-22.04
     strategy:

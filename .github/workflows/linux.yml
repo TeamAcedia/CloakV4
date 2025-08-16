@@ -58,7 +58,7 @@ jobs:
           cd nowrite
           ../bin/cloakv4 --run-unittests
 
-  # Current clang version
+  # Current clang version # this is the main one for linux
   clang_18:
     runs-on: ubuntu-24.04
     steps:
