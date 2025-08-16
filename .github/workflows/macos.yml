@@ -55,7 +55,7 @@ jobs:
 
       - name: Test
         run: |
-          ./build/macos/luanti.app/Contents/MacOS/luanti --run-unittests
+          ./build/macos/cloakv4.app/Contents/MacOS/cloakv4 --run-unittests
 
       # Zipping the built .app preserves permissions on the contained files,
       #   which the GitHub artifact pipeline would otherwise strip away.
@@ -68,7 +68,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: luanti-macos
+          name: cloakv4-macos
           path: ./build/macos/*.zip
   build-arm-macos-xcode:
     runs-on: macos-14
@@ -104,10 +104,10 @@ jobs:
         run: |
           mkdir -p "${HOME}/Library/Application Support/minetest/games/"
           ln -s "${PWD}/games/devtest" "${HOME}/Library/Application Support/minetest/games/"
-          ./build/macos/luanti.app/Contents/MacOS/luanti --run-unittests
-          ./build_xcode/luanti.xcarchive/Products/Applications/luanti.app/Contents/MacOS/luanti --run-unittests
+          ./build/macos/cloakv4.app/Contents/MacOS/cloakv4 --run-unittests
+          ./build_xcode/cloakv4.xcarchive/Products/Applications/cloakv4.app/Contents/MacOS/cloakv4 --run-unittests
 
       - name: Diff Resources
         run: |
-          diff -rd ./build/macos/luanti.app/Contents/Resources ./build_xcode/build/Release/luanti.app/Contents/Resources || exit 1
-          diff -rd ./build/macos/luanti.app/Contents/Resources ./build_xcode/luanti.xcarchive/Products/Applications/luanti.app/Contents/Resources || exit 1
+          diff -rd ./build/macos/cloakv4.app/Contents/Resources ./build_xcode/build/Release/cloakv4.app/Contents/Resources || exit 1
+          diff -rd ./build/macos/cloakv4.app/Contents/Resources ./build_xcode/cloakv4.xcarchive/Products/Applications/cloakv4.app/Contents/Resources || exit 1
