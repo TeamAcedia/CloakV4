@@ -75,6 +75,7 @@ AppDir
 !/clientmods/preview/
 /client/mod_storage/
 /mod_data
+!/themes
 
 ## Configuration/log files
 minetest.conf

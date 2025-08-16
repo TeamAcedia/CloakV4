@@ -156,18 +156,18 @@ local function get_formspec(dlgview, name, tabdata)
 
 	-- Point the player to ContentDB when no games are found
 	if #pkgmgr.games == 0 then
-		local W = dlgview.width
-		local H = dlgview.height
+		local hypertext = "<global valign=middle halign=center size=16>" ..
+			fgettext_ne("CloakV4 is a hack client for Luanti, which is a game-creation platform that allows you to play many different games.") .. "\n" ..
+			fgettext_ne("Luanti doesn't come with a game by default.") .. " " ..
+			fgettext_ne("You need to install a game before you can create a world.")
 
-		local hypertext = "<global valign=middle halign=center size=18>" ..
-				fgettext_ne("Minetest is a game-creation platform that allows you to play many different games.") .. "\n" ..
-				fgettext_ne("Minetest doesn't come with a game by default.") .. " " ..
-				fgettext_ne("You need to install a game before you can create a world.")
-
-		local button_y = H * 2/3 - 0.6
 		return table.concat({
-			"hypertext[0.375,0;", W - 2*0.375, ",", button_y, ";ht;", core.formspec_escape(hypertext), "]",
-			"button[5.25,", button_y, ";5,1.2;game_open_cdb;", fgettext("Install a game"), "]"})
+			"formspec_version[4]",
+			"size[10,5]",
+
+			"hypertext[0.5,0;9,3;ht;" .. core.formspec_escape(hypertext) .. "]",
+			"button[2.5,3.5;5,1;game_open_cdb;" .. fgettext("Install a game") .. "]"
+		}, "")
 	end
 
 	local retval = ""
