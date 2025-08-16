@@ -51,6 +51,7 @@ local function replace_ascii_with_similar_text(text)
 		--['g'] = 'γ',  -- Greek gamma
 		--['h'] = 'η',  -- Greek eta
 		--['i'] = 'ι',  -- Greek iota
+		['i'] = 'i​',  -- i with space
 		['j'] = 'ј',  -- Cyrillic je
 		['k'] = 'κ',  -- Greek kappa
 		--['l'] = 'λ',  -- Greek lamda
