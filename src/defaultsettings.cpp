@@ -362,7 +362,7 @@ void set_default_settings()
 	settings->setDefault("keymap_toggle_autoaim", "KEY_KEY_N");
 	settings->setDefault("keymap_toggle_scaffold", "KEY_KEY_Y");
 	settings->setDefault("keymap_toggle_blink", "KEY_KEY_B");
-	
+	settings->setDefault("keymap_toggle_left_hand", "KEY_KEY_F");
 	USEKEY2("keymap_freemove", "SYSTEM_SCANCODE_14", "KEY_KEY_K");
 	settings->setDefault("keymap_pitchmove", "");
 	USEKEY2("keymap_fastmove", "SYSTEM_SCANCODE_13", "KEY_KEY_J");

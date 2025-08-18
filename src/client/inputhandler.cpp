@@ -73,6 +73,7 @@ void MyEventReceiver::reloadKeybindings()
 	keybindings[KeyType::AUTOAIM] = getKeySetting("keymap_toggle_autoaim");
 	keybindings[KeyType::SCAFFOLD] = getKeySetting("keymap_toggle_scaffold");
     keybindings[KeyType::BLINK] = getKeySetting("keymap_toggle_blink");
+	keybindings[KeyType::LH] = getKeySetting("keymap_toggle_left_hand");
 
 	keybindings[KeyType::QUICKTUNE_NEXT] = getKeySetting("keymap_quicktune_next");
 	keybindings[KeyType::QUICKTUNE_PREV] = getKeySetting("keymap_quicktune_prev");

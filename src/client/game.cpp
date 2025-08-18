@@ -2032,6 +2032,9 @@ if (g_settings->getBool("use_old_menu")) {
 		toggleScaffold();
 	} else if (wasKeyDown(KeyType::BLINK)) {
 		toggleBlink();
+	} else if (wasKeyDown(KeyType::LH)) {
+		bool p = g_settings->getBool("left_hand");
+		g_settings->setBool("left_hand", !p);
 #if USE_SOUND
 	} else if (wasKeyDown(KeyType::MUTE)) {
 		bool new_mute_sound = !g_settings->getBool("mute_sound");

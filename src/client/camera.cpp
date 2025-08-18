@@ -556,7 +556,7 @@ void Camera::update(LocalPlayer* player, f32 frametime, f32 tool_reload_ratio)
 		quat.W = -quat.W;
 
 		// Apply +90 degrees pitch correction
-		core::quaternion pitchFix(v3f(0, 0, 90) * core::DEGTORAD);
+		core::quaternion pitchFix(v3f(180, 0, 180) * core::DEGTORAD);
 		quat = pitchFix * quat;
 
 		// Convert back to Euler
