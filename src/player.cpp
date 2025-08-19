@@ -217,25 +217,15 @@ PlayerControl &Player::getPlayerControl() {
 u32 PlayerControl::getKeysPressed() const
 {
 	u32 keypress_bits;
-	if (g_settings->getBool("freecam")) {
-		keypress_bits =
-			(0 << 4) |
-			(0 << 5) |
-			(0 << 6) |
-			(0 << 7) |
-			(0 << 8) |
-			(0 << 9)
-		;
-	} else {
-		keypress_bits =
-			( (u32)(jump  & 1) << 4) |
-			( (u32)(aux1  & 1) << 5) |
-			( (u32)(sneak & 1) << 6) | //(0 << 6) | // Sneak is never pressed
-			( (u32)(dig   & 1) << 7) |
-			( (u32)(place & 1) << 8) |
-			( (u32)(zoom  & 1) << 9)
-		;
-	}
+	
+	keypress_bits =
+		( (u32)(jump  & 1) << 4) |
+		( (u32)(aux1  & 1) << 5) |
+		( (u32)(sneak & 1) << 6) | //(0 << 6) | // Sneak is never pressed
+		( (u32)(dig   & 1) << 7) |
+		( (u32)(place & 1) << 8) |
+		( (u32)(zoom  & 1) << 9)
+	;
 
 	if (g_settings->getBool("freecam")) {}
 	// If any direction keys are pressed pass those through
@@ -273,25 +263,14 @@ u32 PlayerControl::getKeysPressed() const
 u32 PlayerControl::getKeysPressedAutoSneak() const
 {
 	u32 keypress_bits;
-	if (g_settings->getBool("freecam")) {
-		keypress_bits =
-			(0 << 4) |
-			(0 << 5) |
-			(1 << 6) |
-			(0 << 7) |
-			(0 << 8) |
-			(0 << 9)
-		;
-	} else {
-		keypress_bits =
-			( (u32)(jump  & 1) << 4) |
-			( (u32)(aux1  & 1) << 5) |
-			(1 << 6) |
-			( (u32)(dig   & 1) << 7) |
-			( (u32)(place & 1) << 8) |
-			( (u32)(zoom  & 1) << 9)
-		;
-	}
+	keypress_bits =
+		( (u32)(jump  & 1) << 4) |
+		( (u32)(aux1  & 1) << 5) |
+		(1 << 6) |
+		( (u32)(dig   & 1) << 7) |
+		( (u32)(place & 1) << 8) |
+		( (u32)(zoom  & 1) << 9)
+	;
 
 	if (g_settings->getBool("freecam")) {}
 	// If any direction keys are pressed pass those through

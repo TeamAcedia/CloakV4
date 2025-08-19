@@ -54,6 +54,9 @@ public:
 	bool on_object_add(s16 id);
 
 	v3f get_send_speed(v3f speed);
+	f32 get_send_pitch(f32 pitch);
+	f32 get_send_yaw(f32 yaw);
+	u32 get_send_keys_pressed(u32 keypress_bits);
 
 	void setEnv(ClientEnvironment *env);
 };

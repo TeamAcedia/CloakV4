@@ -537,9 +537,7 @@ void LocalPlayer::move(f32 dtime, Environment *env, std::vector<CollisionInfo> *
 		} else {
 			// jump pressed
 			// Reduce boost when speed already is high
-			if (g_settings->getBool("BHOP")) {
-				jumpspeed = jumpspeed;
-			} else {
+			if (!g_settings->getBool("BHOP")) {
 				jumpspeed = jumpspeed / (1.0f + (m_speed.Y * 2.8f / jumpspeed));
 			}
 		}
@@ -920,6 +918,33 @@ v3f LocalPlayer::getSendSpeed()
 		speed = m_client->getScript()->get_send_speed(speed);
 
 	return speed;
+}
+f32 LocalPlayer::getSendPitch()
+{
+	f32 pitch = getLegitPitch();
+
+	if (m_client->modsLoaded())
+		pitch = m_client->getScript()->get_send_pitch(pitch);
+
+	return pitch;
+}
+
+f32 LocalPlayer::getSendYaw()
+{
+	f32 yaw = getLegitYaw();
+
+	if (m_client->modsLoaded())
+		yaw = m_client->getScript()->get_send_yaw(yaw);
+
+	return yaw;
+}
+
+u32 LocalPlayer::getSendKeysPressed(u32 keypress_bits)
+{	
+	if (m_client->modsLoaded())
+		keypress_bits = m_client->getScript()->get_send_keys_pressed(keypress_bits);
+
+	return keypress_bits;
 }
 
 v3f LocalPlayer::getEyeOffset() const

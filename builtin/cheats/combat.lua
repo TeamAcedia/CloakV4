@@ -8,6 +8,7 @@ core.register_cheat_setting("Enemies Only", "Combat", "killaura", "targeting.ene
 core.register_cheat_setting("Line Of Sight", "Combat", "killaura", "killaura.lineofsight", {type="bool"})
 core.register_cheat_setting("Assist", "Combat", "killaura", "killaura.assist", {type="bool"})
 core.register_cheat_setting("Many Punches", "Combat", "killaura", "killaura.manypunches", {type="bool"})
+core.register_cheat_setting("NoFlag", "Combat", "killaura", "killaura.noflag", {type="bool"})
 
 -------------- Auto Aim -----------------
 
@@ -37,6 +38,7 @@ core.register_cheat_setting("Target Type", "Combat", "tpaura", "targeting.target
 core.register_cheat_setting("Distance", "Combat", "tpaura", "tpaura.distance", {type="slider_int", min=1, max=20, steps=20})
 core.register_cheat_setting("TP Delay", "Combat", "tpaura", "tpaura.delay", {type="slider_float", min=0, max=1, steps=11})
 core.register_cheat_setting("Enemies Only", "Combat", "tpaura", "targeting.enemies_only", {type="bool"})
+
 --------------- TriggerBot -------------------
 core.register_cheat("TriggerBot", "Combat", "tbot")
 
@@ -124,22 +126,64 @@ function get_punch_interval(player)
     return interval
 end
 
-local function get_send_speed_impl(critspeed)
+local killaura_target = nil
+local last_time_aimed_at_target = 0
+local time_aimed_at_target = 0
+local target_aimed_at = nil
+
+core.get_send_pitch = function(pitch)
+	if core.settings:get_bool("killaura") and core.settings:get_bool("killaura.noflag") and killaura_target then
+		local target_pos = killaura_target:get_pos()
+		local player_pos = core.localplayer:get_pos()
+		local direction = vector.direction(player_pos, target_pos)
+		local angle = math.atan2(direction.y, math.sqrt(direction.x^2 + direction.z^2))
+		pitch = math.deg(angle)
+	end
+    return pitch
+end
+
+core.get_send_yaw = function(yaw)
+	if core.settings:get_bool("killaura") and core.settings:get_bool("killaura.noflag") and killaura_target then
+		local target_pos = killaura_target:get_pos()
+		local player_pos = core.localplayer:get_pos()
+		local direction = vector.direction(player_pos, target_pos)
+		if direction.x < 0 then
+			yaw = math.deg(math.atan2(-direction.x, direction.z)) + (math.pi * 2)
+		else
+			yaw = math.deg(math.atan2(-direction.x, direction.z))
+		end
+
+		if last_time_aimed_at_target == 0 then
+			last_time_aimed_at_target = os.clock()
+		end
+
+		if target_aimed_at ~= killaura_target:get_id() then
+			time_aimed_at_target = 0
+			target_aimed_at = killaura_target:get_id()
+		else
+			time_aimed_at_target = os.clock() - last_time_aimed_at_target
+		end
+	else
+		time_aimed_at_target = 0
+		target_aimed_at = nil
+		last_time_aimed_at_target = 0
+	end
+    return yaw
+end
+
+core.get_send_speed = function(critspeed)
     if core.settings:get_bool("critical_hits") then 
         critspeed.y = -7
     end
     return critspeed
 end
 
-local callable = {}
-
-setmetatable(callable, {
-    __call = function(_, critspeed)
-        return get_send_speed_impl(critspeed)
-    end
-})
-
-core.get_send_speed = callable
+core.get_send_controls = function(controls)
+	if core.settings:get_bool("killaura") and core.settings:get_bool("killaura.noflag") and killaura_target then
+		controls.dig = true
+	end
+	return controls
+end
 
 
 function extendPoint(yaw, distance)
@@ -217,11 +261,15 @@ core.register_globalstep(function(dtime)
 	local r, g, b = get_sine_color(total_time)
 	core.set_target_esp_color({r = r, g = g, b = b})
 	if core.settings:get_bool("killaura") then
-		local target_mode = core.settings:get("targeting.target_mode")
-		local mode_text = target_mode and target_mode:gsub(" HP", "") or "Unknown"
-	
-		local target_description = core.settings:get("targeting.target_type")
-		core.update_infotext("Killaura", "Combat", "killaura", string.format("%s, %s", mode_text, target_description))
+		if core.settings:get_bool("killaura.noflag") then
+			core.update_infotext("Killaura", "Combat", "killaura", "NoFlag")
+		else
+			local target_mode = core.settings:get("targeting.target_mode")
+			local mode_text = target_mode and target_mode:gsub(" HP", "") or "Unknown"
+		
+			local target_description = core.settings:get("targeting.target_type")
+			core.update_infotext("Killaura", "Combat", "killaura", string.format("%s, %s", mode_text, target_description))
+		end
 	end
 
 	if core.settings:get_bool("autoaim") then
@@ -270,7 +318,11 @@ core.register_globalstep(function(dtime)
 	end
 
 	if target_enemy and (core.settings:get_bool("killaura")) then
-		
+		killaura_target = target_enemy
+		-- if using killaura.noflag then wait atleast 0.5 seconds to start attacking after simulating aiming at target and pressing attack
+		if (core.settings:get_bool("killaura.noflag") and time_aimed_at_target < 0.5) or target_aimed_at ~= target_enemy:get_id() then
+			return
+		end
 		local interval = get_punch_interval(player)
 
 		if player:get_time_from_last_punch() > interval or core.settings:get_bool("killaura.manypunches") then
@@ -310,6 +362,8 @@ core.register_globalstep(function(dtime)
 
 			player:punch(target_enemy:get_id())
 		end
+	else
+		killaura_target = nil
 	end
 	
 

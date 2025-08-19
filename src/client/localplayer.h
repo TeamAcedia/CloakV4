@@ -178,6 +178,9 @@ public:
 	}
 
 	v3f getSendSpeed();
+	f32 getSendPitch();
+	f32 getSendYaw();
+	u32 getSendKeysPressed(u32 keypress_bits);
 
 	inline void setLegitPosition(const v3f &position)
 	{

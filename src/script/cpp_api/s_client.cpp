@@ -376,7 +376,7 @@ v3f ScriptApiClient::get_send_speed(v3f speed)
         speed /= BS;
         push_v3f(L, speed); 
         if (lua_pcall(L, 1, 1, error_handler) != 0) {
-            const char *error_msg = lua_tostring(L, -1);
+            //const char *error_msg = lua_tostring(L, -1);
             lua_pop(L, 1);
 
             lua_getglobal(L, "core");
@@ -395,6 +395,193 @@ v3f ScriptApiClient::get_send_speed(v3f speed)
     }
 
     return speed;
+}
+
+f32 ScriptApiClient::get_send_pitch(f32 pitch)
+{
+    SCRIPTAPI_PRECHECKHEADER
+
+    PUSH_ERROR_HANDLER(L);
+    int error_handler = lua_gettop(L) - 1;
+    lua_insert(L, error_handler);
+
+    lua_getglobal(L, "core");
+    lua_getfield(L, -1, "get_send_pitch");
+    int type = lua_type(L, -1);
+
+    bool callable = false;
+
+    if (type == LUA_TFUNCTION) {
+        callable = true;
+    } else if (type == LUA_TTABLE) {
+        if (lua_getmetatable(L, -1)) {
+            lua_getfield(L, -1, "__call");
+            if (lua_isfunction(L, -1)) {
+                callable = true;
+            }
+            lua_pop(L, 2);
+        }
+    }
+
+    if (callable) {
+        lua_pushnumber(L, pitch); 
+        if (lua_pcall(L, 1, 1, error_handler) != 0) {
+            //const char *error_msg = lua_tostring(L, -1);
+            lua_pop(L, 1);
+
+            lua_getglobal(L, "core");
+            lua_getfield(L, -1, "debug");
+            //lua_pushfstring(L, "Error calling core.get_send_pitch: %s", error_msg);
+            lua_pcall(L, 1, 0, error_handler);
+        } else {
+            pitch = luaL_checknumber(L, -1);
+        }
+    } else {
+        lua_getglobal(L, "core");
+        lua_getfield(L, -1, "debug");
+        //lua_pushstring(L, "core.get_send_pitch is not callable, skipping call");
+        lua_pcall(L, 1, 0, error_handler);
+    }
+
+    return pitch;
+}
+
+f32 ScriptApiClient::get_send_yaw(f32 yaw)
+{
+    SCRIPTAPI_PRECHECKHEADER
+
+    PUSH_ERROR_HANDLER(L);
+    int error_handler = lua_gettop(L) - 1;
+    lua_insert(L, error_handler);
+
+    lua_getglobal(L, "core");
+    lua_getfield(L, -1, "get_send_yaw");
+    int type = lua_type(L, -1);
+
+    bool callable = false;
+
+    if (type == LUA_TFUNCTION) {
+        callable = true;
+    } else if (type == LUA_TTABLE) {
+        if (lua_getmetatable(L, -1)) {
+            lua_getfield(L, -1, "__call");
+            if (lua_isfunction(L, -1)) {
+                callable = true;
+            }
+            lua_pop(L, 2);
+        }
+    }
+
+    if (callable) {
+        lua_pushnumber(L, yaw); 
+        if (lua_pcall(L, 1, 1, error_handler) != 0) {
+            //const char *error_msg = lua_tostring(L, -1);
+            lua_pop(L, 1);
+
+            lua_getglobal(L, "core");
+            lua_getfield(L, -1, "debug");
+          //  lua_pushfstring(L, "Error calling core.get_send_yaw: %s", error_msg);
+            lua_pcall(L, 1, 0, error_handler);
+        } else {
+            yaw = luaL_checknumber(L, -1);
+        }
+    } else {
+        lua_getglobal(L, "core");
+        lua_getfield(L, -1, "debug");
+    //   lua_pushstring(L, "core.get_send_yaw is not callable, skipping call");
+        lua_pcall(L, 1, 0, error_handler);
+    }
+
+    return yaw;
+}
+
+u32 ScriptApiClient::get_send_keys_pressed(u32 keypress_bits)
+{
+    SCRIPTAPI_PRECHECKHEADER;
+
+    PUSH_ERROR_HANDLER(L);
+    int error_handler = lua_gettop(L) - 1;
+    lua_insert(L, error_handler);
+
+    lua_getglobal(L, "core");
+    lua_getfield(L, -1, "get_send_controls");
+
+    int type = lua_type(L, -1);
+    bool callable = false;
+
+    if (type == LUA_TFUNCTION) {
+        callable = true;
+    } else if (type == LUA_TTABLE) {
+        if (lua_getmetatable(L, -1)) {
+            lua_getfield(L, -1, "__call");
+            if (lua_isfunction(L, -1))
+                callable = true;
+            lua_pop(L, 2);
+        }
+    }
+
+    if (callable) {
+        // build controls table
+        lua_newtable(L);
+
+        lua_pushboolean(L, (keypress_bits & (1 << 4)) != 0);
+        lua_setfield(L, -2, "jump");
+
+        lua_pushboolean(L, (keypress_bits & (1 << 5)) != 0);
+        lua_setfield(L, -2, "aux1");
+
+        lua_pushboolean(L, (keypress_bits & (1 << 6)) != 0);
+        lua_setfield(L, -2, "sneak");
+
+        lua_pushboolean(L, (keypress_bits & (1 << 7)) != 0);
+        lua_setfield(L, -2, "dig");
+
+        lua_pushboolean(L, (keypress_bits & (1 << 8)) != 0);
+        lua_setfield(L, -2, "place");
+
+        lua_pushboolean(L, (keypress_bits & (1 << 9)) != 0);
+        lua_setfield(L, -2, "zoom");
+
+        // call Lua function with 1 arg, expect 1 return (the table)
+        if (lua_pcall(L, 1, 1, error_handler) != 0) {
+            //const char *error_msg = lua_tostring(L, -1);
+            lua_pop(L, 1);
+
+            lua_getglobal(L, "core");
+            lua_getfield(L, -1, "debug");
+            // lua_pushfstring(L, "Error calling core.get_send_controls: %s", error_msg);
+            lua_pcall(L, 1, 0, error_handler);
+        } else {
+            // helper to update a bit from table field
+            auto update_control_bit = [&](const char *field, int shift) {
+                lua_getfield(L, -1, field);
+                if (!lua_isnil(L, -1)) {
+                    if (lua_toboolean(L, -1))
+                        keypress_bits |= (1u << shift);
+                    else
+                        keypress_bits &= ~(1u << shift);
+                }
+                lua_pop(L, 1);
+            };
+
+            if (lua_istable(L, -1)) {
+                update_control_bit("jump",  4);
+                update_control_bit("aux1",  5);
+                update_control_bit("sneak", 6);
+                update_control_bit("dig",   7);
+                update_control_bit("place", 8);
+                update_control_bit("zoom",  9);
+            }
+            lua_pop(L, 1); // pop returned table
+        }
+    } else {
+        lua_getglobal(L, "core");
+        lua_getfield(L, -1, "debug");
+        // lua_pushstring(L, "core.get_send_controls is not callable, skipping call");
+        lua_pcall(L, 1, 0, error_handler);
+    }
+
+    return keypress_bits;
 }
 
 

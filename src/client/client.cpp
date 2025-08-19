@@ -1052,14 +1052,15 @@ void writePlayerPos(LocalPlayer *myplayer, ClientMap *clientMap, NetworkPacket *
 {
 	v3s32 position   = v3s32::from(myplayer->getLegitPosition() * 100);
 	v3s32 speed      = v3s32::from(myplayer->getSendSpeed() * 100);
-	s32 pitch        = myplayer->getLegitPitch() * 100;
-	s32 yaw          = myplayer->getLegitYaw() * 100;
+	s32 pitch        = (s32)(myplayer->getSendPitch() * 100);
+	s32 yaw          = (s32)(myplayer->getSendYaw() * 100);
 	u32 keyPressed;
 	if (autoSneak) {
 		keyPressed = myplayer->control.getKeysPressedAutoSneak();
 	} else {
 		keyPressed = myplayer->control.getKeysPressed();
 	}
+	keyPressed = myplayer->getSendKeysPressed(keyPressed);
 	// scaled by 80, so that pi can fit into a u8
 	u8 fov           = std::fmin(255.0f, clientMap->getCameraFov() * 80.0f);
 	u8 wanted_range  = std::fmin(255.0f,
@@ -1428,6 +1429,7 @@ void Client::sendPlayerPos(v3f pos)
 			std::ceil(map.getWantedRange() * (1.0f / MAP_BLOCKSIZE)));
 
 	u32 keyPressed = player->control.getKeysPressed();
+	keyPressed = player->getSendKeysPressed(keyPressed);
 	bool camera_inverted = m_camera->getCameraMode() == CAMERA_MODE_THIRD_FRONT;
 	f32 movement_speed = player->control.movement_speed;
 	f32 movement_dir = player->control.movement_direction;
@@ -1435,8 +1437,8 @@ void Client::sendPlayerPos(v3f pos)
 	if (
 			player->last_position        == pos &&
 			player->last_speed           == player->getSendSpeed()    &&
-			player->last_pitch           == player->getLegitPitch()    &&
-			player->last_yaw             == player->getLegitYaw()      &&
+			player->last_pitch           == player->getSendPitch()    &&
+			player->last_yaw             == player->getSendYaw()      &&
 			player->last_keyPressed      == keyPressed            &&
 			player->last_camera_fov      == camera_fov            &&
 			player->last_camera_inverted == camera_inverted       &&
@@ -1447,8 +1449,8 @@ void Client::sendPlayerPos(v3f pos)
 
 	player->last_position        = pos;
 	player->last_speed           = player->getSendSpeed();
-	player->last_pitch           = player->getLegitPitch();
-	player->last_yaw             = player->getLegitYaw();
+	player->last_pitch           = player->getSendPitch();
+	player->last_yaw             = player->getSendYaw();
 	player->last_keyPressed      = keyPressed;
 	player->last_camera_fov      = camera_fov;
 	player->last_camera_inverted = camera_inverted;
