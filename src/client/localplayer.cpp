@@ -890,7 +890,7 @@ v3s16 LocalPlayer::getStandingNodePos()
 
 v3s16 LocalPlayer::getFootstepNodePos()
 {
-	v3f feet_pos = getLegitPosition() + v3f(0.0f, m_collisionbox.MinEdge.Y, 0.0f);
+	v3f feet_pos = getPosition() + v3f(0.0f, m_collisionbox.MinEdge.Y, 0.0f);
 
 	// Emit swimming sound if the player is in liquid
 	if (in_liquid_stable)
