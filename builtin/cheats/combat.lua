@@ -9,6 +9,7 @@ core.register_cheat_setting("Line Of Sight", "Combat", "killaura", "killaura.lin
 core.register_cheat_setting("Assist", "Combat", "killaura", "killaura.assist", {type="bool"})
 core.register_cheat_setting("Many Punches", "Combat", "killaura", "killaura.manypunches", {type="bool"})
 core.register_cheat_setting("NoFlag", "Combat", "killaura", "killaura.noflag", {type="bool"})
+core.register_cheat_setting("Fake aiming time", "Combat", "killaura", "killaura.simtime", {type="bool"})
 
 -------------- Auto Aim -----------------
 
@@ -320,7 +321,7 @@ core.register_globalstep(function(dtime)
 	if target_enemy and (core.settings:get_bool("killaura")) then
 		killaura_target = target_enemy
 		-- if using killaura.noflag then wait atleast 0.5 seconds to start attacking after simulating aiming at target and pressing attack
-		if (core.settings:get_bool("killaura.noflag") and time_aimed_at_target < 0.5) or target_aimed_at ~= target_enemy:get_id() then
+		if (core.settings:get_bool("killaura.noflag") and core.settings:get_bool("killaura.simtime") and time_aimed_at_target < 0.5) or (core.settings:get_bool("killaura.noflag") and target_aimed_at ~= target_enemy:get_id()) then
 			return
 		end
 		local interval = get_punch_interval(player)
