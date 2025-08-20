@@ -70,14 +70,14 @@ For Void users:
 
 Download source (this is the URL to the latest of source repository, which might not work at all times) using Git:
 
-    git clone --depth 1 https://github.com/luanti-org/luanti
-    cd luanti
+    git clone --depth 1 https://github.com/TeamAcedia/CloakV4/
+    cd CloakV4
 
 Download source, without using Git:
 
-    wget https://github.com/luanti-org/luanti/archive/master.tar.gz
+    wget https://github.com/TeamAcedia/CloakV4/archive/master.tar.gz
     tar xf master.tar.gz
-    cd luanti-master
+    cd CloakV4-main
 
 ## Build
 
