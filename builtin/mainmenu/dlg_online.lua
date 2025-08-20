@@ -64,10 +64,22 @@ local function get_formspec(dlgview, name, tabdata_etc)
 		tabdata.search_for = ""
 	end
 
+	local profile_names = get_profile_names()
+	local dropdown_options = table.concat(profile_names, ",")
+
+	local selected_index = tonumber(core.settings:get("selected_profile"))
+
 	local retval =
-		-- Search
+		-- Main container and back
 		"size[16.5,8.1,true]" .. "field[0.54,0.54;6,0.75;te_search;;" .. core.formspec_escape(tabdata.search_for) .. "]" ..
-		"button[0.25,7.1;3.5,0.8;back;" .. fgettext("Back") .. "]" ..
+		"button[0.25,7.1;4.25,0.8;back;" .. fgettext("Back") .. "]" ..
+
+		-- Personality profile selector
+		"dropdown[4.58,7.1;4.25,0.8;profile_dropdown;" ..
+		dropdown_options .. ";" ..
+		selected_index .. ";true]" ..
+
+		-- Search
 		"field_enter_after_edit[te_search;true]" ..
 		"container[6.25,0.25]" ..
 		"image_button[0,0;0.75,0.75;" .. core.formspec_escape(defaulttexturedir .. "search.png") .. ";btn_mp_search;]" ..
@@ -272,6 +284,31 @@ local function set_selected_server(tabdata, idx, server)
 end
 
 local function main_button_handler(dlgview, fields, name, tabdata_etc)
+
+	if fields.profile_dropdown then
+		local selected_index = tonumber(fields.profile_dropdown)
+		local profile_names = get_profile_names()
+		local selected_profile_name = profile_names[selected_index]
+
+		local profile = personality_profiles[selected_profile_name]
+		core.log("action", "Selected profile: " .. (profile and profile.profile_name or "none"))
+		if profile then
+			core.settings:set("declared_version_major", tostring(profile.version_major))
+			core.settings:set("declared_version_minor", tostring(profile.version_minor))
+			core.settings:set("declared_version_patch", tostring(profile.version_patch))
+			core.settings:set("declared_protocol_min", tostring(profile.protocol_version_min))
+			core.settings:set("declared_protocol_max", tostring(profile.protocol_version_max))
+			core.settings:set("selected_profile", tostring(selected_index))
+
+			if profile.version_extra then
+				core.settings:set("declared_version_extra", profile.version_extra)
+			else
+				core.settings:set("declared_version_extra", "")
+			end
+			
+		end
+	end
+
 	if fields.te_name then
 		gamedata.playername = fields.te_name
 		core.settings:set("name", fields.te_name)

@@ -26,6 +26,7 @@ dofile(menupath .. DIR_DELIM .. "serverlistmgr.lua")
 dofile(menupath .. DIR_DELIM .. "game_theme.lua")
 dofile(menupath .. DIR_DELIM .. "content" .. DIR_DELIM .. "init.lua")
 
+dofile(menupath .. DIR_DELIM .. "personality_profiles.lua")
 dofile(menupath .. DIR_DELIM .. "dlg_config_world.lua")
 dofile(basepath .. "common" .. DIR_DELIM .. "settings" .. DIR_DELIM .. "init.lua")
 dofile(menupath .. DIR_DELIM .. "dlg_create_world.lua")
@@ -90,6 +91,7 @@ local function init_globals()
 	--check_reinstall_mtg()
 	--migrate_keybindings()
 	--check_new_version()
+	load_personality_profiles()
 	show_sign_in_screen()
 end
 

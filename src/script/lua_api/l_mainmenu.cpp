@@ -701,6 +701,15 @@ int ModApiMainMenu::l_get_modpaths(lua_State *L)
 }
 
 /******************************************************************************/
+int ModApiMainMenu::l_get_personality_profiles_path(lua_State *L)
+{
+	std::string personality_profiles_path = fs::RemoveRelativePathComponents(
+		porting::path_user + DIR_DELIM + "personality_profiles" + DIR_DELIM);
+	lua_pushstring(L, personality_profiles_path.c_str());
+	return 1;
+}
+
+/******************************************************************************/
 int ModApiMainMenu::l_get_clientmodpath(lua_State *L)
 {
 	std::string modpath = fs::RemoveRelativePathComponents(
@@ -1062,6 +1071,7 @@ void ModApiMainMenu::Initialize(lua_State *L, int top)
 	API_FCT(get_user_path);
 	API_FCT(get_modpath);
 	API_FCT(get_modpaths);
+	API_FCT(get_personality_profiles_path);
 	API_FCT(get_clientmodpath);
 	API_FCT(get_gamepath);
 	API_FCT(get_texturepath);
@@ -1103,6 +1113,7 @@ void ModApiMainMenu::InitializeAsync(lua_State *L, int top)
 	API_FCT(get_user_path);
 	API_FCT(get_modpath);
 	API_FCT(get_modpaths);
+	API_FCT(get_personality_profiles_path);
 	API_FCT(get_clientmodpath);
 	API_FCT(get_gamepath);
 	API_FCT(get_texturepath);

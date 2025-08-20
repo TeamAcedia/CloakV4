@@ -1174,8 +1174,21 @@ void Client::sendInit(const std::string &playerName)
 {
 	NetworkPacket pkt(TOSERVER_INIT, 1 + 2 + 2 + (1 + playerName.size()));
 
+	u16 declared_protocol_min = g_settings->getU16("declared_protocol_min");
+	u16 declared_protocol_max = g_settings->getU16("declared_protocol_max");
+
+	if (declared_protocol_min < CLIENT_PROTOCOL_VERSION_MIN) {
+		errorstream << "Client: Declared protocol min version too low, "
+				"this could cause issues." << std::endl;
+	}
+
+	if (declared_protocol_max > LATEST_PROTOCOL_VERSION) {
+		errorstream << "Client: Declared protocol max version too high, "
+				"this could cause issues." << std::endl;
+	}
+
 	pkt << SER_FMT_VER_HIGHEST_READ << (u16) 0 /* unused */;
-	pkt << CLIENT_PROTOCOL_VERSION_MIN << LATEST_PROTOCOL_VERSION;
+	pkt << declared_protocol_min << declared_protocol_max;
 	pkt << playerName;
 
 	Send(&pkt);
@@ -1400,14 +1413,33 @@ void Client::sendRespawnLegacy()
 
 void Client::sendReady()
 {
+	const u16 declared_version_major = g_settings->getU16("declared_version_major");
+	const u16 declared_version_minor = g_settings->getU16("declared_version_minor");
+	const u16 declared_version_patch = g_settings->getU16("declared_version_patch");
+	const char* declared_version_extra = g_settings->get("declared_version_extra").c_str();
+
+	// Build version string "major.minor.patch[-extra]"
+	std::string version_string =
+		std::to_string(declared_version_major) + "." +
+		std::to_string(declared_version_minor) + "." +
+		std::to_string(declared_version_patch);
+
+	if (declared_version_extra && *declared_version_extra != '\0') {
+		version_string += declared_version_extra;
+	}
+
 	NetworkPacket pkt(TOSERVER_CLIENT_READY,
-			1 + 1 + 1 + 1 + 2 + sizeof(char) * strlen(g_version_hash) + 2);
+		1 + 1 + 1 + 1 + 2 + (u16)version_string.size() + 2);
 
-	pkt << (u8) VERSION_MAJOR << (u8) VERSION_MINOR << (u8) VERSION_PATCH
-		<< (u8) 0 << (u16) strlen(g_version_hash);
+	pkt << (u8)declared_version_major
+	    << (u8)declared_version_minor
+	    << (u8)declared_version_patch
+	    << (u8)0
+	    << (u16)version_string.size();
 
-	pkt.putRawString(g_version_hash, (u16) strlen(g_version_hash));
+	pkt.putRawString(version_string.c_str(), (u16)version_string.size());
 	pkt << (u16)FORMSPEC_API_VERSION;
+
 	Send(&pkt);
 }
 

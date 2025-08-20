@@ -645,6 +645,14 @@ void set_default_settings()
 #endif
 
 	// Network
+	settings->setDefault("declared_protocol_max", std::to_string(LATEST_PROTOCOL_VERSION));
+	settings->setDefault("declared_protocol_min", std::to_string(CLIENT_PROTOCOL_VERSION_MIN));
+	settings->setDefault("declared_version_major", std::to_string(VERSION_MAJOR));
+	settings->setDefault("declared_version_minor", std::to_string(VERSION_MINOR));
+	settings->setDefault("declared_version_patch", std::to_string(VERSION_PATCH));
+	settings->setDefault("declared_version_extra", std::string(VERSION_EXTRA));
+	settings->setDefault("selected_profile", "1");
+	
 	settings->setDefault("enable_ipv6", "true");
 	settings->setDefault("ipv6_server", "true");
 	settings->setDefault("max_packets_per_iteration", "1024");

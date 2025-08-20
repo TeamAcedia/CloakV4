@@ -140,3 +140,9 @@ lib/irrlichtmt
 
 # Generated mod storage database
 client/mod_storage.sqlite
+
+# Custom personality profiles
+personality_profiles/*
+# ignore the default profiles
+!/personality_profiles/default.profile
+!/personality_profiles/latest.profile
