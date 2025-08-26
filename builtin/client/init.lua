@@ -33,4 +33,7 @@ dofile(cheatspath .. "chatfilter_bypass.lua")
 dofile(clientpath .. "networking.lua")
 assert(core.get_http_api == nil)
 
+
+dofile(clientpath .. "sscsm.lua")
+
 assert(loadfile(commonpath .. "item_s.lua"))({}) -- Just for push/read node functions

@@ -937,6 +937,7 @@ void ContentFeatures::updateTextures(ITextureSource *tsrc, IShaderSource *shdsrc
 
 	// Tiles (fill in f->tiles[])
 	bool any_polygon_offset = false;
+	/*
 	for (u16 j = 0; j < 6; j++) {
 		tiles[j].world_aligned = isWorldAligned(tdef[j].align_style,
 				tsettings.world_aligned_mode, drawtype);
@@ -951,6 +952,7 @@ void ContentFeatures::updateTextures(ITextureSource *tsrc, IShaderSource *shdsrc
 		tiles[j].layers[0].need_polygon_offset = !tiles[j].layers[1].empty();
 		any_polygon_offset |= tiles[j].layers[0].need_polygon_offset;
 	}
+	*/
 
 	if (drawtype == NDT_MESH && any_polygon_offset) {
 		// Our per-tile polygon offset enablement workaround works fine for normal
@@ -971,11 +973,13 @@ void ContentFeatures::updateTextures(ITextureSource *tsrc, IShaderSource *shdsrc
 	}
 	u32 special_shader = shdsrc->getShader("nodes_shader", special_material, drawtype);
 
-	// Special tiles (fill in f->special_tiles[])
+	// Special tiles (fill in f->special_tiles[]) 
+	/*
 	for (u16 j = 0; j < CF_SPECIAL_COUNT; j++)
 		fillTileAttribs(tsrc, &special_tiles[j].layers[0], special_tiles[j], tdef_spec[j],
 				color, special_material, special_shader,
 				tdef_spec[j].backface_culling, tsettings);
+	*/
 
 	if (param_type_2 == CPT2_COLOR ||
 			param_type_2 == CPT2_COLORED_FACEDIR ||
