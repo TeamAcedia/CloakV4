@@ -31,6 +31,7 @@ dofile(cheatspath .. "nametags.lua")
 dofile(cheatspath .. "autostaff.lua")
 dofile(cheatspath .. "chatfilter_bypass.lua")
 dofile(clientpath .. "networking.lua")
+dofile(clientpath .. "multicraft_compat.lua")
 assert(core.get_http_api == nil)
 
 
