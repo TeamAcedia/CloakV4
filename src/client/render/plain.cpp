@@ -141,8 +141,6 @@ void DrawTracersAndESP::run(PipelineContext &context)
 	material.ZWriteEnable = irr::video::EZW_OFF;
 	driver->setMaterial(material);
 
-	//int pCnt = 0, eCnt = 0, nCnt = 0;
-
  	if (draw_entity_esp || draw_entity_tracers || draw_player_esp || draw_player_tracers) {
  		v3f current_pos = context.client->getEnv().getLocalPlayer()->getPosition();
  		std::vector<DistanceSortedActiveObject> allObjects;
@@ -155,8 +153,6 @@ void DrawTracersAndESP::run(PipelineContext &context)
 			if (!obj) {
 				continue;
 			}
-			//v3f velocity = obj->getVelocity();
-			//v3f rotation = obj->getRotation();
 			EntityRelationship relationship = player->getEntityRelationship(obj);
 			bool is_player = obj->isPlayer();
 			bool draw_esp = is_player ? draw_player_esp : draw_entity_esp;
@@ -199,14 +195,13 @@ void DrawTracersAndESP::run(PipelineContext &context)
 			box.MaxEdge += pos;
 
 			if (draw_esp) {
-				if (RenderingCore::combat_target != NULL && obj->getId() == RenderingCore::combat_target && (g_settings->getBool("enable_combat_target_hud.target_highlight") && g_settings->getBool("enable_combat_target_hud"))) {
+				// Fixed the != NULL warning here by changing it to != 0
+				if (RenderingCore::combat_target != 0 && obj->getId() == RenderingCore::combat_target && (g_settings->getBool("enable_combat_target_hud.target_highlight") && g_settings->getBool("enable_combat_target_hud"))) {
 					driver->draw3DBox(box, RenderingCore::target_esp_color, targetDT, targetEO, targetFO);
 				} else {
 					if (is_player) {
-						//pCnt += 1;
 						driver->draw3DBox(box, color, playerDT, playerEO, playerFO);
 					} else if (!cao->getParent()) {
-						//eCnt += 1;
 						driver->draw3DBox(box, color, entityDT, entityEO, entityFO);
 					}			
 				}
@@ -229,7 +224,6 @@ void DrawTracersAndESP::run(PipelineContext &context)
 				if ((intToFloat(p, BS) - player->getLegitPosition()).getLengthSQ() > (wanted_range*BS) * (wanted_range*BS))
 					continue;
 				MapNode node = map.getNode(p);
-				//nCnt += 1;
 				u8 diffNeighbors = getDifferentNeighborFlags(p, map, node);
 				if (!diffNeighbors)
 					continue;
@@ -244,6 +238,65 @@ void DrawTracersAndESP::run(PipelineContext &context)
 					}
 					if (draw_node_tracers)
 						driver->draw3DLine(eye_pos, box.getCenter(), color);
+				}
+			}
+		}
+	}
+
+	bool draw_tunnel_esp = g_settings->getBool("enable_tunnel_esp");
+	bool draw_tunnel_tracers = g_settings->getBool("enable_tunnel_tracers");
+	video::SColor t_color(255, 255, 175, 25);
+	if (g_settings->exists("tunnel_esp_color")) {
+		v3f tc = g_settings->getV3F("tunnel_esp_color").value();
+		t_color = video::SColor(255, tc.X, tc.Y, tc.Z);
+	}
+
+	if (draw_tunnel_esp || draw_tunnel_tracers) {
+		Map &map = env.getMap();
+		std::vector<v3s16> positions;
+		map.listAllLoadedBlocks(positions);
+		for (v3s16 blockp : positions) {
+			MapBlock *block = map.getBlockNoCreate(blockp);
+			if (!block || !block->mesh)
+				continue;
+			for (v3s16 p : block->mesh->tunnel_nodes) {
+				v3f pos = intToFloat(p, BS) - camera_offset;
+				if ((intToFloat(p, BS) - player->getLegitPosition()).getLengthSQ() > (wanted_range*BS) * (wanted_range*BS))
+					continue;
+
+				u8 diffNeighborsTunnel = 0;
+				for (int i = 0; i < 6; ++i) {
+					v3s16 np = p + directions[i];
+					MapBlock *nblock = map.getBlockNoCreateNoEx(getNodeBlockPos(np));
+					
+					bool is_tunnel = false;
+					if (nblock && nblock->mesh && nblock->mesh->tunnel_nodes.find(np) != nblock->mesh->tunnel_nodes.end()) {
+						is_tunnel = true;
+					}
+					if (!is_tunnel && block->mesh->tunnel_nodes.find(np) != block->mesh->tunnel_nodes.end()) {
+						is_tunnel = true;
+					}
+
+					if (!is_tunnel) {
+						diffNeighborsTunnel |= (1 << i);
+					}
+				}
+
+				if (!diffNeighborsTunnel)
+					continue;
+
+				// Thin 2D square slightly above the actual floor block to prevent clipping/z-fighting
+				aabb3f box(-BS/2, -BS/2 + 0.02f * BS, -BS/2, BS/2, -BS/2 + 0.03f * BS, BS/2);
+				box.MinEdge += pos;
+				box.MaxEdge += pos;
+				
+				if (draw_tunnel_esp) {
+					// Face Opacity is set to 0 to only draw the edges of the box
+					driver->draw3DBox(box, t_color, nodeDT, nodeEO, 0, diffNeighborsTunnel);
+				}
+				
+				if (draw_tunnel_tracers) {
+					driver->draw3DLine(eye_pos, box.getCenter(), t_color);
 				}
 			}
 		}

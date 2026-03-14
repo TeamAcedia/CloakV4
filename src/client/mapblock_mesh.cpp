@@ -657,7 +657,7 @@ MapBlockMesh::MapBlockMesh(Client *client, MeshMakeData *data):
 	}
 
 
-		/*
+	/*
 		NodeESP
 	*/
 	{
@@ -673,7 +673,115 @@ MapBlockMesh::MapBlockMesh(Client *client, MeshMakeData *data):
 			}
 		}
 	}
-/*
+
+	/*
+		TunnelESP
+	*/
+	if (g_settings->getBool("enable_tunnel_esp")) {
+		u16 min_len = g_settings->getU16("tunnel_esp_min_length");
+		u16 max_width = g_settings->getU16("tunnel_esp_max_width");
+		u16 max_height = g_settings->getU16("tunnel_esp_max_height");
+
+		auto isWalkable = [&](const v3s16 &p) {
+			MapNode n = data->m_vmanip.getNodeNoExNoEmerge(p);
+			// If out of bounds of the vmanip, assume it's a valid wall so we don't cull chunk-edge tunnels
+			if (n.getContent() == CONTENT_IGNORE) return true; 
+			return data->m_nodedef->get(n).walkable;
+		};
+		auto isPassable = [&](const v3s16 &p) {
+			MapNode n = data->m_vmanip.getNodeNoExNoEmerge(p);
+			// If out of bounds, assume it's valid air so tunnels can cross borders
+			if (n.getContent() == CONTENT_IGNORE) return true; 
+			return !data->m_nodedef->get(n).walkable;
+		};
+
+		auto isSliceValidZ = [&](const v3s16 &p, int w, int h) {
+			for (int dx = 0; dx < w; ++dx) {
+				if (!isWalkable(p + v3s16(dx, -1, 0))) return false;
+				if (!isWalkable(p + v3s16(dx, h, 0))) return false;
+				for (int dy = 0; dy < h; ++dy) {
+					if (!isPassable(p + v3s16(dx, dy, 0))) return false;
+				}
+			}
+			for (int dy = 0; dy < h; ++dy) {
+				if (!isWalkable(p + v3s16(-1, dy, 0))) return false;
+				if (!isWalkable(p + v3s16(w, dy, 0))) return false;
+			}
+			return true;
+		};
+
+		auto isSliceValidX = [&](const v3s16 &p, int w, int h) {
+			for (int dz = 0; dz < w; ++dz) {
+				if (!isWalkable(p + v3s16(0, -1, dz))) return false;
+				if (!isWalkable(p + v3s16(0, h, dz))) return false;
+				for (int dy = 0; dy < h; ++dy) {
+					if (!isPassable(p + v3s16(0, dy, dz))) return false;
+				}
+			}
+			for (int dy = 0; dy < h; ++dy) {
+				if (!isWalkable(p + v3s16(0, dy, -1))) return false;
+				if (!isWalkable(p + v3s16(0, dy, w))) return false;
+			}
+			return true;
+		};
+
+		v3s16 blockpos_nodes = data->m_blockpos * MAP_BLOCKSIZE;
+
+		for (s16 x = 0; x < MAP_BLOCKSIZE; x++) {
+			for (s16 y = 0; y < MAP_BLOCKSIZE; y++) {
+				for (s16 z = 0; z < MAP_BLOCKSIZE; z++) {
+					v3s16 pos = v3s16(x, y, z) + blockpos_nodes;
+					
+					bool found = false;
+					for (int w = 1; w <= max_width && !found; ++w) {
+						for (int h = w; h <= max_height && !found; ++h) {
+							int required_len = std::max((int)min_len, std::max(w + 1, h + 1));
+
+							// Check Z-axis tunnel
+							if (isSliceValidZ(pos, w, h)) {
+								int len = 1;
+								for (int step = 1; step <= required_len && len < required_len; ++step) {
+									if (isSliceValidZ(pos + v3s16(0, 0, step), w, h)) len++; else break;
+								}
+								for (int step = 1; step <= required_len && len < required_len; ++step) {
+									if (isSliceValidZ(pos + v3s16(0, 0, -step), w, h)) len++; else break;
+								}
+								if (len >= required_len) {
+									for (int dx = 0; dx < w; ++dx) {
+										// We only care about rendering the floor now, so dy is always 0
+										tunnel_nodes.insert(pos + v3s16(dx, 0, 0));
+									}
+									found = true;
+								}
+							}
+
+							if (found) break;
+
+							// Check X-axis tunnel
+							if (isSliceValidX(pos, w, h)) {
+								int len = 1;
+								for (int step = 1; step <= required_len && len < required_len; ++step) {
+									if (isSliceValidX(pos + v3s16(step, 0, 0), w, h)) len++; else break;
+								}
+								for (int step = 1; step <= required_len && len < required_len; ++step) {
+									if (isSliceValidX(pos + v3s16(-step, 0, 0), w, h)) len++; else break;
+								}
+								if (len >= required_len) {
+									for (int dz = 0; dz < w; ++dz) {
+										// We only care about rendering the floor now, so dy is always 0
+										tunnel_nodes.insert(pos + v3s16(0, 0, dz));
+									}
+									found = true;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/*
 	  X-Ray settings
 	*/
 	std::set<content_t> xraySet;

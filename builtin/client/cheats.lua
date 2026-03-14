@@ -10,6 +10,8 @@ core.cheats = {
 		["PlayerTracers"] = "enable_player_tracers",
 		["NodeESP"] = "enable_node_esp",
 		["NodeTracers"] = "enable_node_tracers",
+		["TunnelESP"] = "enable_tunnel_esp",
+		["TunnelTracers"] = "enable_tunnel_tracers",
 	--	["HUDBypass"] = "hud_flags_bypass", dont wanna work, will fix later
 		["HealthESP"] = "enable_health_esp",
 		["NoHurtCam"] = "no_hurt_cam",
@@ -228,8 +230,8 @@ core.register_cheat_description("NodeESP", "Render", "enable_node_esp", "See spe
 core.register_cheat_description("NodeTracers", "Render", "enable_node_tracers", "Draw tracers to specified nodes")
 core.register_cheat_description("PlayerESP", "Render", "enable_player_esp", "See players through walls")
 core.register_cheat_description("PlayerTracers", "Render", "enable_player_tracers", "Draw tracers to players")
---core.register_cheat_description("TunnelESP", "Render", "enable_tunnel_esp", "See tunnels through walls")
---core.register_cheat_description("TunnelTracers", "Render", "enable_tunnel_tracers", "Draw tracers to tunnels")
+core.register_cheat_description("TunnelESP", "Render", "enable_tunnel_esp", "See tunnels through walls")
+core.register_cheat_description("TunnelTracers", "Render", "enable_tunnel_tracers", "Draw tracers to tunnels")
 core.register_cheat_description("Xray", "Render", "xray", "Don't render specific nodes")
 core.register_cheat_description("TargetHUD", "Render", "enable_combat_target_hud", "Shows best target on a HUD (depends on your combat settings)")
 core.register_cheat_description("DetachedCamera", "Render", "detached_camera", "Detaches what you're seeing from your actual camera")
@@ -265,6 +267,10 @@ core.register_cheat_setting("Field Of View", "Render", "fov_setting", "fov.step"
 core.register_cheat_setting("Display sunrise", "Render", "custom_skybox", "display_sunrise", {type="bool"})
 core.register_cheat_setting("Force custom sky", "Render", "custom_skybox", "force_custom_skybox", {type="bool"})
 core.register_cheat_setting("Force render sky", "Render", "custom_skybox", "force_render_skybox", {type="bool"})
+
+core.register_cheat_setting("Min Length", "Render", "enable_tunnel_esp", "tunnel_esp_min_length", {type="slider_int", min=1, max=10, steps=10})
+core.register_cheat_setting("Max Width", "Render", "enable_tunnel_esp", "tunnel_esp_max_width", {type="slider_int", min=1, max=5, steps=5})
+core.register_cheat_setting("Max Height", "Render", "enable_tunnel_esp", "tunnel_esp_max_height", {type="slider_int", min=1, max=5, steps=5})
 
 local update_interval = 0.25
 local timer = 0

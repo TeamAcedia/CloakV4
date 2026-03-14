@@ -123,6 +123,10 @@ Game::Game() :
 		&freecamChangedCallback, this);
 	g_settings->registerChangedCallback("enable_node_esp.nodes",
 		&updateAllMapBlocksCallback, this);
+	g_settings->registerChangedCallback("enable_tunnel_esp",
+		&updateAllMapBlocksCallback, this);
+	g_settings->registerChangedCallback("tunnel_esp_color",
+		&updateAllMapBlocksCallback, this);
 
 	readSettings();
 }
@@ -156,6 +160,10 @@ Game::~Game()
 	g_settings->deregisterChangedCallback("freecam",
 		&freecamChangedCallback, this);
 	g_settings->deregisterChangedCallback("enable_node_esp.nodes",
+		&updateAllMapBlocksCallback, this);
+	g_settings->deregisterChangedCallback("enable_tunnel_esp",
+		&updateAllMapBlocksCallback, this);
+	g_settings->deregisterChangedCallback("tunnel_esp_color",
 		&updateAllMapBlocksCallback, this);
 
 	if (m_rendering_engine)

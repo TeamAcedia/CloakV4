@@ -246,6 +246,7 @@ public:
 	}
 
 	std::set<v3s16> esp_nodes;
+	std::set<v3s16> tunnel_nodes;
 
 private:
 
