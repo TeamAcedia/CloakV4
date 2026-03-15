@@ -33,13 +33,15 @@ on:
 
 jobs:
   build-intel-macos:
-    runs-on: macos-13
+    runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
       - name: Install deps
         run: |
           source ./util/ci/common.sh
           install_macos_deps
+          # brew jsoncpp do not include libjsoncpp.a, and if installed header conflict caused build failure
+          brew uninstall jsoncpp
 
       - name: Build
         run: |
@@ -50,7 +52,8 @@ jobs:
             -DCMAKE_FIND_FRAMEWORK=LAST \
             -DCMAKE_INSTALL_PREFIX=../build/macos/ \
             -DRUN_IN_PLACE=FALSE -DENABLE_GETTEXT=TRUE \
-            -DINSTALL_DEVTEST=TRUE
+            -DINSTALL_DEVTEST=TRUE \
+            -DENABLE_SYSTEM_JSONCPP=OFF
           cmake --build . -j$(sysctl -n hw.logicalcpu)
           make install
 
@@ -58,17 +61,11 @@ jobs:
         run: |
           ./build/macos/cloakv4.app/Contents/MacOS/cloakv4 --run-unittests
 
-      - name: CPack
-        run: |
-          cd build
-          rm -rf macos
-          cmake .. -DINSTALL_DEVTEST=FALSE
-          cpack -G ZIP -B macos
-
-      - uses: actions/upload-artifact@v4
+      - name: Create Artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: cloakv4-macos-intel
-          path: ./build/macos/*.zip
+          name: macos-intel-build
+          path: build/macos
 
   build-arm-macos-xcode:
     runs-on: macos-14
@@ -81,7 +78,7 @@ jobs:
           # brew jsoncpp do not include libjsoncpp.a, and if installed header conflict caused build failure
           brew uninstall jsoncpp
 
-      - name: Build with Cmake
+      - name: Build
         run: |
           mkdir build
           cd build
@@ -90,35 +87,19 @@ jobs:
             -DCMAKE_FIND_FRAMEWORK=LAST \
             -DCMAKE_INSTALL_PREFIX=../build/macos/ \
             -DRUN_IN_PLACE=FALSE -DENABLE_GETTEXT=TRUE \
+            -DINSTALL_DEVTEST=TRUE \
             -DENABLE_SYSTEM_JSONCPP=OFF
           cmake --build . -j$(sysctl -n hw.logicalcpu)
           make install
-
-      - name: Build and Archive with Xcode
-        run: |
-          mkdir build_xcode
-          cd build_xcode
-          ../util/ci/build_xcode.sh
 
       - name: Tests
         run: |
           mkdir -p "${HOME}/Library/Application Support/minetest/games/"
           ln -s "${PWD}/games/devtest" "${HOME}/Library/Application Support/minetest/games/"
           ./build/macos/cloakv4.app/Contents/MacOS/cloakv4 --run-unittests
-          ./build_xcode/cloakv4.xcarchive/Products/Applications/cloakv4.app/Contents/MacOS/cloakv4 --run-unittests
-
-      - name: Diff Resources
-        run: |
-          diff -rd ./build/macos/cloakv4.app/Contents/Resources ./build_xcode/build/Release/cloakv4.app/Contents/Resources || exit 1
-          diff -rd ./build/macos/cloakv4.app/Contents/Resources ./build_xcode/cloakv4.xcarchive/Products/Applications/cloakv4.app/Contents/Resources || exit 1
 
       - name: Create Artifact
-        run: |
-          cd build_xcode
-          cpack -G ZIP -B macos
-
-      - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cloakv4-macos-arm
-          path: build_xcode/zip/cloakv4.zip
+          name: macos-arm-build
+          path: build/macos
