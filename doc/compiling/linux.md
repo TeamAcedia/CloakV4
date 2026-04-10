@@ -88,11 +88,11 @@ Build a version that runs directly from the source directory:
 
 Run it:
 
-    ./bin/luanti
+    ./bin/cloakv4
 
 Run unit tests:
 
-    ./bin/luanti --run-unittests
+    ./bin/cloakv4 --run-unittests
 
 - Use `cmake . -LH` to see all CMake options and their current state.
 - If you want to install it system-wide (or are making a distribution package),
