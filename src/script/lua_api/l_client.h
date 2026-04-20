@@ -51,6 +51,9 @@ private:
 	// show_formspec(name, formspec)
 	static int l_show_formspec(lua_State *L);
 
+	// send_formspec_fields()
+	static int l_send_formspec_fields(lua_State *L);
+
 	// send_respawn()
 	static int l_send_respawn(lua_State *L);
 

@@ -1,0 +1,105 @@
+name: macos
+
+# build on c/cpp changes or workflow changes
+on:
+  push:
+    paths:
+      - 'lib/**.[ch]'
+      - 'lib/**.cpp'
+      - 'src/**.[ch]'
+      - 'src/**.cpp'
+      - 'irr/**.[ch]'
+      - 'irr/**.cpp'
+      - 'irr/**.mm' # Objective-C(++)
+      - '**/CMakeLists.txt'
+      - 'cmake/Modules/**'
+      - 'po/**.po'
+      - 'util/ci/**'
+      - '.github/workflows/macos.yml'
+  pull_request:
+    paths:
+      - 'lib/**.[ch]'
+      - 'lib/**.cpp'
+      - 'src/**.[ch]'
+      - 'src/**.cpp'
+      - 'irr/**.[ch]'
+      - 'irr/**.cpp'
+      - 'irr/**.mm' # Objective-C(++)
+      - '**/CMakeLists.txt'
+      - 'cmake/Modules/**'
+      - 'po/**.po'
+      - 'util/ci/**'
+      - '.github/workflows/macos.yml'
+
+jobs:
+  build-intel-macos:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: |
+          source ./util/ci/common.sh
+          install_macos_deps
+          # brew jsoncpp do not include libjsoncpp.a, and if installed header conflict caused build failure
+          brew uninstall jsoncpp
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake .. \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=10.14 \
+            -DCMAKE_FIND_FRAMEWORK=LAST \
+            -DCMAKE_INSTALL_PREFIX=../build/macos/ \
+            -DRUN_IN_PLACE=FALSE -DENABLE_GETTEXT=TRUE \
+            -DINSTALL_DEVTEST=TRUE \
+            -DENABLE_SYSTEM_JSONCPP=OFF
+          cmake --build . -j$(sysctl -n hw.logicalcpu)
+          make install
+
+      - name: Test
+        run: |
+          ./build/macos/cloakv4.app/Contents/MacOS/cloakv4 --run-unittests
+
+      - name: Create Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-intel-build
+          path: build/macos
+
+  build-arm-macos-xcode:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: |
+          source ./util/ci/common.sh
+          install_macos_deps
+          # brew jsoncpp do not include libjsoncpp.a, and if installed header conflict caused build failure
+          brew uninstall jsoncpp
+
+      - name: Build
+        run: |
+          mkdir build
+          cd build
+          cmake .. \
+            -DCMAKE_OSX_DEPLOYMENT_TARGET=14 \
+            -DCMAKE_FIND_FRAMEWORK=LAST \
+            -DCMAKE_INSTALL_PREFIX=../build/macos/ \
+            -DRUN_IN_PLACE=FALSE -DENABLE_GETTEXT=TRUE \
+            -DINSTALL_DEVTEST=TRUE \
+            -DENABLE_SYSTEM_JSONCPP=OFF
+          cmake --build . -j$(sysctl -n hw.logicalcpu)
+          make install
+
+      - name: Tests
+        run: |
+          mkdir -p "${HOME}/Library/Application Support/minetest/games/"
+          ln -s "${PWD}/games/devtest" "${HOME}/Library/Application Support/minetest/games/"
+          ./build/macos/cloakv4.app/Contents/MacOS/cloakv4 --run-unittests
+
+      - name: Create Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-arm-build
+          path: build/macos

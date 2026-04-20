@@ -1,0 +1,46 @@
+name: appimage
+
+on:
+  push:
+    paths:
+      - 'lib/**.[ch]'
+      - 'lib/**.cpp'
+      - 'src/**.[ch]'
+      - 'src/**.cpp'
+      - '**/CMakeLists.txt'
+      - 'cmake/Modules/**'
+      - 'util/buildbot/**'
+      - 'misc/AppImageBuilder.yml'
+      - 'util/ci/**'
+      - '.github/workflows/**.yml'
+      - 'Dockerfile'
+      - '.dockerignore'
+
+env:
+  CMAKE_BUILD_TYPE: 'Release'
+  CC: clang
+  CXX: clang++
+
+jobs:
+  clang:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install deps
+        run: |
+          source ./util/ci/common.sh
+          install_linux_deps clang gdb ninja-build python3-pip python3-setuptools patchelf desktop-file-utils libgdk-pixbuf2.0-dev fakeroot strace fuse sshpass
+          sudo wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage -O /usr/local/bin/appimagetool
+          sudo chmod +x /usr/local/bin/appimagetool
+          sudo pip3 install git+https://github.com/AppImageCrafters/appimage-builder.git
+
+      - name: Compile AppImage
+        run: |
+          appimage-builder --recipe misc/AppImageBuilder.yml
+
+      - uses: actions/upload-artifact@v4
+        id: artifact-upload-step
+        with:
+          name: appimage
+          path: ./*.AppImage
+          if-no-files-found: error

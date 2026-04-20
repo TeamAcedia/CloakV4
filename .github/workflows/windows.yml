@@ -1,0 +1,68 @@
+name: windows
+
+# build on c/cpp changes or workflow changes
+on:
+  push:
+    paths:
+      - 'lib/**.[ch]'
+      - 'lib/**.cpp'
+      - 'src/**.[ch]'
+      - 'src/**.cpp'
+      - 'irr/**.[ch]'
+      - 'irr/**.cpp'
+      - '**/CMakeLists.txt'
+      - 'cmake/Modules/**'
+      - 'po/**.po'
+      - 'util/buildbot/**'
+      - 'misc/*.manifest'
+      - '.github/workflows/windows.yml'
+  pull_request:
+    paths:
+      - 'lib/**.[ch]'
+      - 'lib/**.cpp'
+      - 'src/**.[ch]'
+      - 'src/**.cpp'
+      - 'irr/**.[ch]'
+      - 'irr/**.cpp'
+      - '**/CMakeLists.txt'
+      - 'cmake/Modules/**'
+      - 'po/**.po'
+      - 'util/buildbot/**'
+      - 'misc/*.manifest'
+      - '.github/workflows/windows.yml'
+
+jobs:
+  mingw:  # this is the main one for windows
+    name: "MinGW cross-compiler (${{ matrix.bits }}-bit)"
+    runs-on: ubuntu-22.04
+    strategy:
+      fail-fast: false
+      matrix:
+        bits: [32, 64]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install compiler
+        run: |
+          sudo dpkg --add-architecture i386
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends gettext wine wine${{ matrix.bits }}
+          sudo ./util/buildbot/download_toolchain.sh /usr
+
+      - name: Build
+        run: |
+           EXISTING_MINETEST_DIR=$PWD \
+           ./util/buildbot/buildwin${{ matrix.bits }}.sh B
+
+      # Check that the resulting binary can run (DLLs etc.)
+      - name: Runtime test
+        run: |
+          dest=$(mktemp -d)
+          unzip -q -d "$dest" B/build/*.zip
+          cd "$dest"/cloakv4-*-win*
+          wine bin/cloakv4.exe --version
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: "CloakV4-Windows-${{ matrix.bits }}bit"
+          path: B/build/*.zip
+          if-no-files-found: error

@@ -1,0 +1,84 @@
+name: linux
+
+# build on c/cpp changes or workflow changes
+on:
+  push:
+    paths:
+      - 'lib/**.[ch]'
+      - 'lib/**.cpp'
+      - 'src/**.[ch]'
+      - 'src/**.cpp'
+      - 'irr/**.[ch]'
+      - 'irr/**.cpp'
+      - '**/CMakeLists.txt'
+      - 'cmake/Modules/**'
+      - 'po/**.po'
+      - 'util/ci/**'
+      - '.github/workflows/linux.yml'
+  pull_request:
+    paths:
+      - 'lib/**.[ch]'
+      - 'lib/**.cpp'
+      - 'src/**.[ch]'
+      - 'src/**.cpp'
+      - 'irr/**.[ch]'
+      - 'irr/**.cpp'
+      - '**/CMakeLists.txt'
+      - 'cmake/Modules/**'
+      - 'po/**.po'
+      - 'util/ci/**'
+      - '.github/workflows/linux.yml'
+
+env:
+  MINETEST_POSTGRESQL_CONNECT_STRING: 'host=localhost user=minetest password=minetest dbname=minetest'
+
+jobs:
+
+  # Current gcc version
+  gcc_14:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: |
+          source ./util/ci/common.sh
+          install_linux_deps g++-14 libluajit-5.1-dev
+
+      - name: Build
+        run: |
+          CMAKE_BUILD_SERVER=FALSE ./util/ci/build.sh
+        env:
+          CC: gcc-14
+          CXX: g++-14
+
+      - name: Test
+        run: |
+          mkdir nowrite
+          chmod a-w nowrite
+          cd nowrite
+          ../bin/cloakv4 --run-unittests
+
+  # Current clang version # this is the main one for linux
+  clang_18:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install deps
+        run: |
+          source ./util/ci/common.sh
+          install_linux_deps clang-18 lldb
+
+      - name: Build
+        run: |
+          CMAKE_BUILD_SERVER=FALSE ./util/ci/build.sh
+        env:
+          CC: clang-18
+          CXX: clang++-18
+
+      - name: Test
+        run: |
+          ./bin/cloakv4 --run-unittests
+
+      - name: Integration test + devtest
+        run: |
+          ./util/test_multiplayer.sh

@@ -152,6 +152,27 @@ int ModApiClient::l_show_formspec(lua_State *L)
 	return 1;
 }
 
+// send_formspec_fields(formname, fields, local_only)
+int ModApiClient::l_send_formspec_fields(lua_State *L)
+{
+	std::string* formname = new std::string(luaL_checkstring(L, 1));
+	std::string* fields = new std::string(luaL_checkstring(L, 2));
+	bool local_only = lua_isboolean(L, 1) ? lua_toboolean(L, 1) : false;
+
+	Client* client = getClient(L);
+	TextDest *txt_dst;
+	switch (local_only) {
+		case true: txt_dst = new LocalFormspecHandler(*formname, client);
+		case false: txt_dst = new TextDestPlayerInventory(client, *formname);
+	}
+
+	std::wstring fields_wstr = utf8_to_wide(*fields);
+	txt_dst->gotText(fields_wstr);
+	delete formname;
+	delete fields;
+	return 0;
+}
+
 // send_respawn()
 int ModApiClient::l_send_respawn(lua_State *L)
 {
@@ -436,7 +457,7 @@ int ModApiClient::l_place_node(lua_State *L)
 		client->interact(INTERACT_PLACE, pointed);
 		return 0;
 	}
-	
+
 	MapNode n(id, 0, 0);
 	client->addNode(pos, n);
 	client->interact(INTERACT_PLACE, pointed);
@@ -1050,6 +1071,7 @@ void ModApiClient::Initialize(lua_State *L, int top)
 	API_FCT(clear_out_chat_queue);
 	API_FCT(get_player_names);
 	API_FCT(show_formspec);
+	API_FCT(send_formspec_fields);
 	API_FCT(send_respawn);
 	API_FCT(gettext);
 	API_FCT(get_node_or_nil);
